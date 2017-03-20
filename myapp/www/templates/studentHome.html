@@ -1,0 +1,91 @@
+<ion-view title="Student Home" hide-nav-bar="true" id="page31" ng-init="initData()">
+  <ion-nav-buttons side="right">
+    <button class="button button-icon icon No Icon"></button>
+  </ion-nav-buttons>
+  <ion-content padding="false" class="manual-ios-statusbar-padding">
+    <div id="studentHome-container29">
+      <div id="studentHome-button-bar12" class="button-bar">
+        <button ng-click="studentHomeForm()" id="studentHome-button131" id="studentHome-btn131" class="button button-light  button-outline">{{ 'HOME' | translate }}</button>
+        <button ng-click="studentAchievementsForm()" id="studentHome-button133" id="studentHome-btn133" class="button button-light  button-outline">{{ 'ACHIEVEMENTS' | translate }}</button>
+        <button ng-click="studentBadgesForm()" id="studentHome-button134" id="studentHome" class="button button-light  button-outline">{{ 'BADGES' | translate }}</button>
+      </div>
+    </div>
+
+    <!-- Student Home Page -->
+
+    <div ng-show="loginTypeStudentHome">
+      <h3 id="studentHome-heading25" class="studentHome-hdg25">{{studentName}} {{studentSurname}}</h3>
+      <div id="studentHome-container28" class="list-student">
+        <img class="icon ion-image" class="list-student" src="{{studentAvatar}}"></img>
+      </div>
+      <form id="studentHome-form1" class="list list-elements list-student">
+        <ion-list id="signUp-list2">
+          <label class="item item-input list-elements" id="signUp-input3">
+            <span class="inputLabelProfile">
+              <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'NAME'  | translate }}
+              <input id="inputName" type="text" placeholder="{{studentName}}" ng-model="name"></span>
+          </label>
+          <label class="item item-input list-elements" id="signUp-input3">
+            <span class="inputLabelProfile">
+              <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'SURNAME' | translate }}
+              <input id="inputSurname" type="text" placeholder="{{studentSurname}}" ng-model="surname"></span>
+          </label>
+          <label class="item item-input list-elements" id="signUp-input3">
+            <span class="inputLabelProfile">
+              <i class="icon ion-locked"></i>&nbsp;&nbsp;{{ 'AVATAR' | translate }}
+              <input id="inputAvatar" type="text" placeholder="{{studentAvatar}}" ng-model="avatar"></span>
+          </label>
+        </ion-list>
+        <button id="signUp-button9" ng-disabled="!name || !surname" id="signUp-btn9" class="button button-calm button-large button-block" ng-click="editStudent(name, surname, avatar)">{{ 'SAVE_CHANGES' | translate }}</button>
+      </form>
+      <ion-list id="studentHome-list33">
+        <ion-item id="studentHome-list-item46" ng-repeat="item in items" class="list-student-dialog">
+          <i>&nbsp;&nbsp;{{item.name}}</i>
+          <span class="item-note">{??}%</span>
+          <ion-option-button class="button-assertive">
+            <i class="icon ion-minus-round"></i>
+          </ion-option-button>
+          <ion-option-button class="button-calm">
+            <i class="icon ion-plus-round"></i>
+          </ion-option-button>
+        </ion-item>
+      </ion-list>
+      <div class="button-bar action_buttons">
+      <a ui-sref="login" id="studentHome-button162" id="studentHome-btn162" class="button button-assertive  button-block button-clear ion-ios-close-empty logout">{{ 'LOG_OUT' | translate }} </a>
+      </div>
+    </div>
+
+    <!-- Student Achievements Page -->
+
+    <div ng-show="loginTypeStudentAchievements">
+      <h3 id="studentAchievements-heading27" class="studentAchievements-hdg27">{{studentName}} {{studentSurname}}</h3>
+      <ion-list id="studentAchievements-list39" class="list-elements align-text-center">
+        <ion-item class="light  list-item-header" id="studentAchievements-list-item86">{{ 'ACHIEVEMENT_NAME' | translate }}</ion-item>
+        <ion-item class="light  list-item-header" id="studentAchievements-list-item87">{{ 'ACHIEVEMENT_DESCRIPTION' | translate }}</ion-item>
+        <ion-item class="light  list-item-header" id="studentAchievements-list-item88">{{ 'REQUIREMENTS' | translate }}</ion-item>
+      </ion-list>
+      <ion-list id="studentAchievements-list40" class="list-elements align-text-center">
+        <ion-item id="studentAchievements-list-item90" class="list-item">???</ion-item>
+        <ion-item id="studentAchievements-list-item91" class="list-item">???</ion-item>
+        <ion-item id="studentAchievements-list-item92" class="list-item">???</ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Student Badges Page -->
+
+    <div ng-show="loginTypeStudentBadges">
+      <h3 id="studentBadges-heading28" class="studentBadges-hdg28">{{studentName}} {{studentSurname}}</h3>
+      <ion-list id="studentBadges-list43" class="list-elements align-text-center">
+        <ion-item class="light  list-item-header" id="studentBadges-list-item99">{{ 'BADGE_DESCRIPTION' | translate }}</ion-item>
+        <ion-item class="light  list-item-header" id="studentBadges-list-item100">{{ 'BADGE_DESCRIPTION' | translate }}</ion-item>
+        <ion-item class="light  list-item-header" id="studentBadges-list-item101">{{ 'REQUIREMENTS' | translate }}</ion-item>
+      </ion-list>
+      <ion-list id="studentBadges-list44" class="list-elements align-text-center">
+        <ion-item id="studentBadges-list-item102" class="list-item">???</ion-item>
+        <ion-item id="studentBadges-list-item103" class="list-item">???</ion-item>
+        <ion-item id="studentBadges-list-item104" class="list-item">???</ion-item>
+      </ion-list>
+    </div>
+
+  </ion-content>
+</ion-view>

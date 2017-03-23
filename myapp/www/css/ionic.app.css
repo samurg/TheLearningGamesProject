@@ -5397,15 +5397,15 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
   display: block;
   margin-top: 12px;
   margin-left: -110px;
-  height: 280px;
-  width: 220px;
+  height: auto !important;
+  width: 360px;
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   opacity: 0; }
   .popover .item:first-child {
-    border-top: 0; }
+    border-top: 1; }
   .popover .item:last-child {
-    border-bottom: 0; }
+    border-bottom: 1; }
   .popover.popover-bottom {
     margin-top: -12px; }
 

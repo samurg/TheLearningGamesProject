@@ -31,8 +31,14 @@
           <input type="password" placeholder="" ng-model="passwordRepeat" ng-minlenght="3">
         </label>
         <label class="item item-input list-elements" id="signUp-input3">
+            <span class="inputLabelProfile">
+              <i class="icon ion-clipboard"></i>&nbsp;&nbsp;ESCUELA
+              <input id="inputAvatar" type="text" placeholder="" ng-model="school">
+            </span>
+          </label>
+        <label class="item item-input list-elements" id="signUp-input3">
           <span class="input-label">
-            <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'AVATAR' | translate }}</span>
+            <i class="icon ion-image"></i>&nbsp;&nbsp;{{ 'AVATAR' | translate }}</span>
           <input type="text" placeholder="" ng-model="avatar">
         </label>
       </ion-list>

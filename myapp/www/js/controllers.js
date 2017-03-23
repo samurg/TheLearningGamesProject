@@ -1,9 +1,9 @@
 angular.module('app.controllers', ['pascalprecht.translate'])
      
-.controller('loginCtrl', ['$scope', '$stateParams', '$cookies', '$http', 'Backand', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('loginCtrl', ['$scope', '$stateParams', '$http', 'Backand', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $cookies, $http, Backand,$state) {
+function ($scope, $stateParams, $http, Backand,$state) {
 	
 	$scope.clearForm1 = function(){
     var form = document.getElementById("login-form1");
@@ -33,13 +33,13 @@ function ($scope, $stateParams, $cookies, $http, Backand,$state) {
     $http.get(Backand.getApiUrl()+'/1/query/data/getTeacher'+'?parameters={ "email" : \"'+CryptoJS.SHA256(email).toString()+'\" , "password" : \"'+CryptoJS.SHA256(password).toString()+'\"}')
         .then(function (response) {
           if (response.data.length > 0) {
-            $cookies.put('teacherId', response.data[0].id);
-            $cookies.put('teacherName', CryptoJS.AES.decrypt(response.data[0].name, email).toString(CryptoJS.enc.Utf8));
-            $cookies.put('teacherSurname', CryptoJS.AES.decrypt(response.data[0].surname, email).toString(CryptoJS.enc.Utf8));
-            $cookies.put('teacherAvatar', response.data[0].avatar);
-            $cookies.put('teacherEmail', email);
-            $cookies.put('teacherPassword', password);
-            $scope.teacherId = $cookies.get('teacherId');
+            //$cookies.put('teacherId', response.data[0].id);
+            //$cookies.put('teacherName', CryptoJS.AES.decrypt(response.data[0].name, email).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('teacherSurname', CryptoJS.AES.decrypt(response.data[0].surname, email).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('teacherAvatar', response.data[0].avatar);
+            //$cookies.put('teacherEmail', email);
+            //$cookies.put('teacherPassword', password);
+            //$scope.teacherId = $cookies.get('teacherId');
             $state.go('teacherHome', {teacherId: $scope.teacherId});
           } else {
             alert('Wrong credentials');
@@ -47,22 +47,16 @@ function ($scope, $stateParams, $cookies, $http, Backand,$state) {
         });
   }
 
-
-  /*
-    This function returns the student's data when it is logged, 
-    decrypts personal data, saves personal data in cookies 
-    and goes to studentHome.
-  */
   $scope.getStudent = function(hashCode) {
     $http.get(Backand.getApiUrl()+'/1/query/data/getStudentData'+'?parameters={ "hashCode" : \"'+hashCode+'\"}')
         .then(function (response) {
           if (response.data.length > 0) {
-            $cookies.put('studentId', response.data[0].id);
-            $cookies.put('studentName', CryptoJS.AES.decrypt(response.data[0].name, hashCode).toString(CryptoJS.enc.Utf8));
-            $cookies.put('studentSurname', CryptoJS.AES.decrypt(response.data[0].surname, hashCode).toString(CryptoJS.enc.Utf8));
-            $cookies.put('hashCode', response.data[0].hashCode)
-            $cookies.put('studentAvatar', response.data[0].avatar);
-            $scope.studentId = $cookies.get('studentId');
+            //$cookies.put('studentId', response.data[0].id);
+            //$cookies.put('studentName', CryptoJS.AES.decrypt(response.data[0].name, hashCode).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('studentSurname', CryptoJS.AES.decrypt(response.data[0].surname, hashCode).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('hashCode', response.data[0].hashCode)
+            //$cookies.put('studentAvatar', response.data[0].avatar);
+            //$scope.studentId = $cookies.get('studentId');
             $state.go('studentHome', {studentId: $scope.studentId});
           } else {
             alert('Wrong credentials');
@@ -87,10 +81,10 @@ function ($scope, $stateParams, $cookies, $http, Backand,$state) {
 
 
 
-.controller('signUpCtrl', ['$scope', '$stateParams', '$cookies', '$http', 'Backand', '$state',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('signUpCtrl', ['$scope', '$stateParams', '$http', 'Backand', '$state',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $cookies, $http, Backand, $state) {
+function ($scope, $stateParams, $http, Backand, $state) {
 
 	$scope.clearForm = function(){
     var form = document.getElementById("signUp-form2");
@@ -148,182 +142,81 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', 'Backand', '$cookies', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', 'Backand', '$state', '$ionicPopover', '$ionicActionSheet', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, NgTableParams) {
+function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopover, $ionicActionSheet, NgTableParams) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
   */
 
-  $scope.loginTypeTeacherHome=true;
-  $scope.loginTypeTeacherProfile=false;
-  $scope.loginTypeTeacherSettings=false;
-    $scope.loginTypeSecondButtonBar=false;
-      $scope.loginTypeClass=false;
-      $scope.loginTypeTeam=false;
-      $scope.loginTypeRules=false;
-        $scope.loginTypeItems=false;
-        $scope.loginTypeAchievements=false;
-        $scope.loginTypeBadges=false;
-      $scope.loginTypeMissions=false;
+  $scope.allFalse = function() {
+    $scope.teacherHomeView = false;
+    $scope.teacherProfileView = false;
+    $scope.teacherSettingsView = false;
+    $scope.classStudentsView = false;
+    $scope.classTeamsView = false;
+    $scope.rulesView = false;
+    $scope.itemsView = false;
+    $scope.achievementsView = false;
+    $scope.missionsView = false;
+    $scope.rewardShopView = false;
+  }
 
   $scope.teacherHomeForm = function(){
-    $scope.loginTypeTeacherHome=true;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=false;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.teacherHomeView = true;
   }
 
   $scope.teacherProfileForm = function(){
-    $scope.initData();
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=true;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=false;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    //$scope.initData();
+    $scope.allFalse();
+    $scope.teacherProfileView = true;
   }
 
   $scope.teacherSettingsForm = function(){
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=true;
-      $scope.loginTypeSecondButtonBar=false;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
-  }
-
-  $scope.secondButtonBarForm = function() {
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=true;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.teacherSettingsView = true;
   }
 
   $scope.classForm = function(){
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=true;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.classStudentsView = true;
   }
 
   $scope.teamsForm = function(){
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=true;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.classTeamsView = true;
   }
 
   $scope.rulesForm = function() {
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=true;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.rulesView = true;
   }
 
   $scope.itemsForm = function() {
-    $scope.getItems();
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=true;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
+    //$scope.getItems();
+    $scope.allFalse();
+    $scope.itemsView = true;
   }
 
   $scope.achievementsForm = function() {
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=true;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=false;
-  }
-
-  $scope.badgesForm = function() {
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=true;
-        $scope.loginTypeMissions=false;
+    $scope.allFalse();
+    $scope.achievementsView = true;
   }
 
   $scope.missionsForm = function() {
-    $scope.loginTypeTeacherHome=false;
-    $scope.loginTypeTeacherProfile=false;
-    $scope.loginTypeTeacherSettings=false;
-      $scope.loginTypeSecondButtonBar=true;
-        $scope.loginTypeClass=false;
-        $scope.loginTypeTeam=false;
-        $scope.loginTypeRules=false;
-          $scope.loginTypeItems=false;
-          $scope.loginTypeAchievements=false;
-          $scope.loginTypeBadges=false;
-        $scope.loginTypeMissions=true;
+    $scope.allFalse();
+    $scope.missionsView = true;
   }
+
+  $scope.rewardShopForm = function() {
+    $scope.allFalse();
+    $scope.rewardShopView = true;
+  }
+
+  $scope.teacherHomeForm();
 
   $scope.loginTypeSelectItem=true;
   $scope.loginTypeSelectStudent=false;
@@ -338,11 +231,514 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
     $scope.loginTypeSelectStudent=true;
   }
 
+  // ******************************************************///////////////////////
+  // ***********************************************PRUEBAS///////////////////////
+  // ******************************************************///////////////////////
+
+  //POPOVER (TEST)
+  var template = '<ion-popover-view>'+
+      '<ion-list class="list-elements align-text-center">'+
+        '<ion-item ng-click="teacherHomeForm(); closePopover()">TeacherHome</ion-item>'+
+        '<ion-item ng-click="teacherProfileForm(); closePopover()">Profile</ion-item>'+
+        '<ion-item ng-click="teacherSettingsForm(); closePopover()">Settings</ion-item>'+
+        '<ion-item class="item item-toggle">'+
+           'HTML5'+
+           '<label class="toggle toggle-assertive">'+
+             '<input type="checkbox">'+
+             '<div class="track">'+
+               '<div class="handle"></div>'+
+             '</div>'+
+           '</label>'+
+        '</ion-item>'+
+      '</ion-list>'+
+    '</ion-popover-view>';
+
+  $scope.popover = $ionicPopover.fromTemplate(template, {
+    scope: $scope
+  });
+
+  $scope.openPopover = function($event) {
+    $scope.popover.show($event);
+  };
+  $scope.closePopover = function() {
+    $scope.popover.hide();
+  };
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.popover.remove();
+  });
+  // Execute action on hidden popover
+  $scope.$on('popover.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove popover
+  $scope.$on('popover.removed', function() {
+    // Execute action
+  });
+
+  //FLOATING BUTTON
+  $scope.showActionsheet = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ActionSheet Example',
+      buttons: [
+        { text: '<i class="icon ion-share"></i> Share' },
+        { text: '<i class="icon ion-arrow-move"></i> Move' },
+        { text: 'Idioma Español' },
+        { text: 'Idioma Ingles' },
+      ],
+      destructiveText: 'Delete',
+      cancelText: 'Cancel',
+      cancel: function() {
+        console.log('CANCELLED');
+      },
+      buttonClicked: function(index) {
+        console.log('BUTTON CLICKED', index);
+        if (index === 2) {
+          $scope.$broadcast('changeLanguageEvent', {
+            language: 'es',
+          });
+        }
+        if (index === 3) {
+          $scope.$broadcast('changeLanguageEvent', {
+            language: 'en',
+          });
+        }
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        console.log('DESTRUCT');
+        return true;
+      }
+    });
+  };
+
+  // ******************************************************///////////////////////
+  // ******************************************************///////////////////////
+  // ******************************************************///////////////////////
+
   /*
-    *************************************SAVE EVERY MODAL INTO $COOKIES*******************************
+    *************************************EVERY ACTIONSHEET GOES HERE*******************************
   */
 
-  $cookies.put('attendanceModal', '<ion-modal-view hide-nav-bar="true" >'+
+                                        /* TEACHERHOME ACTIONSHEET */
+
+  $scope.showActionsheetTeacherHome = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES TEACHERHOME',
+      buttons: [
+        { text: 'ARCHIVAR CLASES' },
+        { text: 'DUPLICAR CLASES' },
+        { text: 'COPIA DE SEGURIDAD' },
+      ],
+      destructiveText: 'BORRAR CLASE(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //ARCHIVE CLASSES ACTION
+        } else if (index === 1) {
+          //DUPLICATE CLASSES ACTION
+        } else if (index === 2) {
+          //BACKUP ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE CLASSROOMS ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* CLASS STUDENTS ACTIONSHEET */
+
+  $scope.showActionsheetClassStudents = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES CLASS STUDENTS',
+      buttons: [
+        { text: 'TOMAR ASISTENCIA' },
+        { text: 'EVALUAR ESTUDIANTE(S)' },
+        { text: 'ENVIAR MENSAJE' },
+      ],
+      destructiveText: 'BORRAR ESTUDIANTE(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //TAKE ATTENDANCE ACTION
+        } else if (index === 1) {
+          //EVALUATE STUDENTS ACTION
+        } else if (index === 2) {
+          //SEND MESSAGE ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE STUDENTS ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* CLASS TEAMS ACTIONSHEET */
+
+  $scope.showActionsheetClassTeams = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES CLASS TEAMS',
+      buttons: [
+        { text: 'TOMAR ASISTENCIA' },
+        { text: 'EVALUAR EQUIPO(S)' },
+        { text: 'DUPLICAR EQUIPO(S)' },
+        { text: 'ENVIAR MENSAJE' },
+      ],
+      destructiveText: 'BORRAR EQUIPO(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //TAKE ATTENDANCE ACTION
+        } else if (index === 1) {
+          //EVALUATE TEAMS ACTION
+        } else if (index === 2) {
+          //DUPLICATE TEAMS ACTION
+        } else if (index === 3) {
+          //SEND MESSAGE ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE TEAMS ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* ITEMS ACTIONSHEET */
+
+  $scope.showActionsheetItems = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES ITEMS',
+      buttons: [
+        { text: 'DUPLICAR ITEM(S)' },
+      ],
+      destructiveText: 'BORRAR ITEM(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //DUPLICATE ITEMS ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE ITEMS ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* ACHIEVEMENT ACTIONSHEET */
+
+  $scope.showActionsheetAchievements = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES LOGROS',
+      buttons: [
+        { text: 'DUPLICAR LOGRO(S)' },
+      ],
+      destructiveText: 'BORRAR LOGRO(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //DUPLICATE ACHIEVEMENT ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE ACHIEVEMENT ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* MISSIONS ACTIONSHEET */
+
+  $scope.showActionsheetMissions = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES MISIONES',
+      buttons: [
+        { text: 'DUPLICAR MISION(S)' },
+      ],
+      destructiveText: 'BORRAR MISION(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //DUPLICATE MISSION ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE MISSION ACTION
+        return true;
+      }
+    });
+  };
+
+                                          /* REWARDS ACTIONSHEET */
+
+  $scope.showActionsheetRewards = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES RECOMPENSAS',
+      buttons: [
+        { text: 'DUPLICAR RECOMPENSA(S)' },
+      ],
+      destructiveText: 'BORRAR RECOMPENSA(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //DUPLICATE REWARD ACTION
+        }
+
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE REWARD ACTION
+        return true;
+      }
+    });
+  };
+
+  /*
+    *************************************SAVE EVERY POPOVER INTO $SCOPE*******************************
+  */
+
+  $scope.templateLanguagesPopover = '<ion-popover-view>'+
+    '<div ng-controller="changeLanguageCtrl">'+
+      '<ion-list class="list-elements">'+
+        '<ion-item ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
+      '</ion-list>'+
+    '</div>'+
+  '</ion-popover-view>';
+
+  $scope.templateTeacherHomePopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item>IMPORTAR</ion-item>'+
+      '<ion-item>EXPORTAR</ion-item>'+
+      '<ion-item>VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-click="teacherSettingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  $scope.templateClassStudentsPopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="closePopoverClassStudents()()">IMPORTAR</ion-item>'+
+      '<ion-item ng-click="closePopoverClassStudents()()">EXPORTAR</ion-item>'+
+      '<ion-item class="item item-input item-select">'+
+        '<div class="input-label">VISTA DE ALUMNOS'+
+        '</div>'+
+        '<select>'+
+          '<option selected>AVATAR</option>'+
+          '<option>IMAGEN</option>'+
+        '</select>'+
+      '</ion-item>'+
+      '<ion-item class="item item-toggle">NOTIFICACIONES'+
+        '<label class="toggle toggle-assertive">'+
+          '<input type="checkbox">'+
+          '<div class="track"><div class="handle"></div></div>'+
+        '</label>'+
+      '</ion-item>'+
+      '<ion-item ng-click="closePopoverClassStudents()">VER HASHCODES</ion-item>'+
+      '<ion-item ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="teacherSettingsForm(); closePopoverClassStudents()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  $scope.templateClassTeamsPopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="closePopoverClassTeams()">IMPORTAR</ion-item>'+
+      '<ion-item ng-click="closePopoverClassTeams()">EXPORTAR</ion-item>'+
+      '<ion-item class="item item-toggle">NOTIFICACIONES'+
+        '<label class="toggle toggle-assertive">'+
+          '<input type="checkbox">'+
+          '<div class="track"><div class="handle"></div></div>'+
+        '</label>'+
+      '</ion-item>'+
+      '<ion-item ng-click="closePopoverClassTeams()">VER HASHCODES</ion-item>'+
+      '<ion-item ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverClassTeams()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="teacherSettingsForm(); closePopoverClassTeams()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  $scope.templateDefaultPopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="closePopoverDefault()">IMPORTAR</ion-item>'+
+      '<ion-item ng-click="closePopoverDefault()">EXPORTAR</ion-item>'+
+      '<ion-item ng-click="rulesForm(); closePopoverDefault()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverDefault()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverDefault()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="teacherSettingsForm(); closePopoverDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  /*
+    *************************************EVERY POPOVER FUNCTION GOES HERE*******************************
+  */
+
+                                        /* LANGUAGES POPOVER */
+
+  $scope.popoverLanguages = $ionicPopover.fromTemplate($scope.templateLanguagesPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverLanguages = function($event) {
+    $scope.popoverLanguages.show($event);
+  };
+  $scope.closePopoverLanguages = function() {
+    $scope.popoverLanguages.hide();
+  }
+  $scope.$on('$destroy', function() {
+    $scope.popoverLanguages.remove();
+  });
+  $scope.$on('popoverLanguages.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverLanguages.removed', function() {
+    // Execute action
+  });
+
+                                        /* TEACHERHOME POPOVER */
+
+  $scope.popoverTeacherHome = $ionicPopover.fromTemplate($scope.templateTeacherHomePopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverTeacherHome = function($event) {
+    $scope.popoverTeacherHome.show($event);
+  };
+  $scope.closePopoverTeacherHome = function() {
+    $scope.popoverTeacherHome.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverTeacherHome.remove();
+  });
+  $scope.$on('popoverTeacherHome.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverTeacherHome.removed', function() {
+    // Execute action
+  });
+
+                                        /* CLASS STUDENTS POPOVER */
+
+  $scope.popoverClassStudents = $ionicPopover.fromTemplate($scope.templateClassStudentsPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverClassStudents = function($event) {
+    $scope.popoverClassStudents.show($event);
+  };
+  $scope.closePopoverClassStudents = function() {
+    $scope.popoverClassStudents.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverClassStudents.remove();
+  });
+  $scope.$on('popoverClassStudents.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverClassStudents.removed', function() {
+    // Execute action
+  });
+
+                                        /* CLASS TEAMS POPOVER */
+
+  $scope.popoverClassTeams = $ionicPopover.fromTemplate($scope.templateClassTeamsPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverClassTeams = function($event) {
+    $scope.popoverClassTeams.show($event);
+  };
+  $scope.closePopoverClassTeams = function() {
+    $scope.popoverClassTeams.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverClassTeams.remove();
+  });
+  $scope.$on('popoverClassTeams.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverClassTeams.removed', function() {
+    // Execute action
+  });
+
+                                        /* DEFAULT POPOVER */
+
+  $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateDefaultPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverDefault = function($event) {
+    $scope.popoverDefault.show($event);
+  };
+  $scope.closePopoverDefault = function() {
+    $scope.popoverDefault.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverDefault.remove();
+  });
+  $scope.$on('popoverDefault.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverDefault.removed', function() {
+    // Execute action
+  });
+
+  /*
+    *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
+  */
+
+  $scope.attendanceModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
       '<input class="dateInput" type="text" value="{{date | date:\'dd-MM-yyyy\'}}" readonly />'+
@@ -352,10 +748,10 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
       '</div>'+
-      '</ion-contentw>'+
-      '</ion-modal-view>');
+    '</ion-contentw>'+
+  '</ion-modal-view>';
 
-  $cookies.put('newClassModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newClassModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_CLASS\' | translate }}</h3>'+
       '<form id="dataClassForm" class="list">'+
@@ -380,10 +776,10 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
           '</div>'+
         '</form>'+
       '</div>'+
-      '</ion-content>'+
-      '</ion-modal-view>');
+    '</ion-content>'+
+  '</ion-modal-view>';
 
-  $cookies.put('secondaryMenuModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.secondaryMenuModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'ASSIGN_STUDENT_TO_TEAM\' | translate }}</h3>'+
       '<form class="list">'+
@@ -408,12 +804,12 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<button class="button button-calm  button-block" ng-click="closeModalSecondary() ; clearFormModal()">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
-      '</ion-modal-view>');
+      '</ion-modal-view>';
 
-  $cookies.put('studentDialogModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.studentDialogModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h2>{{studentName}} {{studentSurname}}</h2>'+
-      '<h3>{{studentHashCode}}</h3>'+
+      '<h2>{studentName} {studentSurname}</h2>'+
+      '<h3>{studentHashCode}</h3>'+
       '<div class="list-student">'+
         '<div class="avatar_content">'+
           '<i class="icon ion-image" ></i>'+
@@ -437,9 +833,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<button ng-click="showModalSecondary()" class="button button-positive  button-block icon ion-android-more-horizontal"></button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newStudentModal', '<ion-modal-view hide-nav-bar="true" class="fondo" >'+
+  $scope.newStudentModal = '<ion-modal-view hide-nav-bar="true" class="fondo" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_STUDENT\' | translate }}</h3>'+
       '<div class="list-student list-elements">'+
@@ -468,17 +864,20 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<button class="button button-positive  button-block icon ion-android-more-horizontal" ng-click="showModalSecondary()"></button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>)');
+  '</ion-modal-view>)';
 
-  $cookies.put('teamDialogModal', '<ion-modal-view title="Team Dialog" hide-nav-bar="true" >'+
+  $scope.teamDialogModal = '<ion-modal-view title="Team Dialog" hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{team.name}</h3>'+
+      '<div>'+
+        '<h2>{OBJETIVO}</h2>'+
+      '</div>'+
       '<div class="list-student">'+
         '<div class="avatar_content">'+
           '<i class="icon ion-image" ></i>'+
         '</div>'+
-        '<button  class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
-        '<button  class="button button-light  button-block button-outline" ng-click="showModalEditTeam()">{{ \'EDIT_TEAM\' | translate }}</button>'+
+        '<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
+        '<button class="button button-light  button-block button-outline" ng-click="showModalEditTeam()">{{ \'EDIT_TEAM\' | translate }}</button>'+
         '<button ng-click="closeModalTeamDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
       '<div class="list-team">'+
@@ -490,9 +889,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<button ng-click="showModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newTeamDialogModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newTeamDialogModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>New Team</h3>'+
       '<div class="list-student">'+
@@ -503,6 +902,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<form id="teamNameForm" class="list">'+
           '<label class="item item-input list-elements">'+
             '<input type="text" placeholder="{{ \'NAME\' | translate }}">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<input type="text" placeholder="OBJETIVO">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog() ; clearFormTeam()">{{ \'CANCEL\' | translate }}</button>'+
@@ -518,9 +920,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '</ion-list>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('addStudentModal', '<ion-modal-view title="Add Student" hide-nav-bar="true" >'+
+  $scope.addStudentModal = '<ion-modal-view title="Add Student" hide-nav-bar="true" >'+
     '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
       '<h3>Add Students</h3>'+
       '<ion-list>'+
@@ -530,9 +932,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
       '</ion-list>'+
       '<button ng-click="closeModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('editTeamModal', '<ion-modal-view title="Edit Team" hide-nav-bar="true" >'+
+  $scope.editTeamModal = '<ion-modal-view title="Edit Team" hide-nav-bar="true" >'+
     '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
       '<h3>{team.name}</h3>'+
       '<div class="list-student">'+
@@ -543,6 +945,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<form id="teamNameForm" class="list">'+
           '<label class="item item-input list-elements">'+
             '<input type="text" placeholder="{{ \'NAME\' | translate }}">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<input type="text" placeholder="OBJETIVO">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalEditTeam() ; clearFormTeam()">{{ \'CANCEL\' | translate }}</button>'+
@@ -558,9 +963,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '</ion-list>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newMissionModal', '<ion-modal-view title="New Mission" hide-nav-bar="true" >'+
+  $scope.newMissionModal = '<ion-modal-view title="New Mission" hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<form id="missionDataForm" class="list">'+
         '<h3>{{ \'NEW_MISSION\' | translate }}</h3>'+
@@ -589,9 +994,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         '<button ng-click="closeModalNewMission() ; clearFormNewMission()" class="button button-calm  button-block">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newItemModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newItemModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
      '<h3>{{ \'NEW_ITEM\' | translate }}</h3>'+
       '<form id="itemDataForm" class="list list-student fullScreen">'+
@@ -608,77 +1013,61 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
             '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
             '<input type="text" placeholder="{item.requirements}" ng-model="requirements">'+
           '</label>'+
+      '<label class="item item-input list-elements">'+
+      '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
+            '<input type="text" placeholder="{item.score}" ng-model="scoreRange">'+
+          '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.name}" ng-model="maxPoints">'+
+            '<input type="text" placeholder="{item.maxScore}" ng-model="maxPoints">'+
           '</label>'+
-          '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-          '<div class="item range">'+
-            '<i class="icon ion-thumbsup"></i>'+
-            '<input type="range" name="volume" min="0" max="maxPoints" step="1" default="(maxPoints/2)" ng-model="scoreRange">&nbsp;{{scoreRange}}'+
-          '</div>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem() ; clearFormItems() ; createItem(name, description, requirements, maxPoints, scoreRange)"">{{ \'ADD_ITEM\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem() ; clearFormItems()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newAchievementModal', '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newAchievementModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_ACHIEVEMENT\' | translate }}</h3>'+
       '<form id="achievementDataForm" class="list list-student">'+
         '<ion-list>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{achievement.name}">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{achievement.description}">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{achievement.requirements}">'+
-          '</label>'+
-        '</ion-list>'+
+        '<ion-item class ="teacherAvatar">'+
+          '<img src={achievementBadge} class="avatar">'+
+        '</ion-item>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
+          '<input type="text" placeholder="{achievement.name}">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
+          '<input type="text" placeholder="{achievement.description}">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
+          '<input type="text" placeholder="{achievement.requirements}">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">MÁXIMO NIVEL</span>'+
+          '<input type="text" placeholder="{achievement.maxLevel}">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">MEDALLA</span>'+
+          '<input type="text" placeholder="{achievement.badge}">'+
+        '</label>'+
+      '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
+    '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()">{{ \'CANCEL\' | translate }}</button>'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()">{{ \'CANCEL\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
-  '</ion-modal-view>');
+  '</ion-modal-view>';
 
-  $cookies.put('newBadgeModal', '<ion-modal-view hide-nav-bar="true" >'+
-    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{{ \'NEW_BADGE\' | translate }}</h3>'+
-      '<form id="badgeDataForm" class="list list-student">'+
-        '<ion-list>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{badge.name}">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{badge.description}">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{badge.requirements}">'+
-          '</label>'+
-        '</ion-list>'+
-      '</form>'+
-      '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewBadge() ; clearFormBadges()">{{ \'ADD_BADGE\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewBadge() ; clearFormBadges()">{{ \'CANCEL\' | translate }}</button>'+
-      '</div>'+
-    '</ion-content>'+
-  '</ion-modal-view>');
-
-  $cookies.put('studentsEvaluateModal', '<ion-modal-view hide-nav-bar="true" id="page11">'+
+  $scope.studentsEvaluateModal = '<ion-modal-view hide-nav-bar="true" id="page11">'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
     '<div ng-show="loginTypeSelectItem">'+
       '<ion-list id="evaluate-list1" class="item list_tests">'+
@@ -696,19 +1085,49 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
     '<button class="button button-calm" ng-click="closeModalEvaluateStudent()">{{ \'CANCEL\' | translate }}</button>'+
     '<button class="button button-calm" ng-click="setScore(); closeModalEvaluateStudent()">{{ \'SET_ITEM\' | translate }}</button>'+
     '</div></ion-content>'+
-    '</ion-modal-view>');
+  '</ion-modal-view>';
+
+  $scope.newRewardModal = '<ion-modal-view title="New Reward" hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<form id="missionDataForm" class="list">'+
+        '<h3>NUEVA RECOMPENSA</h3>'+
+        '<ion-list>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
+            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PERMISO</span>'+
+            '<input type="text" placeholder="PERMISO">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PRECIO</span>'+
+            '<input type="text" placeholder="PRECIO">'+
+          '</label>'+
+        '</ion-list>'+
+      '</form>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()">{{ \'ACCEPT\' | translate }}</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
 
   /*
     *************************************EVERY MODAL FUNCTION GOES HERE*******************************
   */
                                         /* ATTENDANCE MODAL */
-  $scope.attendanceModal = $ionicModal.fromTemplate($cookies.get('attendanceModal'), {
+  $scope.attendanceModal = $ionicModal.fromTemplate($scope.attendanceModal, {
     scope: $scope,
     animation: 'slide-in-up'
   })
 
   $scope.showAttendanceModal = function(){
-    $scope.classroomName = $cookies.get('classroomName');
+    //$scope.classroomName = $cookies.get('classroomName');
     $scope.getStudents();
     if ($scope.students.length > 0) {
       $scope.attendanceModal.show();
@@ -721,7 +1140,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
   }
 
                                         /* NEW CLASS MODAL */
-  $scope.newClassModal = $ionicModal.fromTemplate($cookies.get('newClassModal'), {
+  $scope.newClassModal = $ionicModal.fromTemplate($scope.newClassModal, {
     scope: $scope,
     animation: 'slide-in-up'
   })
@@ -736,7 +1155,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* SECONDARY MENU MODAL */
 
-  $scope.secondaryMenuModal = $ionicModal.fromTemplate( $cookies.get('secondaryMenuModal'), {
+  $scope.secondaryMenuModal = $ionicModal.fromTemplate( $scope.secondaryMenuModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -763,13 +1182,12 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* STUDENT DIALOG MODAL */
 
-  $scope.studentDialogModal = $ionicModal.fromTemplate($cookies.get('studentDialogModal'), {
+  $scope.studentDialogModal = $ionicModal.fromTemplate($scope.studentDialogModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
  
-  $scope.showModalStudentDialog = function(student){
-    $scope.studentProfileId = student.id;
+  $scope.showModalStudentDialog = function(){
     $scope.studentDialogModal.show();  
   }
     
@@ -779,7 +1197,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* NEW STUDENT DIALOG MODAL */
 
-  $scope.newStudentModal = $ionicModal.fromTemplate($cookies.get('newStudentModal'), {
+  $scope.newStudentModal = $ionicModal.fromTemplate($scope.newStudentModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -794,7 +1212,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* TEAM DIALOG MODAL */  
 
-  $scope.teamDialogModal = $ionicModal.fromTemplate($cookies.get('teamDialogModal'), {
+  $scope.teamDialogModal = $ionicModal.fromTemplate($scope.teamDialogModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -809,7 +1227,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* NEW TEAM DIALOG MODAL */
 
-  $scope.newTeamDialogModal = $ionicModal.fromTemplate($cookies.get('newTeamDialogModal'), {
+  $scope.newTeamDialogModal = $ionicModal.fromTemplate($scope.newTeamDialogModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -824,7 +1242,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* ADD STUDENT MODAL */
 
-  $scope.addStudentModal = $ionicModal.fromTemplate($cookies.get('addStudentModal'), {
+  $scope.addStudentModal = $ionicModal.fromTemplate($scope.addStudentModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -839,7 +1257,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* EDIT TEAM MODAL */
 
-  $scope.editTeamModal = $ionicModal.fromTemplate($cookies.get('editTeamModal'), {
+  $scope.editTeamModal = $ionicModal.fromTemplate($scope.editTeamModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -854,7 +1272,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* NEW MISSION MODAL */
 
-  $scope.newMissionModal = $ionicModal.fromTemplate($cookies.get('newMissionModal'),  {
+  $scope.newMissionModal = $ionicModal.fromTemplate($scope.newMissionModal,  {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -869,7 +1287,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* NEW ITEM MODAL */
 
-  $scope.newItemModal = $ionicModal.fromTemplate($cookies.get('newItemModal'), {
+  $scope.newItemModal = $ionicModal.fromTemplate($scope.newItemModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -884,7 +1302,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
                                         /* NEW ACHIEVEMENT MODAL */
 
-  $scope.newAchievementModal = $ionicModal.fromTemplate($cookies.get('newAchievementModal'), {
+  $scope.newAchievementModal = $ionicModal.fromTemplate($scope.newAchievementModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
@@ -897,36 +1315,36 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
     $scope.newAchievementModal.hide();
   }
 
-                                        /* NEW BADGE MODAL */
-  $scope.newBadgeModal = $ionicModal.fromTemplate($cookies.get('newBadgeModal'), {
-    scope: $scope,
-    animation: 'slide-in-up'
-  });
-
-  $scope.showModalNewBadge = function(){
-    $scope.newBadgeModal.show();  
-  }
-    
-  $scope.closeModalNewBadge = function(){
-    $scope.newBadgeModal.hide();
-  }
-
                                        /* STUDENTS EVALUATE MODAL */
-  $scope.studentsEvaluateModal = $ionicModal.fromTemplate($cookies.get('studentsEvaluateModal'), {
+  $scope.studentsEvaluateModal = $ionicModal.fromTemplate($scope.studentsEvaluateModal, {
     scope: $scope,
     animation: 'slide-in-up'
   });
 
   $scope.showModalEvaluateStudent = function(){
-      //To clear the array of students to evaluate
-      $scope.studentsToEvaluate = [];
-      $scope.loginTypeSelectItem=true;
-      $scope.loginTypeSelectStudent=false;
-      $scope.studentsEvaluateModal.show();  
+    //To clear the array of students to evaluate
+    $scope.studentsToEvaluate = [];
+    $scope.loginTypeSelectItem=true;
+    $scope.loginTypeSelectStudent=false;
+    $scope.studentsEvaluateModal.show();  
   }
     
   $scope.closeModalEvaluateStudent = function(){
-      $scope.studentsEvaluateModal.hide();
+    $scope.studentsEvaluateModal.hide();
+  }
+
+                                       /* NEW REWARD MODAL */
+  $scope.newRewardModal = $ionicModal.fromTemplate($scope.newRewardModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+  $scope.showModalNewReward = function(){
+    $scope.newRewardModal.show();  
+  }
+    
+  $scope.closeModalNewReward = function(){
+    $scope.newRewardModal.hide();
   }
 
   /*
@@ -984,11 +1402,11 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
   */
 
-  $scope.teacherId = $cookies.get('teacherId');
-  $scope.classroomId = $cookies.get('classroomId');
-  $scope.classroomName = $cookies.get('classroomName');
+  //$scope.teacherId = $cookies.get('teacherId');
+  //$scope.classroomId = $cookies.get('classroomId');
+  //$scope.classroomName = $cookies.get('classroomName');
 
-  $scope.classrooms = $cookies.get('classrooms');
+  //$scope.classrooms = $cookies.get('classrooms');
 
   var modalFirst;
 
@@ -1016,7 +1434,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
     $http.get(Backand.getApiUrl()+'/1/query/data/getClassrooms'+'?parameters={ "teacher" : \"'+$scope.teacherId+'\"}')
       .then(function (response) {
         $scope.classrooms = response.data;
-        $cookies.put('classrooms', response.data);
+        //$cookies.put('classrooms', response.data);
       });
   }
 
@@ -1035,34 +1453,34 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
         for(var i = 0; i< $scope.studentsAttendance.length; i++){
           checked.push(response.data[i].hashCode);
         }
-        $cookies.put('studentsAttendance',response.data);
+        //$cookies.put('studentsAttendance',response.data);
       });
   }
 
   $scope.setClassroomId = function(value) {
     $scope.classroomId = value;
-    $cookies.put('classroomId', value);
+    //$cookies.put('classroomId', value);
   }
 
   $scope.setClassroomName = function(value) {
     $scope.classroomName = value;
-    $cookies.put('classroomName', value);
+    //$cookies.put('classroomName', value);
   }
 
   $scope.setStudent = function(value) {
     $scope.studentId = value.id;
     $scope.studentHashCode = value.hashCode;
-    $cookies.put('studentId', value.id);
-    $cookies.put('studentHashCode', value.hashCode);
+    //$cookies.put('studentId', value.id);
+    //$cookies.put('studentHashCode', value.hashCode);
   }
 
   $scope.setStudentName = function(name, surname, hashCode) {
     $scope.studentName = name;
     $scope.studentSurname = surname;
     $scope.studentHashCode = hashCode;
-    $cookies.put('studentName', name);
-    $cookies.put('studentSurname', surname);
-    $cookies.put('studentHashCode', hashCode);
+    //$cookies.put('studentName', name);
+    //$cookies.put('studentSurname', surname);
+    //$cookies.put('studentHashCode', hashCode);
   }
   
   $scope.createClassroom = function(name) {
@@ -1089,12 +1507,12 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
                                         /* FUNCTIONS IN TEACHER PROFILE */
 
     $scope.initData = function(){
-      $scope.teacherId = $cookies.get('teacherId');
-      $scope.teacherAvatar = $cookies.get('teacherAvatar');
-      $scope.teacherName = $cookies.get('teacherName');
-      $scope.teacherSurname = $cookies.get('teacherSurname');
-      $scope.teacherEmail = $cookies.get('teacherEmail');
-      $scope.teacherPassword = $cookies.get('teacherPassword');
+      //$scope.teacherId = $cookies.get('teacherId');
+      //$scope.teacherAvatar = $cookies.get('teacherAvatar');
+      //$scope.teacherName = $cookies.get('teacherName');
+      //$scope.teacherSurname = $cookies.get('teacherSurname');
+      //$scope.teacherEmail = $cookies.get('teacherEmail');
+      //$scope.teacherPassword = $cookies.get('teacherPassword');
 
       //Getting all the inputs for change their placeholders
       var input1 = document.getElementById ("inputName");
@@ -1124,16 +1542,18 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
             $scope.teacherSurname = response.data[0].surname;
             $scope.teacherEmail = response.data[0].email;
             $scope.teacherPassword = response.data[0].password;
-            $cookies.put('teacherName', CryptoJS.AES.decrypt(response.data[0].name, email).toString(CryptoJS.enc.Utf8));
-            $cookies.put('teacherSurname', CryptoJS.AES.decrypt(response.data[0].surname, email).toString(CryptoJS.enc.Utf8));
-            $cookies.put('teacherAvatar', response.data[0].Avatar);
+            //$cookies.put('teacherName', CryptoJS.AES.decrypt(response.data[0].name, email).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('teacherSurname', CryptoJS.AES.decrypt(response.data[0].surname, email).toString(CryptoJS.enc.Utf8));
+            //$cookies.put('teacherAvatar', response.data[0].Avatar);
           });
     }
 
     $scope.checkTeacherEmail = function(name, surname, email, password, avatar) {
 
-      if (email == null || email == $cookies.get('teacherEmail')) {
-        email = $cookies.get('teacherEmail');
+      //var emailToCheck = $cookies.get('teacherEmail');
+
+      if (email == null || email == emailToCheck) {
+        //email = $cookies.get('teacherEmail');
         $scope.editTeacher(name, surname, email, password, avatar);
         $scope.getTeacherData();
       } else {
@@ -1153,10 +1573,10 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
     $scope.editTeacher = function(name, surname, email, password, avatar) {
 
-      $scope.teacherId = $cookies.get('teacherId');
+      //$scope.teacherId = $cookies.get('teacherId');
 
       if (avatar == null) {
-        avatar = $cookies.get('teacherAvatar');
+        //avatar = $cookies.get('teacherAvatar');
       }
 
       var teacher = {
@@ -1169,11 +1589,11 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
       
       $http.put(Backand.getApiUrl()+'/1/objects/'+'teachers/'+$scope.teacherId, teacher)
         .success(function(response) {
-          $cookies.put('teacherEmail', email);
-          $cookies.put('teacherPassword', password);
-          $cookies.put('teacherName', name);
-          $cookies.put('teacherSurname', surname);
-          $cookies.put('teacherAvatar', avatar);
+          //$cookies.put('teacherEmail', email);
+          //$cookies.put('teacherPassword', password);
+          //$cookies.put('teacherName', name);
+          //$cookies.put('teacherSurname', surname);
+          //$cookies.put('teacherAvatar', avatar);
           $scope.clearFormTeacherProfile();
         })
 
@@ -1185,7 +1605,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
       $http.get(Backand.getApiUrl()+'/1/query/data/getItems'+'?parameters={ "classroom" : \"'+$scope.classroomId+'\"}')
         .then(function (response) {
           $scope.items = response.data;
-          $cookies.put('items', response.data);
+          //$cookies.put('items', response.data);
         });
     }
 
@@ -1339,10 +1759,10 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $cookies, $state, N
 
 
 
-.controller('studentHomeCtrl', ['$scope', '$stateParams', '$cookies', '$http', 'Backand', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', 'Backand', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $cookies, $http, Backand, $state) {
+function ($scope, $stateParams, $http, Backand, $state) {
 
   $scope.loginTypeStudentHome=true;
   $scope.loginTypeStudentAchievements=false;
@@ -1367,10 +1787,10 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
   }
 
   $scope.initData = function(){
-    $scope.studentAvatar = $cookies.get('studentAvatar');
-    $scope.studentName = $cookies.get('studentName');
-    $scope.studentSurname = $cookies.get('studentSurname');
-    $scope.hashCode = $cookies.get('hashCode');
+    //$scope.studentAvatar = $cookies.get('studentAvatar');
+    //$scope.studentName = $cookies.get('studentName');
+    //$scope.studentSurname = $cookies.get('studentSurname');
+    //$scope.hashCode = $cookies.get('hashCode');
 
       //Getting all the inputs for change their placeholders
       var input1 = document.getElementById ("inputName");
@@ -1396,7 +1816,7 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
     $http.get(Backand.getApiUrl()+'/1/query/data/getClassroomByHashCode'+'?parameters={ "hashCode" : \"'+$scope.hashCode+'\"}')
       .success(function (response) {
         $scope.classroomId = response[0].id;
-        $cookies.put('classroomId', response[0].id);
+        //$cookies.put('classroomId', response[0].id);
 
         $scope.getItems(response[0].id);
 
@@ -1407,16 +1827,16 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
     $http.get(Backand.getApiUrl()+'/1/query/data/getItems'+'?parameters={ "classroom" : \"'+classroomId+'\"}')
       .then(function (response) {
         $scope.items = response;
-        $cookies.put('items', response);
+        //$cookies.put('items', response);
       });
   }
 
   $scope.editStudent = function(name, surname, avatar) {
 
-    $scope.studentId = $cookies.get('studentId');
+    //$scope.studentId = $cookies.get('studentId');
 
     if (avatar == null) {
-      avatar = $cookies.get('studentAvatar');
+      //avatar = $cookies.get('studentAvatar');
     }
 
     var student = {
@@ -1427,9 +1847,9 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
 
     $http.put(Backand.getApiUrl()+'/1/objects/'+'students/'+$scope.studentId, student)
       .success(function(response) {
-        $cookies.put('studentName', name);
-        $cookies.put('studentSurname', surname);
-        $cookies.put('studentAvatar', avatar);
+        //$cookies.put('studentName', name);
+        //$cookies.put('studentSurname', surname);
+        //$cookies.put('studentAvatar', avatar);
         $scope.clearForm();
       })
   }
@@ -1451,10 +1871,16 @@ function ($scope, $stateParams, $cookies, $http, Backand, $state) {
 
 
 
-.controller('changeLanguageCtrl', ['$translate', '$scope', '$cookies', 
-  function ($translate, $scope, $cookies) {
+.controller('changeLanguageCtrl', ['$translate', '$scope',
+  function ($translate, $scope) {
  
       $scope.changeLanguage = function (langKey) {
         $translate.use(langKey);
       };
+
+      $scope.$on('changeLanguageEvent', function(event, args) {
+        console.log('He llegado al receptor de eventos');
+        $scope.changeLanguage(args.language);
+      });
+
 }])

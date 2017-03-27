@@ -154,7 +154,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   $scope.allFalse = function() {
     $scope.teacherHomeView = false;
     $scope.teacherProfileView = false;
-    $scope.teacherSettingsView = false;
+    $scope.settingsView = false;
     $scope.classStudentsView = false;
     $scope.classTeamsView = false;
     $scope.rulesView = false;
@@ -175,9 +175,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     $scope.teacherProfileView = true;
   }
 
-  $scope.teacherSettingsForm = function(){
+  $scope.settingsForm = function(){
     $scope.allFalse();
-    $scope.teacherSettingsView = true;
+    $scope.settingsView = true;
   }
 
   $scope.classForm = function(){
@@ -374,6 +374,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       buttonClicked: function(index) {
         if (index === 0) {
           //TAKE ATTENDANCE ACTION
+          $scope.showAttendanceModal();
         } else if (index === 1) {
           //EVALUATE STUDENTS ACTION
         } else if (index === 2) {
@@ -538,6 +539,29 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     });
   };
 
+                                          /* REWARDS (STUDENT PART) ACTIONSHEET */
+
+  $scope.showActionsheetRewardsStudent = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES RECOMPENSAS',
+      buttons: [
+        { text: 'COMPRAR SELECCIONADO(S)' },
+      ],
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //BUY SELECTED REWARDS ACTION
+        }
+
+        return true;
+      }
+    });
+  };
+
   /*
     *************************************SAVE EVERY POPOVER INTO $SCOPE*******************************
   */
@@ -561,7 +585,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<ion-item>IMPORTAR</ion-item>'+
       '<ion-item>EXPORTAR</ion-item>'+
       '<ion-item>VER ARCHIVADAS</ion-item>'+
-      '<ion-item ng-click="teacherSettingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
@@ -587,7 +611,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<ion-item ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="teacherSettingsForm(); closePopoverClassStudents()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverClassStudents()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
@@ -605,18 +629,18 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<ion-item ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverClassTeams()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="teacherSettingsForm(); closePopoverClassTeams()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverClassTeams()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
-  $scope.templateDefaultPopover = '<ion-popover-view>'+
+  $scope.templateTeacherDefaultPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverDefault()">IMPORTAR</ion-item>'+
-      '<ion-item ng-click="closePopoverDefault()">EXPORTAR</ion-item>'+
-      '<ion-item ng-click="rulesForm(); closePopoverDefault()">VER REGLAS</ion-item>'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverDefault()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverDefault()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="teacherSettingsForm(); closePopoverDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item ng-click="closePopoverTeacherDefault()">IMPORTAR</ion-item>'+
+      '<ion-item ng-click="closePopoverTeacherDefault()">EXPORTAR</ion-item>'+
+      '<ion-item ng-click="rulesForm(); closePopoverTeacherDefault()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverTeacherDefault()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverTeacherDefault()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverTeacherDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
@@ -714,7 +738,29 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 
                                         /* DEFAULT POPOVER */
 
-  $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateDefaultPopover, {
+  $scope.popoverteacherDefault = $ionicPopover.fromTemplate($scope.templateTeacherDefaultPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverTeacherDefault = function($event) {
+    $scope.popoverteacherDefault.show($event);
+  };
+  $scope.closePopoverTeacherDefault = function() {
+    $scope.popoverteacherDefault.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverteacherDefault.remove();
+  });
+  $scope.$on('popoverteacherDefault.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverteacherDefault.removed', function() {
+    // Execute action
+  });
+
+                                        /* DEFAULT POPOVER */
+
+  $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateTeacherDefaultPopover, {
     scope: $scope
   });
 
@@ -747,6 +793,29 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
+      '</div>'+
+    '</ion-contentw>'+
+  '</ion-modal-view>';
+
+  $scope.selectStudentsModal = '<ion-modal-view hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-checked="student.inClass">{studentName}{studentSurname}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button id="attendance-button123" ng-click="closeSelectStudentsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
+      '</div>'+
+    '</ion-contentw>'+
+  '</ion-modal-view>';
+
+  $scope.selectItemsModal = '<ion-modal-view hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student">{itemName}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button id="attendance-button123" ng-click="closeSelectItemsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ITEMS</button>'+
       '</div>'+
     '</ion-contentw>'+
   '</ion-modal-view>';
@@ -965,33 +1034,67 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newMissionModal = '<ion-modal-view title="New Mission" hide-nav-bar="true" >'+
+  $scope.newMissionModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<form id="missionDataForm" class="list">'+
-        '<h3>{{ \'NEW_MISSION\' | translate }}</h3>'+
-        '<ion-list>'+
+      '<h3>{{ \'NEW_MISSION\' | translate }}</h3>'+
+        '<form id="achievementDataForm" class="list">'+
+          '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{{ \'NAME\' | translate }}">'+
+            '<input type="text" placeholder="{missionName}" ng-model="name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}">'+
+            '<span class="input-label">RECOMPENSA</span>'+
+            '<input type="text" placeholder="{missionReward}" ng-model="reward">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'PHASES\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'NUMBER_OF_PHASES\' | translate }}">'+
+            '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
+            '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="additionalPoints">'+
           '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'SCORES\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'SCORES_DESCRIPTION\' | translate }}">'+
-          '</label>'+
-        '</ion-list>'+
-      '</form>'+
+        '</form>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
+      '<ion-list id="items-list9" class="list-student">'+
+        '<ion-item id="items-list-item15">{itemName}</ion-item>'+
+      '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button ng-click="closeModalNewMission() ; clearFormNewMission()" class="button button-calm  button-block">{{ \'CANCEL\' | translate }}</button>'+
-        ''+
-        '<button ng-click="closeModalNewMission() ; clearFormNewMission()" class="button button-calm  button-block">{{ \'ACCEPT\' | translate }}</button>'+
+        '<button id="achievements-button91" class="button button-calm  button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
+      '</div>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewMission()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!name || !reward || !additionalPoints" ng-click="closeModalNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.editMissionModal = '<ion-modal-view hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{missionName}</h3>'+
+        '<form class="list">'+
+          '<ion-list>'+
+            '<label class="item item-input list-elements">'+
+              '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
+              '<input type="text" placeholder="{missionName}" ng-model="name">'+
+            '</label>'+
+            '<label class="item item-input list-elements">'+
+              '<span class="input-label">RECOMPENSA</span>'+
+              '<input type="text" placeholder="{missionReward}" ng-model="reward">'+
+            '</label>'+
+            '<label class="item item-input list-elements">'+
+              '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
+              '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="additionalPoints">'+
+            '</label>'+
+          '</ion-list>'+
+        '</form>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
+      '<ion-list id="items-list9" class="list-student">'+
+        '<ion-item id="items-list-item15">{itemName}</ion-item>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
+      '</div>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeModalEditMission()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!name && !reward && !additionalPoints" ng-click="closeModalEditMission()">EDITAR MISIÓN</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1003,29 +1106,29 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.name}" ng-model="name">'+
+            '<input type="text" placeholder="{itemName}" ng-model="name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.description}" ng-model="description">'+
+            '<input type="text" placeholder="{itemDescription}" ng-model="description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.requirements}" ng-model="requirements">'+
+            '<input type="text" placeholder="{itemRequirements}" ng-model="requirements">'+
           '</label>'+
-      '<label class="item item-input list-elements">'+
-      '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.score}" ng-model="scoreRange">'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
+            '<input type="text" placeholder="{itemScore}" ng-model="score">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{item.maxScore}" ng-model="maxPoints">'+
+            '<input type="text" placeholder="{itemMaxScore}" ng-model="maxPoints">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()" ng-disabled="!name || !description || !requirements || !score || !maxPoints">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1033,36 +1136,32 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   $scope.newAchievementModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_ACHIEVEMENT\' | translate }}</h3>'+
-      '<form id="achievementDataForm" class="list list-student">'+
+      '<form id="achievementDataForm" class="list">'+
         '<ion-list>'+
         '<ion-item class ="teacherAvatar">'+
           '<img src={achievementBadge} class="avatar">'+
         '</ion-item>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-          '<input type="text" placeholder="{achievement.name}">'+
+          '<input type="text" placeholder="{achievementName}" ng-model="name">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievement.description}">'+
+          '<input type="text" placeholder="{achievementDescription}" ng-model="description">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievement.requirements}">'+
+          '<input type="text" placeholder="{achievementRequirements}" ng-model="requirements">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">MÁXIMO NIVEL</span>'+
-          '<input type="text" placeholder="{achievement.maxLevel}">'+
-        '</label>'+
-        '<label class="item item-input list-elements">'+
-          '<span class="input-label">MEDALLA</span>'+
-          '<input type="text" placeholder="{achievement.badge}">'+
+          '<input type="text" placeholder="{achievementMaxLevel}" ng-model="maxLevel">'+
         '</label>'+
       '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
     '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormAchievements()" ng-disabled="!name || !description || !requirements || !maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1094,25 +1193,56 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{{ \'NAME\' | translate }}">'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}">'+
+            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PERMISO</span>'+
-            '<input type="text" placeholder="PERMISO">'+
+            '<input type="text" placeholder="PERMISO" ng-model="permission">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PRECIO</span>'+
-            '<input type="text" placeholder="PRECIO">'+
+            '<input type="text" placeholder="PRECIO" ng-model="price">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewReward()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()">{{ \'ACCEPT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()" ng-disabled=" !name || !description || !permission || !price">{{ \'ACCEPT\' | translate }}</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.editRewardModal = '<ion-modal-view title="New Reward" hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<form id="missionDataForm" class="list">'+
+        '<h3>{rewardName}</h3>'+
+        '<ion-list>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
+            '<input type="text" placeholder="{rewardName}" ng-model="name">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
+            '<input type="text" placeholder="{rewardDescription}" ng-model="description">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PERMISO</span>'+
+            '<input type="text" placeholder="{rewardPermission}" ng-model="permission">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PRECIO</span>'+
+            '<input type="text" placeholder="{rewardPrice}" ng-model="price">'+
+          '</label>'+
+        '</ion-list>'+
+      '</form>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeModalEditReward()">{{ \'CANCEL\' | translate }}</button>'+
+        ''+
+        '<button class="button button-calm  button-block" ng-disabled="!name && !description && !permission && !price" ng-click="closeModalEditReward()">EDITAR RECOMPENSA</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1120,6 +1250,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   /*
     *************************************EVERY MODAL FUNCTION GOES HERE*******************************
   */
+
                                         /* ATTENDANCE MODAL */
   $scope.attendanceModal = $ionicModal.fromTemplate($scope.attendanceModal, {
     scope: $scope,
@@ -1128,15 +1259,43 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 
   $scope.showAttendanceModal = function(){
     //$scope.classroomName = $cookies.get('classroomName');
-    $scope.getStudents();
-    if ($scope.students.length > 0) {
+    //$scope.getStudents();
+    //if ($scope.students.length > 0) {
       $scope.attendanceModal.show();
-    }
+    //}
     $scope.date = Date.now(); 
   }
     
   $scope.closeAttendanceModal = function(){
     $scope.attendanceModal.hide();
+  }
+
+                                        /* SELECT STUDENTS MODAL */
+  $scope.selectStudentsModal = $ionicModal.fromTemplate($scope.selectStudentsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+
+  $scope.showSelectStudentsModal = function(){
+    $scope.selectStudentsModal.show();
+  }
+    
+  $scope.closeSelectStudentsModal = function(){
+    $scope.selectStudentsModal.hide();
+  }
+
+                                        /* SELECT ITEMS MODAL */
+  $scope.selectItemsModal = $ionicModal.fromTemplate($scope.selectItemsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+
+  $scope.showSelectItemsModal = function(){
+    $scope.selectItemsModal.show();
+  }
+    
+  $scope.closeSelectItemsModal = function(){
+    $scope.selectItemsModal.hide();
   }
 
                                         /* NEW CLASS MODAL */
@@ -1285,6 +1444,21 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     $scope.newMissionModal.hide();
   }
 
+                                        /* EDIT MISSION MODAL */
+
+  $scope.editMissionModal = $ionicModal.fromTemplate($scope.editMissionModal,  {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+  $scope.showModalEditMission = function(){
+    $scope.editMissionModal.show();  
+  }
+    
+  $scope.closeModalEditMission = function(){
+    $scope.editMissionModal.hide();
+  }
+
                                         /* NEW ITEM MODAL */
 
   $scope.newItemModal = $ionicModal.fromTemplate($scope.newItemModal, {
@@ -1345,6 +1519,21 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     
   $scope.closeModalNewReward = function(){
     $scope.newRewardModal.hide();
+  }
+
+                                        /* EDIT REWARD MODAL */
+
+  $scope.editRewardModal = $ionicModal.fromTemplate($scope.editRewardModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalEditReward = function(){
+    $scope.editRewardModal.show();  
+  }
+    
+  $scope.closeModalEditReward = function(){
+    $scope.editRewardModal.hide();
   }
 
   /*
@@ -1759,32 +1948,248 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 
 
 
-.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', 'Backand', '$state',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', 'Backand', '$state', '$ionicModal', '$ionicPopover',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $http, Backand, $state) {
+function ($scope, $stateParams, $http, Backand, $state, $ionicModal, $ionicPopover) {
 
-  $scope.loginTypeStudentHome=true;
-  $scope.loginTypeStudentAchievements=false;
-  $scope.loginTypeStudentBadges=false;
+  /*
+    *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
+  */
+
+  $scope.allFalse = function() {
+    $scope.studentHomeView = false;
+    $scope.settingsView = false;
+    $scope.classView = false;
+    $scope.rulesItemsView = false;
+    $scope.rulesAchievementsView = false;
+    $scope.rewardShopView = false;
+    $scope.missionsView = false;
+  }
 
   $scope.studentHomeForm = function(){
-    $scope.loginTypeStudentHome=true;
-    $scope.loginTypeStudentAchievements=false;
-    $scope.loginTypeStudentBadges=false;
+    $scope.allFalse();
+    $scope.studentHomeView = true;
   }
 
-  $scope.studentAchievementsForm = function(){
-    $scope.loginTypeStudentHome=false;
-    $scope.loginTypeStudentAchievements=true;
-    $scope.loginTypeStudentBadges=false;
+  $scope.settingsForm = function() {
+    $scope.allFalse();
+    $scope.settingsView = true;
   }
 
-  $scope.studentBadgesForm = function(){
-    $scope.loginTypeStudentHome=false;
-    $scope.loginTypeStudentAchievements=false;
-    $scope.loginTypeStudentBadges=true;
+  $scope.classForm = function(){
+    $scope.allFalse();
+    $scope.classView = true;
   }
+
+  $scope.rulesItemsForm = function(){
+    $scope.allFalse();
+    $scope.rulesItemsView = true;
+  }
+
+  $scope.rulesAchievementsForm = function() {
+    $scope.allFalse();
+    $scope.rulesAchievementsView = true;
+  }
+
+  $scope.rewardShopForm = function() {
+    $scope.allFalse();
+    $scope.rewardShopView = true;
+  }
+
+  $scope.missionsForm = function() {
+    $scope.allFalse();
+    $scope.missionsView = true;
+  }
+
+  $scope.studentHomeForm();
+
+  /*
+    *************************************SAVE EVERY POPOVER INTO $SCOPE*******************************
+  */
+
+  $scope.templateLanguagesPopover = '<ion-popover-view>'+
+    '<div ng-controller="changeLanguageCtrl">'+
+      '<ion-list class="list-elements">'+
+        '<ion-item ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
+        '<ion-item ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
+      '</ion-list>'+
+    '</div>'+
+  '</ion-popover-view>';
+
+  $scope.templateStudentHomePopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="closePopoverStudentHome()">VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverStudentHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  $scope.templateMissionsPopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="closePopoverMissions()">VER FINALIZADAS</ion-item>'+
+      '<ion-item ng-click="rulesItemsForm(); closePopoverMissions()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverMissions()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverMissions()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverMissions()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  $scope.templateStudentDefaultPopover = '<ion-popover-view>'+
+    '<ion-list class="list-elements">'+
+      '<ion-item ng-click="rulesItemsForm(); closePopoverStudentDefault()">VER REGLAS</ion-item>'+
+      '<ion-item ng-click="rewardShopForm(); closePopoverStudentDefault()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item ng-click="missionsForm(); closePopoverStudentDefault()">VER MISIONES</ion-item>'+
+      '<ion-item ng-click="settingsForm(); closePopoverStudentDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+    '</ion-list>'+
+  '</ion-popover-view>';
+
+  /*
+    *************************************EVERY POPOVER FUNCTION GOES HERE*******************************
+  */
+
+                                        /* LANGUAGES POPOVER */
+
+  $scope.popoverLanguages = $ionicPopover.fromTemplate($scope.templateLanguagesPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverLanguages = function($event) {
+    $scope.popoverLanguages.show($event);
+  };
+  $scope.closePopoverLanguages = function() {
+    $scope.popoverLanguages.hide();
+  }
+  $scope.$on('$destroy', function() {
+    $scope.popoverLanguages.remove();
+  });
+  $scope.$on('popoverLanguages.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverLanguages.removed', function() {
+    // Execute action
+  });
+
+                                        /* STUDENTHOME POPOVER */
+
+  $scope.popoverStudentHome = $ionicPopover.fromTemplate($scope.templateStudentHomePopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverStudentHome = function($event) {
+    $scope.popoverStudentHome.show($event);
+  };
+  $scope.closePopoverStudentHome = function() {
+    $scope.popoverStudentHome.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverStudentHome.remove();
+  });
+  $scope.$on('popoverStudentHome.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverStudentHome.removed', function() {
+    // Execute action
+  });
+
+                                        /* MISSIONS POPOVER */
+
+  $scope.popoverMissions = $ionicPopover.fromTemplate($scope.templateMissionsPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverMissions = function($event) {
+    $scope.popoverMissions.show($event);
+  };
+  $scope.closePopoverMissions = function() {
+    $scope.popoverMissions.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverMissions.remove();
+  });
+  $scope.$on('popoverMissions.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverMissions.removed', function() {
+    // Execute action
+  });
+
+                                        /* DEFAULT POPOVER */
+
+  $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateStudentDefaultPopover, {
+    scope: $scope
+  });
+
+  $scope.openPopoverStudentDefault = function($event) {
+    $scope.popoverDefault.show($event);
+  };
+  $scope.closePopoverStudentDefault = function() {
+    $scope.popoverDefault.hide();
+  };
+  $scope.$on('$destroy', function() {
+    $scope.popoverDefault.remove();
+  });
+  $scope.$on('popoverDefault.hidden', function() {
+    // Execute action
+  });
+  $scope.$on('popoverDefault.removed', function() {
+    // Execute action
+  });
+
+  /*
+    *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
+  */
+
+  $scope.addClassModal = '<ion-modal-view hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">INTRODUCE UN CODIGO DE CLASE</h3>'+
+      '<form id="addClassHashCodeForm" class="list">'+
+        '<label class="item item-input">'+
+          '<input type="text" ng-model="hashCode" placeholder="CODIGO DE CLASE">'+
+        '</label>'+
+      '</form>'+
+      '<div class="button-bar action_buttons">'+
+        '<button ng-click="closeModalAddClass()" class="button button-calm  button-block" ng-disabled="!hashCode">AÑADIR CLASE</button>'+
+      '</div>'+
+    '</ion-contentw>'+
+  '</ion-modal-view>';
+
+  /*
+    *************************************EVERY MODAL FUNCTION GOES HERE*******************************
+  */
+
+                                        /* STUDENT DIALOG MODAL */
+
+  $scope.addClassModal = $ionicModal.fromTemplate($scope.addClassModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalAddClass = function(){
+    $scope.addClassModal.show();  
+  }
+    
+  $scope.closeModalAddClass = function(){
+    $scope.addClassModal.hide();
+  }
+
+  /*
+    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
+  */
+
+  $scope.clearForm  = function(){
+    var form = document.getElementById('studentHome-form1');
+    form.reset();
+    $state.go('studentHome', {"studentFullName": $scope.studentName + $scope.studentSurname});
+  }
+
+  /*
+    *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
+  */
 
   $scope.initData = function(){
     //$scope.studentAvatar = $cookies.get('studentAvatar');
@@ -1804,12 +2209,6 @@ function ($scope, $stateParams, $http, Backand, $state) {
 
       $scope.getClassroomByHashCode();
 
-  }
-
-  $scope.clearForm  = function(){
-    var form = document.getElementById('studentHome-form1');
-    form.reset();
-    $state.go('studentHome', {"studentFullName": $scope.studentName + $scope.studentSurname});
   }
 
   $scope.getClassroomByHashCode = function() {

@@ -794,7 +794,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
       '</div>'+
-    '</ion-contentw>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.selectStudentsModal = '<ion-modal-view hide-nav-bar="true" >'+
@@ -806,7 +806,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="closeSelectStudentsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
       '</div>'+
-    '</ion-contentw>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.selectItemsModal = '<ion-modal-view hide-nav-bar="true" >'+
@@ -817,7 +817,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="closeSelectItemsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ITEMS</button>'+
       '</div>'+
-    '</ion-contentw>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.newClassModal = '<ion-modal-view hide-nav-bar="true" >'+
@@ -1168,22 +1168,23 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 
   $scope.studentsEvaluateModal = '<ion-modal-view hide-nav-bar="true" id="page11">'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-    '<div ng-show="loginTypeSelectItem">'+
-      '<ion-list id="evaluate-list1" class="item list_tests">'+
-        '<ion-item class="list-student-dialog" ng-repeat="item in items" ng-click="setItemSelected(item); selectStudentForm()">'+
-          '{{item.name}}&nbsp;({{item.defaultPoints}})'+
-        '</ion-item>'+
-      '</ion-list>'+
-    '</div>'+
-    '<div ng-show="loginTypeSelectStudent">'+
-      '<ion-list id="attendance-list7" class="list-elements">'+
-        '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="student in students" ng-checked="false" ng-click="toEvaluate(student)">{{student.name}}</ion-checkbox>'+
-      '</ion-list>'+
-    '</div>'+
-    '<div class="button-bar action_buttons">'+
-    '<button class="button button-calm" ng-click="closeModalEvaluateStudent()">{{ \'CANCEL\' | translate }}</button>'+
-    '<button class="button button-calm" ng-click="setScore(); closeModalEvaluateStudent()">{{ \'SET_ITEM\' | translate }}</button>'+
-    '</div></ion-content>'+
+      '<div ng-show="loginTypeSelectItem">'+
+        '<ion-list id="evaluate-list1" class="item list_tests">'+
+          '<ion-item class="list-student-dialog" ng-repeat="item in items" ng-click="setItemSelected(item); selectStudentForm()">'+
+            '{{item.name}}&nbsp;({{item.defaultPoints}})'+
+          '</ion-item>'+
+        '</ion-list>'+
+      '</div>'+
+      '<div ng-show="loginTypeSelectStudent">'+
+        '<ion-list id="attendance-list7" class="list-elements">'+
+          '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="student in students" ng-checked="false" ng-click="toEvaluate(student)">{{student.name}}</ion-checkbox>'+
+        '</ion-list>'+
+      '</div>'+
+      '<div class="button-bar action_buttons">'+
+      '<button class="button button-calm" ng-click="closeModalEvaluateStudent()">{{ \'CANCEL\' | translate }}</button>'+
+      '<button class="button button-calm" ng-click="setScore(); closeModalEvaluateStudent()">{{ \'SET_ITEM\' | translate }}</button>'+
+      '</div>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.newRewardModal = '<ion-modal-view title="New Reward" hide-nav-bar="true" >'+
@@ -2144,7 +2145,7 @@ function ($scope, $stateParams, $http, Backand, $state, $ionicModal, $ionicPopov
     *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
   */
 
-  $scope.addClassModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.addClassModal = '<ion-modal-view hide-nav-bar="true">'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">INTRODUCE UN CODIGO DE CLASE</h3>'+
       '<form id="addClassHashCodeForm" class="list">'+
@@ -2153,9 +2154,133 @@ function ($scope, $stateParams, $http, Backand, $state, $ionicModal, $ionicPopov
         '</label>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button ng-click="closeModalAddClass()" class="button button-calm  button-block" ng-disabled="!hashCode">AÑADIR CLASE</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalAddClass()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!hashCode" ng-click="closeModalAddClass()">AÑADIR CLASE</button>'+
       '</div>'+
-    '</ion-contentw>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.itemDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{itemName}</h3>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
+          '<p>{itemDescription}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
+          '<p>{itemRequirements}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'MAX_SCORE\' | translate }}'+
+          '<p>{itemMaxScore}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'SCORE\' | translate }}'+
+          '<p>{itemScore}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;USAR PARA NIVEL'+
+          '<label class="toggle toggle-assertive">'+
+            '<input type="checkbox" onclick="return false;">'+
+            '<div class="track"><div class="handle"></div></div>'+
+          '</label>'+
+        '</span>'+
+      '</label>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalItemDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+      '</div>'+
+    '<ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.achievementDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{achievementName}</h3>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
+          '<p>{achievementDescription}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
+          '<p>{achievementRequirements}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements" id="signUp-input3">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;MAXIMO NIVEL'+
+          '<p>{achievementMaxLevel}</p>'+
+        '</span>'+
+      '</label>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalAchievementDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+      '</div>'+
+    '<ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.missionDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{missionName}</h3>'+
+      '<label class="item item-input list-elements">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;RECOMPENSA'+
+          '<p>{missionReward}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PUNTOS ADICIONALES'+
+          '<p>{missionAdditionalPoints}</p>'+
+        '</span>'+
+      '</label>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
+      '<ion-list id="items-list9" class="list-student">'+
+        '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{itemName}</ion-item>'+
+      '</ion-list>'+
+      
+      '<div class="list-student">'+
+        '<button ng-click="closeModalMissionDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+      '</div>'+
+
+    '<ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.rewardDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{rewardName}</h3>'+
+      '<label class="item item-input list-elements">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
+          '<p>{rewardDescription}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PERMISO'+
+          '<p>{rewardPermission}</p>'+
+        '</span>'+
+      '</label>'+
+      '<label class="item item-input list-elements">'+
+        '<span class="inputLabelProfile">'+
+          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PRECIO'+
+          '<p>{rewardPrice}</p>'+
+        '</span>'+
+      '</label>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalRewardDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+      '</div>'+
+    '<ion-content>'+
   '</ion-modal-view>';
 
   /*
@@ -2175,6 +2300,66 @@ function ($scope, $stateParams, $http, Backand, $state, $ionicModal, $ionicPopov
     
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
+  }
+
+                                        /* ITEM DIALOG MODAL */
+
+  $scope.itemDialogModal = $ionicModal.fromTemplate($scope.itemDialogModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalItemDialog = function(){
+    $scope.itemDialogModal.show();  
+  }
+    
+  $scope.closeModalItemDialog = function(){
+    $scope.itemDialogModal.hide();
+  }
+
+                                        /* ACHIEVEMENT DIALOG MODAL */
+
+  $scope.achievementDialogModal = $ionicModal.fromTemplate($scope.achievementDialogModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalAchievementDialog = function(){
+    $scope.achievementDialogModal.show();  
+  }
+    
+  $scope.closeModalAchievementDialog = function(){
+    $scope.achievementDialogModal.hide();
+  }
+
+                                        /* MISSION DIALOG MODAL */
+
+  $scope.missionDialogModal = $ionicModal.fromTemplate($scope.missionDialogModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalMissionDialog = function(){
+    $scope.missionDialogModal.show();  
+  }
+    
+  $scope.closeModalMissionDialog = function(){
+    $scope.missionDialogModal.hide();
+  }
+
+                                        /* REWARD DIALOG MODAL */
+
+  $scope.rewardDialogModal = $ionicModal.fromTemplate($scope.rewardDialogModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalRewardDialog = function(){
+    $scope.rewardDialogModal.show();  
+  }
+    
+  $scope.closeModalRewardDialog = function(){
+    $scope.rewardDialogModal.hide();
   }
 
   /*

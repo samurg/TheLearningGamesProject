@@ -5,16 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-
-var myApp = angular.module('thelearninggames', ['backand'])
-
-myApp.config(function (BackandProvider) {
-      BackandProvider.setAppName('thelearninggames');
-      BackandProvider.setSignUpToken('c75cdcdd-6ed5-4039-b26c-d41c28f95b53');
-      BackandProvider.setAnonymousToken('8c25f926-034e-49f8-b84f-db5ff66a24ba');
-  })
-
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services', 'thelearninggames', 'ngCookies','pascalprecht.translate','ui.router'])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives', 'app.services', 'ngCookies', 'pascalprecht.translate', 'ui.router', 'firebase', 'firebaseConfig'])
 
 .config(function($ionicConfigProvider, $sceDelegateProvider, $translateProvider){
   
@@ -38,41 +29,14 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
     // for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+      cordova.plugins.Keyboard.disableScroll(true);
+    }
   });
 })
-
-/*
-  This directive is used to disable the "drag to open" functionality of the Side-Menu
-  when you are dragging a Slider component.
-*/
-.directive('disableSideMenuDrag', ['$ionicSideMenuDelegate', '$rootScope', function($ionicSideMenuDelegate, $rootScope) {
-    return {
-        restrict: "A",  
-        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-
-            function stopDrag(){
-              $ionicSideMenuDelegate.canDragContent(false);
-            }
-
-            function allowDrag(){
-              $ionicSideMenuDelegate.canDragContent(true);
-            }
-
-            $rootScope.$on('$ionicSlides.slideChangeEnd', allowDrag);
-            $element.on('touchstart', stopDrag);
-            $element.on('touchend', allowDrag);
-            $element.on('mousedown', stopDrag);
-            $element.on('mouseup', allowDrag);
-
-        }]
-    };
-}])
 
 /*
   This directive is used to open regular and dynamic href links inside of inappbrowser.

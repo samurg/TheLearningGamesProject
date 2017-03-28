@@ -80,8 +80,8 @@
           </label>
         </ion-list>
         <div class="button-bar action_buttons">
-          <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm() ; clearFormTeacherProfile()">{{ 'CANCEL' | translate }}</button>
-          <button id="signUp-button9" ng-disabled="!teacherName && !teacherSurname && !teacherEmail && !teacherPassword && !teacherPasswordRepeat && !teacherSchool && !teacherAvatar" id="signUp-btn9" class="button button-calm button-block" ng-click="settingsForm() ; clearFormTeacherProfile()">{{ 'SAVE_CHANGES' | translate }}</button>
+          <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm()">{{ 'CANCEL' | translate }}</button>
+          <button id="signUp-button9" ng-disabled="!teacherName && !teacherSurname && !teacherEmail && !teacherPassword && !teacherPasswordRepeat && !teacherSchool && !teacherAvatar" id="signUp-btn9" class="button button-calm button-block" ng-click="settingsForm()">{{ 'SAVE_CHANGES' | translate }}</button>
         </div>
       </form>
     </div>
@@ -158,6 +158,9 @@
       <div class="button-bar action_buttons">
         <button id="teams-button44" ng-click="showModalNewTeamDialog()" id="teams-btn44" class="button button-calm  button-block">{{ 'ADD_TEAM' | translate }}</button>
       </div>
+	  <div class="button-bar action_buttons">
+        <button id="teams-button44" ng-click="showModalQuantityRandomTeams()" id="teams-btn44" class="button button-calm  button-block">CREAR EQUIPOS ALEATORIOS</button>
+      </div>
       <button class="button button-positive button-float" ng-click="showActionsheetClassTeams()">
         <i class="icon ion-plus"></i>
       </button>
@@ -203,8 +206,8 @@
         <button  class="button button-light  button-block button-outline">{{ 'TAKE_PICTURE' | translate }}</button>
         <form class="list">
           <div class="button-bar action_buttons">
-            <button class="button button-calm  button-block" ng-click="rulesForm() ; clearFormEditItem()">{{ 'CANCEL' | translate }}</button>
-            <button class="button button-calm  button-block" ng-click="rulesForm() ; clearFormEditItem()" ng-disabled="!itemName && !itemDescription && !itemRequirements && !itemMaxPoints && !itemPoints">EDITAR</button>
+            <button class="button button-calm  button-block" ng-click="rulesForm()">{{ 'CANCEL' | translate }}</button>
+            <button class="button button-calm  button-block" ng-click="rulesForm()" ng-disabled="!itemName && !itemDescription && !itemRequirements && !itemMaxPoints && !itemPoints">EDITAR</button>
           </div>
         </form>
       </div>
@@ -290,8 +293,8 @@
         </ion-list>
       </form>
       <div class="button-bar action_buttons">
-        <button class="button button-calm  button-block" ng-click="itemsForm() ; clearFormEditAchievement()">{{ 'CANCEL' | translate }}</button>
-        <button class="button button-calm  button-block" ng-click="itemsForm() ; clearFormEditAchievement()" ng-disabled="!achievementName && !achievementDescription && !achievementRequirements && !achievementMaxLevel">EDITAR LOGRO</button>
+        <button class="button button-calm  button-block" ng-click="itemsForm()">{{ 'CANCEL' | translate }}</button>
+        <button class="button button-calm  button-block" ng-click="itemsForm()" ng-disabled="!achievementName && !achievementDescription && !achievementRequirements && !achievementMaxLevel">EDITAR LOGRO</button>
       </div>
     </div>
 

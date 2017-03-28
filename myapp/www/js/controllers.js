@@ -173,6 +173,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     //$scope.initData();
     $scope.allFalse();
     $scope.teacherProfileView = true;
+	$scope.clearFormTeacherProfile();
   }
 
   $scope.settingsForm = function(){
@@ -199,11 +200,13 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     //$scope.getItems();
     $scope.allFalse();
     $scope.itemsView = true;
+	$scope.clearFormEditItem();
   }
 
   $scope.achievementsForm = function() {
     $scope.allFalse();
     $scope.achievementsView = true;
+	$scope.clearFormEditAchievement();
   }
 
   $scope.missionsForm = function() {
@@ -831,7 +834,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       "</form>"+
       "<div>"+
         '<form class="list">'+
-          '<label class="item item-select">'+
+          '<label class="item item-input item-select">'+
             '<span class="input-label">{{ \'IMPORT_PREFERENCES_FROM\' | translate }}</span>'+
             '<select id="selectClass">'+
               '<option>{{ \'NONE\' | translate }}</option>'+
@@ -839,9 +842,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
             '</select>'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
-            '<button class="button button-calm  button-block" ng-click="closeModalNewClass() ; clearFormNewClass()">{{ \'CANCEL\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="closeModalNewClass()">{{ \'CANCEL\' | translate }}</button>'+
             ''+
-            '<button class="button button-calm  button-block" ng-click="createClassroom(name) ; closeModalNewClass() ; clearFormNewClass()">{{ \'CREATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="createClassroom(name) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -852,14 +855,14 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'ASSIGN_STUDENT_TO_TEAM\' | translate }}</h3>'+
       '<form class="list">'+
-        '<label class="item item-select">'+
+        '<label class="item item-input item-select">'+
           '<span class="input-label">{{ \'SELECT\' | translate }}</span>'+
           '<select id="selectTeam">'+
               '<option>{{ \'NONE\' | translate }}</option>'+
           '</select>'+
         '</label>'+
         '<h3>{{ \'COPY_STUDENT_TO_ANOTHER_CLASS\' | translate }}</h3>'+
-        '<label class="item item-select">'+
+        '<label class="item item-input item-select">'+
           '<span class="input-label">{{ \'SELECT\' | translate }}</span>'+
           '<select id="selectCopy">'+
               '<option>{{ \'NONE\' | translate }}</option>'+
@@ -868,9 +871,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '</label>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalSecondary() ; clearFormSecundaryModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalSecondary()">{{ \'CANCEL\' | translate }}</button>'+
         ''+
-        '<button class="button button-calm  button-block" ng-click="closeModalSecondary() ; clearFormSecundaryModal()">{{ \'ACCEPT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalSecondary()">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
       '</ion-modal-view>';
@@ -914,8 +917,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '<button  class="button button-light  button-block button-outline">{{ \'TAKE_PICTURE\' | translate }}</button>'+
         '<form class="list">'+
           '<div class="button-bar action_buttons">'+
-            '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog() ; clearFormNewStudent()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!name || !surname" ng-click="createStudent(name, surname) ; closeModalNewStudentDialog() ; clearFormNewStudent()">{{ \'GENERATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!name || !surname || !genre" ng-click="createStudent(name, surname) ; closeModalNewStudentDialog()">{{ \'GENERATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -930,12 +933,30 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 			  '<span class="input-label">{{ \'SURNAME\' | translate }}</span>'+
               '<input type="text" ng-model="surname" placeholder="{studentSurname}">'+
             '</label>'+
+			'<label class="item item-input item-select">'+
+			  '<span class="input-label">GENERO</span>'+
+			  '<select ng-model="genre">'+
+				  '<option selected>VARON</option>'+
+				  '<option>MUJER</option>'+
+			  '</select>'+
+            '</label>'+
           '</form>'+
         '</ion-list>'+
         '<button class="button button-positive  button-block icon ion-android-more-horizontal" ng-click="showModalSecondary()"></button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>)';
+  
+  $scope.quantityRandomTeamsModal = '<ion-modal-view hide-nav-bar="true" >'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>SELECCIONA CANTIDAD DE QUIPOS A CREAR</h3>'+
+	  '<input class="item item-input" id="quantityInput" type="number" ng-model="quantity">'+
+	  '<div class="button-bar action_buttons">'+
+		'<button class="button button-calm  button-block" ng-click="closeModalQuantityRandomTeams()">{{ \'CANCEL\' | translate }}</button>'+
+		'<button class="button button-calm  button-block" ng-click="closeModalQuantityRandomTeams()">{{ \'EDIT_TEAM\' | translate }}</button>'+
+	  '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
 
   $scope.teamDialogModal = '<ion-modal-view title="Team Dialog" hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
@@ -955,8 +976,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
 				'<input type="text" placeholder="{teamObjective}" ng-model="objective">'+
 			  '</label>'+
 			  '<div class="button-bar action_buttons">'+
-				'<button class="button button-calm  button-block" ng-click="closeModalTeamDialog() ; clearFormDialogTeam()">{{ \'CANCEL\' | translate }}</button>'+
-				'<button class="button button-calm  button-block" ng-disabled="!name && !objective" ng-click="closeModalTeamDialog() ; clearFormDialogTeam()">{{ \'EDIT_TEAM\' | translate }}</button>'+
+				'<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
+				'<button class="button button-calm  button-block" ng-disabled="!name && !objective" ng-click="closeModalTeamDialog()">{{ \'EDIT_TEAM\' | translate }}</button>'+
 			  '</div>'+
 		'</form>'+
       '</div>'+
@@ -989,8 +1010,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
             '<input type="text" placeholder="{teamObjective}" ng-model="objective">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
-            '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog() ; clearFormNewTeam()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!name || !objective" ng-click="closeModalNewTeamDialog() ; clearFormNewTeam ()">{{ \'ACCEPT\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!name || !objective" ng-click="closeModalNewTeamDialog()">{{ \'ACCEPT\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -1042,8 +1063,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '<button id="achievements-button91" class="button button-calm  button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewMission() ; clearFormNewMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!name || !reward || !additionalPoints" ng-click="closeModalNewMission() ; clearFormNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewMission()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!name || !reward || !additionalPoints" ng-click="closeModalNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1075,8 +1096,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalEditMission() ; clearFormEditMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!name && !reward && !additionalPoints" ng-click="closeModalEditMission() ; clearFormEditMission()">EDITAR MISIÓN</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalEditMission()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!name && !reward && !additionalPoints" ng-click="closeModalEditMission()">EDITAR MISIÓN</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1109,8 +1130,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem() ; clearFormNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem() ; clearFormNewItem()" ng-disabled="!name || !description || !requirements || !score || !maxPoints">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()" ng-disabled="!name || !description || !requirements || !score || !maxPoints">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1142,8 +1163,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
       '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-    '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement() ; clearFormNewAchievement()" ng-disabled="!name || !description || !requirements || !maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
+    '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()" ng-disabled="!name || !description || !requirements || !maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1172,8 +1193,8 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewReward() ; clearFormNewReward()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewReward() ; clearFormNewReward()" ng-disabled=" !name || !description || !permission || !price">{{ \'ACCEPT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewReward()" ng-disabled=" !name || !description || !permission || !price">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1202,9 +1223,9 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalEditReward() ; clearFormEditReward()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalEditReward()">{{ \'CANCEL\' | translate }}</button>'+
         ''+
-        '<button class="button button-calm  button-block" ng-disabled="!name && !description && !permission && !price" ng-click="closeModalEditReward() ; clearFormEditReward()">EDITAR RECOMPENSA</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!name && !description && !permission && !price" ng-click="closeModalEditReward()">EDITAR RECOMPENSA</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1283,6 +1304,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewClass = function(){
+	$scope.clearFormNewClass();
     $scope.newClassModal.hide();
   }
 
@@ -1306,6 +1328,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalSecondary = function(){
+	$scope.clearFormSecundaryModal();
     $scope.secondaryMenuModal.hide();
     if(modalFirst == 1)
       $scope.studentDialogModal.show(); 
@@ -1340,7 +1363,24 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewStudentDialog = function(){
+	$scope.clearFormNewStudent();
     $scope.newStudentModal.hide();
+  }
+  
+                                          /* QUANTITY RANDOM TEAMS MODAL */
+
+  $scope.quantityRandomTeamsModal = $ionicModal.fromTemplate($scope.quantityRandomTeamsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+    
+  $scope.showModalQuantityRandomTeams = function(){
+    $scope.quantityRandomTeamsModal.show();  
+  }
+    
+  $scope.closeModalQuantityRandomTeams = function(){
+	$scope.clearFormQuantityRandomTeams();
+    $scope.quantityRandomTeamsModal.hide();
   }
 
                                         /* TEAM DIALOG MODAL */  
@@ -1355,6 +1395,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalTeamDialog = function(){
+	$scope.clearFormDialogTeam();
     $scope.teamDialogModal.hide();
   }
 
@@ -1370,6 +1411,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewTeamDialog = function(){
+	$scope.clearFormNewTeam();
     $scope.newTeamDialogModal.hide();
   }
 
@@ -1400,6 +1442,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewMission = function(){
+	$scope.clearFormNewMission();
     $scope.newMissionModal.hide();
   }
 
@@ -1415,6 +1458,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalEditMission = function(){
+	$scope.clearFormEditMission();
     $scope.editMissionModal.hide();
   }
 
@@ -1430,6 +1474,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewItem = function(){
+	$scope.clearFormNewItem();
     $scope.newItemModal.hide();
   }
 
@@ -1445,6 +1490,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewAchievement = function(){
+	$scope.clearFormNewAchievement();
     $scope.newAchievementModal.hide();
   }
 
@@ -1459,6 +1505,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalNewReward = function(){
+	$scope.clearFormNewReward();
     $scope.newRewardModal.hide();
   }
 
@@ -1474,6 +1521,7 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   }
     
   $scope.closeModalEditReward = function(){
+	$scope.clearFormEditReward();
     $scope.editRewardModal.hide();
   }
 
@@ -1495,6 +1543,11 @@ function ($scope, $stateParams, $ionicModal, $http, Backand, $state, $ionicPopov
   $scope.clearFormNewStudent = function(){
     var form = document.getElementById("newStudentForm");
     form.reset();
+  }
+  
+  $scope.clearFormQuantityRandomTeams = function(){
+	  var input = document.getElementById("quantityInput");
+	  input.value = "";
   }
 
   $scope.clearFormDialogTeam = function(){

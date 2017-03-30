@@ -58,7 +58,25 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
       firebase.auth().signOut();
     }
 
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function(firebaseUser) {
+      var sessionUser = firebase.auth().currentUser;
+      if (sessionUser) {
+        //User is signed in.
+        var teachersArray = $firebaseArray(teachersRef);
+        teachersArray.$loaded(function() {
+          if (teachersArray.$getRecord(sessionUser.uid)) {
+            $state.go('teacherHome', {teacherId : sessionUser.uid});
+            $scope.clearFormTeacher();
+          } else {
+            alert('NO EXISTE CUENTA DE PROFESOR');
+          }
+        }, function(error) {
+          console.error(error)
+        });
+      } else {
+        //No user is signed in.
+      }
+    }).catch(function(error) {
       if (error) {
         console.error(error.code);
         console.error(error.message);
@@ -66,29 +84,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
       }
     });
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        var sessionUser = firebase.auth().currentUser;
-        if (sessionUser) {
-          //User is signed in.
-          var teachersArray = $firebaseArray(teachersRef);
-          teachersArray.$loaded(function() {
-            if (teachersArray.$getRecord(sessionUser.uid)) {
-              $state.go('teacherHome', {teacherId : sessionUser.uid});
-              $scope.clearFormTeacher();
-            } else {
-              alert('NO EXISTE CUENTA DE PROFESOR');
-            }
-          }, function(error) {
-            console.error(error)
-          });
-        } else {
-          //No user is signed in.
-        }
-      } else {
-        
-      }
-    });
+    
 
   }
 
@@ -98,35 +94,29 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
       firebase.auth().signOut();
     }
 
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function(firebaseUser) {
+      var sessionUser = firebase.auth().currentUser;
+      if (sessionUser) {
+        //User is signed in.
+        var studentsArray = $firebaseArray(studentsRef);
+        studentsArray.$loaded(function() {
+          if (studentsArray.$getRecord(sessionUser.uid)) {
+            $state.go('studentHome', {studentId : sessionUser.uid});
+            $scope.clearFormStudent();
+          } else {
+            alert('NO EXISTE CUENTA DE ALUMNO');
+          }
+        }, function(error) {
+          console.error(error)
+        });
+      } else {
+        //No user is signed in.
+      }
+    }).catch(function(error) {
       if (error) {
         console.error(error.code);
         console.error(error.message);
         alert(error.message);
-      }
-    });
-
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        var sessionUser = firebase.auth().currentUser;
-        if (sessionUser) {
-          //User is signed in.
-          var studentsArray = $firebaseArray(studentsRef);
-          studentsArray.$loaded(function() {
-            if (studentsArray.$getRecord(sessionUser.uid)) {
-              $state.go('studentHome', {studentId : sessionUser.uid});
-              $scope.clearFormStudent();
-            } else {
-              alert('NO EXISTE CUENTA DE ALUMNO');
-            }
-          }, function(error) {
-            console.error(error)
-          });
-        } else {
-          //No user is signed in.
-        }
-      } else {
-        
       }
     });
 
@@ -184,60 +174,55 @@ function ($scope, $stateParams, $http, $state, sharedData) {
       firebase.auth().signOut();
     }
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(firebaseUser) {
+      var signUpType = sharedData.getData();
+      var sessionUser = firebase.auth().currentUser;
+      if (sessionUser) {
+        //User is signed in.
+        if (avatar == null) {
+          avatar = 'https://easyeda.com/assets/static/images/avatar-default.png';
+        }
+        if (school === ' ' || school === '' || school == null) {
+          school = 'Not established';
+        }
+        sessionUser.updateProfile({
+          displayName : name + ' ' + surname,
+          photoURL : avatar
+        }).then(function() {
+          //Update successful.
+          if (signUpType === 'teacher') { //TEACHER
+            var newTeacherRef = firebase.database().ref('teachers/'+sessionUser.uid);
+            newTeacherRef.set({
+              'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'school' : school,
+            }).then(function() {
+              $state.go('teacherHome', {teacherId : sessionUser.uid});
+              $scope.clearForm();
+            });
+          } else if (signUpType === 'student') { //STUDENT
+            var newStudentRef = firebase.database().ref('students/'+sessionUser.uid);
+            newStudentRef.set({
+              'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'school' : school,
+            }).then(function() {
+              $state.go('studentHome', {studentId : sessionUser.uid});
+              $scope.clearForm();
+            });
+          }
+        }, function(error){
+          //An error happened.
+          console.error(error.code);
+          console.error(error.message);
+        });
+      } else {
+        //No user is signed in.
+      }
+    }).catch(function(error) {
       if (error) {
         console.error(error.code);
         console.error(error.message);
-      }
-    });
-
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        var sessionUser = firebase.auth().currentUser;
-        if (sessionUser) {
-          //User is signed in.
-          if (avatar == null) {
-            avatar = 'https://easyeda.com/assets/static/images/avatar-default.png';
-          }
-          if (school === ' ' || school === '' || school == null) {
-            school = 'Not established';
-          }
-          sessionUser.updateProfile({
-            displayName : name + ' ' + surname,
-            photoURL : avatar
-          }).then(function() {
-            //Update successful.
-            if (signUpType === 'teacher') { //TEACHER
-              var newTeacherRef = firebase.database().ref('teachers/'+sessionUser.uid);
-              newTeacherRef.set({
-                'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
-                'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
-                'school' : school,
-              }).then(function() {
-                $state.go('teacherHome', {teacherId : sessionUser.uid});
-                $scope.clearForm();
-              });
-            } else if (signUpType === 'student') { //STUDENT
-              var newStudentRef = firebase.database().ref('students/'+sessionUser.uid);
-              newStudentRef.set({
-                'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
-                'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
-                'school' : school,
-              }).then(function() {
-                $state.go('studentHome', {studentId : sessionUser.uid});
-                $scope.clearForm();
-              });
-            }
-          }, function(error){
-            //An error happened.
-            console.error(error.code);
-            console.error(error.message);
-          });
-        } else {
-          //No user is signed in.
-        }
-      } else {
-        
       }
     });
 
@@ -260,10 +245,10 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseArray', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, NgTableParams) {
+function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, NgTableParams, $firebaseArray) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -316,13 +301,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.itemsForm = function() {
     $scope.allFalse();
     $scope.itemsView = true;
-	$scope.clearFormEditItem();
+    $scope.clearFormEditItem();
   }
 
   $scope.achievementsForm = function() {
     $scope.allFalse();
     $scope.achievementsView = true;
-	$scope.clearFormEditAchievement();
+    $scope.clearFormEditAchievement();
   }
 
   $scope.missionsForm = function() {
@@ -996,11 +981,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<button  class="button button-light  button-block button-outline">{{ \'UPLOAD_AVATAR\' | translate }}</button>'+
         '<form id="newTeamForm" class="list">'+
           '<label class="item item-input list-elements">'+
-			'<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+            '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
             '<input type="text" placeholder="{teamName}" ng-model="name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
-			'<span class="input-label">OBJETIVO</span>'+
+            '<span class="input-label">OBJETIVO</span>'+
             '<input type="text" placeholder="{teamObjective}" ng-model="objective">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
@@ -1592,15 +1577,23 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var modalFirst;
   var modalMissions;
 
+  var rootRef = firebase.database().ref();
+
+  var teachersRef = firebase.database().ref('teachers');
+  var studentsRef = firebase.database().ref('students');
+  var classroomsRef = firebase.database().ref('classrooms');
+
+  if (firebase.auth().currentUser) {
+    $scope.sessionUser = firebase.auth().currentUser;
+  }
+
+  $scope.classrooms = [];
+  $scope.students = [];
+  
+
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
-
-                                        /* FUNCTIONS IN TEACHER HOME */
-
-
-                                        /* FUNCTIONS IN TEACHER PROFILE */
-
 
                                         /* FUNCTIONS IN SETTINGS */
 
@@ -1610,6 +1603,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       $state.go('login');
     }
   }
+
+                                        /* FUNCTIONS IN TEACHER HOME */
+
+
+                                        /* FUNCTIONS IN TEACHER PROFILE */
 
 
                                         /* FUNCTIONS IN CLASS */

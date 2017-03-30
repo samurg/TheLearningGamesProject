@@ -128,7 +128,6 @@ function ($scope, $stateParams, $http, Backand, $state) {
 }])
 
 
-
 //                                  []
 //                                  []
 //                                  []

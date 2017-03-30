@@ -84,11 +84,67 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
   var signUpType = sharedData.getData();
 
+  var rootRef = firebase.database().ref();
+
+  var teachersRef = firebase.database().ref('teachers');
+  var studentsRef = firebase.database().ref('students');
+
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
 
+  $scope.createTeacher = function(name, surname, email, password, school, avatar) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+      if (error) {
+        console.log(error.code);
+        console.log(error.message);
+      }
+    });
+    $scope.logInAsTeacher(name, surname, email, password, school, avatar);
+  }
 
+  $scope.logInAsTeacher = function(name, surname, email, password, school, avatar) {
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      if (error) {
+        console.log(error.code);
+        console.log(error.message);
+      }
+    });
+    $scope.editTeacherData(name, surname, email, password, school, avatar);
+  }
+
+  $scope.editTeacherData = function(name, surname, email, password, school, avatar) {
+    var sessionUser = firebase.auth().currentUser;
+        if (sessionUser) {
+          //User is signed in.
+          if (avatar == null) {
+            avatar = 'https://easyeda.com/assets/static/images/avatar-default.png';
+          }
+          if (school === ' ' || school === '' || school == null) {
+            school = 'Not established';
+          }
+          sessionUser.updateProfile({
+            displayName : name + ' ' + surname,
+            photoURL : avatar
+          }).then(function() {
+            //Update successful.
+            var newTeacherRef = firebase.database().ref('teachers/'+sessionUser.uid);
+            newTeacherRef.set({
+              'school' : school,
+              'pirula' : 'pequeña',
+            }).then(function() {
+              console.log('SET EXISTING USER DONE');
+              $state.go('teacherHome', {teacherId : sessionUser.uid});
+            });
+          }, function(error){
+            //An error happened.
+            console.log(error.code);
+            console.log(error.message);
+          });
+        } else {
+          //No user is signed in.
+        }
+  }
 
 }])
 

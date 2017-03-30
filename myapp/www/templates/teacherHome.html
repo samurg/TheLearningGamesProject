@@ -1,5 +1,4 @@
 <ion-view title="Teacher Home" hide-nav-bar="true" id="page7">
-
   <ion-content padding="false" class="manual-ios-statusbar-padding">
 
     <!-- TeacherHome Page -->
@@ -11,9 +10,9 @@
       </h3>
       <ion-list id="teacherHome-list16" class="list-elements align-text-center">
         <ion-item ng-click="classForm()"><span class="ion-university"></span><br>{classroomName}</ion-item>
-        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" on-swipe-left="setClassroomId(class.id)" ng-click="setClassroomName(class.name); setClassroomId(class.id); showAttendanceModal(); secondButtonBarForm(); getItems()">
+        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" on-swipe-left="setClassroomId(class.id)" ng-click=" showAttendanceModal()">
           <span class="ion-university"></span><br>{{class.name}}
-          <ion-option-button class="button-assertive" ng-click="deleteClassroom()">{{ 'DELETE' | translate }}</ion-option-button>
+          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">
@@ -123,7 +122,7 @@
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalStudentDialog()">
           <h2>{studentName} {studentSurname}</h2>
-          <ion-option-button class="button-assertive" ng-click="deleteStudent()">{{ 'DELETE' | translate }}</ion-option-button>
+          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">
@@ -333,7 +332,7 @@
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalEditReward()">
           <h2>{rewardName}</h2>
-          <ion-option-button class="button-assertive" ng-click="deleteStudent()">{{ 'DELETE' | translate }}</ion-option-button>
+          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">

@@ -1,4 +1,4 @@
-<ion-view title="Student Home" hide-nav-bar="true" id="page31" ng-init="initData()">
+<ion-view title="Student Home" hide-nav-bar="true" id="page31">
   <ion-content padding="false" class="manual-ios-statusbar-padding">
 
     <!-- Student Home Page -->
@@ -10,7 +10,7 @@
       </h3>
       <ion-list id="teacherHome-list16" class="list-elements align-text-center">
         <ion-item ng-click="classForm()"><span class="ion-university"></span><br>{classroomName}</ion-item>
-        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" on-swipe-left="setClassroomId(class.id)" ng-click="setClassroomName(class.name); setClassroomId(class.id); showAttendanceModal(); secondButtonBarForm(); getItems()">
+        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" on-swipe-left="setClassroomId(class.id)" ng-click="showAttendanceModal()">
           <span class="ion-university"></span><br>{{class.name}}
         </ion-item>
       </ion-list>

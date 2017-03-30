@@ -12,7 +12,7 @@
       ng-click="studentForm()">{{ 'LOG_STUDENT' | translate }}</button>
     </div>
 
-    <form id="login-form1" class="list" ng-show="loginType">
+    <form id="teacherLoginForm" class="list" ng-show="loginType">
       <ion-list id="login-list1">
         <label class="item item-input list-elements" id="login-input1">
         <span class="input-label">{{ 'EMAIL' | translate }}</span>
@@ -27,7 +27,7 @@
         </label>
         <div class="spacer" class="spacerLogin"></div>
         <div id="login-button-bar1" class="button-bar">       
-          <button id="login-button6" id="login-button6" class="button button-calm  button-block bold-font" ng-click="clearForm1()">{{ 'LOG_TEACHER' | translate }}</button>
+          <button id="login-button6" id="login-button6" class="button button-calm  button-block bold-font" ng-click="logInTeacher(teacherEmail, teacherPassword)">{{ 'LOG_TEACHER' | translate }}</button>
         </div>
       </ion-list>
       <div id="login-button-bar3" class="button-bar">
@@ -36,7 +36,7 @@
       </div>
     </form>
 
-    <form id="login-form2" class="list" ng-show="loginType2">
+    <form id="studentLoginForm" class="list" ng-show="loginType2">
       <ion-list id="login-list1">
         <label class="item item-input list-elements" id="login-input1">
         <span class="input-label">{{ 'EMAIL' | translate }}</span>
@@ -51,11 +51,11 @@
         </label>
         <div class="spacer" class="spacerLogin"></div>
         <div id="login-button-bar1" class="button-bar">       
-          <button id="login-button6" id="login-button6" class="button button-calm  button-block bold-font" ng-click="clearForm2()">{{ 'LOG_STUDENT' | translate }}</button>
+          <button id="login-button6" id="login-button6" class="button button-calm  button-block bold-font" ng-click="logInStudent(studentEmail, studentPassword)">{{ 'LOG_STUDENT' | translate }}</button>
         </div>
       </ion-list>
       <div id="login-button-bar3" class="button-bar">
-        <button id="login-button10" class="button button-light  button-block button-clear icon ion-ios-arrow-forward" ng-click="testWrite()"> {{ 'FORGOT_PASSWORD' | translate }}</button>
+        <button id="login-button10" class="button button-light  button-block button-clear icon ion-ios-arrow-forward"> {{ 'FORGOT_PASSWORD' | translate }}</button>
         <a ui-sref="signUp" id="login-button2" class="button button-light  button-block button-clear icon ion-ios-arrow-forward">  {{ 'DONT_HAVE_ACCOUNT' | translate }}</a>
       </div>
     </form>

@@ -1,9 +1,9 @@
 angular.module('app.controllers', ['pascalprecht.translate'])
      
-.controller('loginCtrl', ['$scope', '$stateParams', '$http', '$state', 'sharedData',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('loginCtrl', ['$scope', '$stateParams', '$http', '$state', 'sharedData', '$firebaseArray',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $http, $state, sharedData) {
+function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -15,13 +15,13 @@ function ($scope, $stateParams, $http, $state, sharedData) {
   $scope.teacherForm = function(){
     $scope.loginType=true;
     $scope.loginType2=false;
-    $scope.clearForm2();
+    $scope.clearFormTeacher();
     sharedData.setData('teacher');
   }
   $scope.studentForm = function(){
     $scope.loginType=false;
     $scope.loginType2=true;
-    $scope.clearForm1();
+    $scope.clearFormStudent();
     sharedData.setData('student');
   }
 
@@ -29,13 +29,13 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
 	
-	$scope.clearForm1 = function(){
-    var form = document.getElementById("login-form1");
+	$scope.clearFormTeacher = function(){
+    var form = document.getElementById("teacherLoginForm");
     form.reset();
   }
 
-  $scope.clearForm2 = function(){
-    var form = document.getElementById("login-form2");
+  $scope.clearFormStudent = function(){
+    var form = document.getElementById("studentLoginForm");
     form.reset();
   }
 
@@ -43,9 +43,94 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
   */
 
+  var rootRef = firebase.database().ref();
+
+  var teachersRef = firebase.database().ref('teachers');
+  var studentsRef = firebase.database().ref('students');
+
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
+
+  $scope.logInTeacher = function(email, password) {
+
+    if (firebase.auth().currentUser) {
+      firebase.auth().signOut();
+    }
+
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      if (error) {
+        console.error(error.code);
+        console.error(error.message);
+        alert(error.message);
+      }
+    });
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var sessionUser = firebase.auth().currentUser;
+        if (sessionUser) {
+          //User is signed in.
+          var teachersArray = $firebaseArray(teachersRef);
+          teachersArray.$loaded(function() {
+            if (teachersArray.$getRecord(sessionUser.uid)) {
+              $state.go('teacherHome', {teacherId : sessionUser.uid});
+              $scope.clearFormTeacher();
+            } else {
+              alert('NO EXISTE CUENTA DE PROFESOR');
+            }
+          }, function(error) {
+            console.error(error)
+          });
+        } else {
+          //No user is signed in.
+        }
+      } else {
+        
+      }
+    });
+
+  }
+
+  $scope.logInStudent = function(email, password) {
+
+    if (firebase.auth().currentUser) {
+      firebase.auth().signOut();
+    }
+
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      if (error) {
+        console.error(error.code);
+        console.error(error.message);
+        alert(error.message);
+      }
+    });
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var sessionUser = firebase.auth().currentUser;
+        if (sessionUser) {
+          //User is signed in.
+          var studentsArray = $firebaseArray(studentsRef);
+          studentsArray.$loaded(function() {
+            if (studentsArray.$getRecord(sessionUser.uid)) {
+              $state.go('studentHome', {studentId : sessionUser.uid});
+              $scope.clearFormStudent();
+            } else {
+              alert('NO EXISTE CUENTA DE ALUMNO');
+            }
+          }, function(error) {
+            console.error(error)
+          });
+        } else {
+          //No user is signed in.
+        }
+      } else {
+        
+      }
+    });
+
+  }
 
 }])
 
@@ -93,28 +178,22 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
 
-  $scope.createTeacher = function(name, surname, email, password, school, avatar) {
+  $scope.registerUser = function(name, surname, email, password, school, avatar) {
+
+    if (firebase.auth().currentUser) {
+      firebase.auth().signOut();
+    }
+
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
       if (error) {
-        console.log(error.code);
-        console.log(error.message);
+        console.error(error.code);
+        console.error(error.message);
       }
     });
-    $scope.logInAsTeacher(name, surname, email, password, school, avatar);
-  }
 
-  $scope.logInAsTeacher = function(name, surname, email, password, school, avatar) {
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-      if (error) {
-        console.log(error.code);
-        console.log(error.message);
-      }
-    });
-    $scope.editTeacherData(name, surname, email, password, school, avatar);
-  }
-
-  $scope.editTeacherData = function(name, surname, email, password, school, avatar) {
-    var sessionUser = firebase.auth().currentUser;
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var sessionUser = firebase.auth().currentUser;
         if (sessionUser) {
           //User is signed in.
           if (avatar == null) {
@@ -128,22 +207,40 @@ function ($scope, $stateParams, $http, $state, sharedData) {
             photoURL : avatar
           }).then(function() {
             //Update successful.
-            var newTeacherRef = firebase.database().ref('teachers/'+sessionUser.uid);
-            newTeacherRef.set({
-              'school' : school,
-              'pirula' : 'pequeña',
-            }).then(function() {
-              console.log('SET EXISTING USER DONE');
-              $state.go('teacherHome', {teacherId : sessionUser.uid});
-            });
+            if (signUpType === 'teacher') { //TEACHER
+              var newTeacherRef = firebase.database().ref('teachers/'+sessionUser.uid);
+              newTeacherRef.set({
+                'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+                'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+                'school' : school,
+              }).then(function() {
+                $state.go('teacherHome', {teacherId : sessionUser.uid});
+                $scope.clearForm();
+              });
+            } else if (signUpType === 'student') { //STUDENT
+              var newStudentRef = firebase.database().ref('students/'+sessionUser.uid);
+              newStudentRef.set({
+                'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+                'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+                'school' : school,
+              }).then(function() {
+                $state.go('studentHome', {studentId : sessionUser.uid});
+                $scope.clearForm();
+              });
+            }
           }, function(error){
             //An error happened.
-            console.log(error.code);
-            console.log(error.message);
+            console.error(error.code);
+            console.error(error.message);
           });
         } else {
           //No user is signed in.
         }
+      } else {
+        
+      }
+    });
+
   }
 
 }])
@@ -174,7 +271,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.allFalse = function() {
     $scope.teacherHomeView = false;
-    $scope.teacherProfileView = false;
+    $scope.profileView = false;
     $scope.settingsView = false;
     $scope.classStudentsView = false;
     $scope.classTeamsView = false;
@@ -190,10 +287,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.teacherHomeView = true;
   }
 
-  $scope.teacherProfileForm = function(){
+  $scope.profileForm = function(){
     $scope.allFalse();
-    $scope.teacherProfileView = true;
-	$scope.clearFormTeacherProfile();
+    $scope.profileView = true;
+    $scope.clearFormTeacherProfile();
   }
 
   $scope.settingsForm = function(){
@@ -543,7 +640,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '<div class="track"><div class="handle"></div></div>'+
         '</label>'+
       '</ion-item>'+
-      '<ion-item ng-click="closePopoverClassStudents()">VER HASHCODES</ion-item>'+
+      '<ion-item class="item item-toggle">APERTURA'+
+        '<label class="toggle toggle-assertive">'+
+          '<input type="checkbox">'+
+          '<div class="track"><div class="handle"></div></div>'+
+        '</label>'+
+      '</ion-item>'+
+      '<ion-item ng-click="closePopoverClassStudents()">VER HASHCODE DE LA CLASE</ion-item>'+
       '<ion-item ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
@@ -814,12 +917,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.studentDialogModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h2>{studentName} {studentSurname}</h2>'+
-      '<h3>{studentHashCode}</h3>'+
       '<div class="list-student">'+
         '<div class="avatar_content">'+
           '<i class="icon ion-image" ></i>'+
         '</div>'+
-        '<button  class="button button-light  button-block button-outline">{{ \'TAKE_PICTURE\' | translate }}</button>'+
         '<button  class="button button-light  button-block button-outline">{{ \'VIEW_PROFILE\' | translate }}</button>'+
         '<button ng-click="closeModalStudentDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
@@ -840,46 +941,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newStudentModal = '<ion-modal-view hide-nav-bar="true" class="fondo" >'+
-    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{{ \'NEW_STUDENT\' | translate }}</h3>'+
-      '<div class="list-student list-elements">'+
-        '<div class="avatar_content">'+
-          '<i class="icon ion-image"></i>'+
-        '</div>'+
-        '<button  class="button button-light  button-block button-outline">{{ \'TAKE_PICTURE\' | translate }}</button>'+
-        '<form class="list">'+
-          '<div class="button-bar action_buttons">'+
-            '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!name || !surname || !genre" ng-click="createStudent(name, surname) ; closeModalNewStudentDialog()">{{ \'GENERATE\' | translate }}</button>'+
-          '</div>'+
-        '</form>'+
-      '</div>'+
-      '<div class="list-team list-elements">'+
-        '<ion-list>'+
-          '<form id="newStudentForm" class="list">'+
-            '<label class="item item-input">'+
-			  '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-              '<input type="text" ng-model="name" placeholder="{studentName}">'+
-            '</label>'+
-            '<label class="item item-input">'+
-			  '<span class="input-label">{{ \'SURNAME\' | translate }}</span>'+
-              '<input type="text" ng-model="surname" placeholder="{studentSurname}">'+
-            '</label>'+
-			'<label class="item item-input item-select">'+
-			  '<span class="input-label">GENERO</span>'+
-			  '<select ng-model="genre">'+
-				  '<option selected>VARON</option>'+
-				  '<option>MUJER</option>'+
-			  '</select>'+
-            '</label>'+
-          '</form>'+
-        '</ion-list>'+
-        '<button class="button button-positive  button-block icon ion-android-more-horizontal" ng-click="showModalSecondary()"></button>'+
-      '</div>'+
-    '</ion-content>'+
-  '</ion-modal-view>)';
-  
   $scope.quantityRandomTeamsModal = '<ion-modal-view hide-nav-bar="true" >'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>SELECCIONA CANTIDAD DE QUIPOS A CREAR</h3>'+
@@ -1285,22 +1346,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.closeModalStudentDialog = function(){
     $scope.studentDialogModal.hide();
   }
-
-                                        /* NEW STUDENT DIALOG MODAL */
-
-  $scope.newStudentModal = $ionicModal.fromTemplate($scope.newStudentModal, {
-    scope: $scope,
-    animation: 'slide-in-up'
-  });
-    
-  $scope.showModalNewStudentDialog = function(){
-    $scope.newStudentModal.show();  
-  }
-    
-  $scope.closeModalNewStudentDialog = function(){
-	$scope.clearFormNewStudent();
-    $scope.newStudentModal.hide();
-  }
   
                                           /* QUANTITY RANDOM TEAMS MODAL */
 
@@ -1498,7 +1543,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.clearFormTeacherProfile  = function(){
     var form = document.getElementById('teacherProfileForm');
     form.reset();
-    $scope.initData();
   }
 
   $scope.clearFormNewMission = function(){
@@ -1558,6 +1602,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                         /* FUNCTIONS IN TEACHER PROFILE */
 
 
+                                        /* FUNCTIONS IN SETTINGS */
+
+  $scope.logOut = function() {
+    if (firebase.auth().currentUser) {
+      firebase.auth().signOut();
+      $state.go('login');
+    }
+  }
+
+
                                         /* FUNCTIONS IN CLASS */
 
 
@@ -1608,11 +1662,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
   $scope.settingsForm = function() {
     $scope.allFalse();
     $scope.settingsView = true;
-  }
-
-  $scope.classForm = function(){
-    $scope.allFalse();
-    $scope.classView = true;
+    $scope.clearStudentProfileForm();
   }
 
   $scope.rulesItemsForm = function(){
@@ -2017,8 +2067,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
 	  form.reset();
   }
   
-  $scope.clearStudentProfileClassForm = function(){
-	  var form = document.getElementById("studentProfileClassForm");
+  $scope.clearStudentProfileForm = function(){
+	  var form = document.getElementById("studentProfileForm");
 	  form.reset();
   }
   
@@ -2031,6 +2081,15 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
+
+                                        /* FUNCTIONS IN SETTINGS */
+
+  $scope.logOut = function() {
+    if (firebase.auth().currentUser) {
+      firebase.auth().signOut();
+      $state.go('login');
+    }
+  }
 
 
 }])

@@ -20,6 +20,7 @@ ion-view, ion-modal-view{ background-color: #387ef5 !important; }
 	.avatar_content i{ color: #c4c4c4; }
 
 /* Buttons */
+.addButton{ position: fixed; bottom: 0; right: 0;}
 
 /* Login Screen */
 .login_screen .button{ background: none !important;}
@@ -48,3 +49,6 @@ ion-view, ion-modal-view{ background-color: #387ef5 !important; }
 ion-modal-view h2, h3{ background: rgba(255,255,255,.2); color: white;}
 
 ion-modal-view h2{ background-color: #387ef5;}
+
+/* Fixs */
+.scroll, .teacherHomeView{ height: 100%; }

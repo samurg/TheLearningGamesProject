@@ -70,18 +70,27 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
           } else {
             alert('NO EXISTE CUENTA DE PROFESOR');
           }
-        }, function(error) {
-          console.error(error)
         });
       } else {
         //No user is signed in.
       }
     }).catch(function(error) {
       if (error) {
-        console.error(error.code);
-        console.error(error.message);
-        alert(error.message);
-      }
+        switch (error.code) {
+			case "auth/wrong-password":
+				alert("EL EMAIL O CONTRASEÑA SON INCORRECTOS");
+				break;
+			case "auth/user-not-found":
+				alert("EL EMAIL O CONTRASEÑA NO SON INCORRECTOS");
+				break;
+			case "auth/invalid-email":
+				alert("EMAIL INVALIDO");
+				break;
+			default:
+				alert("ERROR DESCONOCIDO");
+				break;
+			}
+		}
     });
 
     
@@ -106,18 +115,27 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
           } else {
             alert('NO EXISTE CUENTA DE ALUMNO');
           }
-        }, function(error) {
-          console.error(error)
         });
       } else {
         //No user is signed in.
       }
     }).catch(function(error) {
       if (error) {
-        console.error(error.code);
-        console.error(error.message);
-        alert(error.message);
-      }
+        switch (error.code) {
+			case "auth/wrong-password":
+				alert("EL EMAIL O CONTRASEÑA SON INCORRECTOS");
+				break;
+			case "auth/user-not-found":
+				alert("EL EMAIL O CONTRASEÑA NO SON INCORRECTOS");
+				break;
+			case "auth/invalid-email":
+				alert("EMAIL INVALIDO");
+				break;
+			default:
+				alert("ERROR DESCONOCIDO");
+				break;
+			}
+		}
     });
 
   }
@@ -211,19 +229,26 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               $scope.clearForm();
             });
           }
-        }, function(error){
-          //An error happened.
-          console.error(error.code);
-          console.error(error.message);
         });
       } else {
         //No user is signed in.
       }
     }).catch(function(error) {
       if (error) {
-        console.error(error.code);
-        console.error(error.message);
-      }
+        switch (error.code) {
+			case "auth/weak-password":
+				alert("CORREO INVALIDO O NO EXISTENTE");
+				break;
+			case "auth/email-already-in-use":
+				alert("EL CORREO INDICADO YA SE ENCUETNRA EN USO");
+				break;
+			case "auth/invalid-email":
+				alert("EL CORREO INDICADO NO ES VALIDO");
+				break;
+			default:
+				alert("ERROR DESCONOCIDO");
+			}
+		}
     });
 
   }

@@ -47,7 +47,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
 
   var teachersRef = firebase.database().ref('teachers');
   var studentsRef = firebase.database().ref('students');
-
+  
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
@@ -110,6 +110,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         var studentsArray = $firebaseArray(studentsRef);
         studentsArray.$loaded(function() {
           if (studentsArray.$getRecord(sessionUser.uid)) {
+            $scope.finishLoader();
             $state.go('studentHome', {studentId : sessionUser.uid});
             $scope.clearFormStudent();
           } else {
@@ -138,6 +139,13 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
 		}
     });
 
+  }
+
+  $scope.startLoader = function(){
+    $scope.isVisible = true;
+  }
+  $scope.finishLoader = function(){
+    $scope.isVisible = false;
   }
 
 }])
@@ -420,6 +428,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           $scope.showAttendanceModal();
         } else if (index === 1) {
           //EVALUATE STUDENTS ACTION
+          $scope.showSelectStudentsModal();
         } else if (index === 2) {
           //SEND MESSAGE ACTION
         }
@@ -841,7 +850,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="student in students" ng-checked="student.inClass" ng-click="inClass(student)">{{student.name}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button id="attendance-button123" ng-click="editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="getSelectedStudents(); editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -850,10 +859,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
       '<ion-list id="attendance-list7" class="list-elements">'+
-        '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-checked="student.inClass">{studentName}{studentSurname}</ion-checkbox>'+
+        '<ion-checkbox  ng-if="student.inClass" id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="student in studentsEvaluation" ng-checked="student.inClass">{{student.name}}{{student.surname}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button id="attendance-button123" ng-click="closeSelectStudentsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
+        '<button id="attendance-button123" ng-click="getItemsForSelection(); showSelectItemsModal(); closeSelectStudentsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -861,7 +870,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.selectItemsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<ion-list id="attendance-list7" class="list-elements">'+
-        '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student">{itemName}</ion-checkbox>'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student" ng-repeat="item in itemsForSelection" ng-click="changeSelectItem(item)" ng-checked="item.selected">{{item.name}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
         '<button id="attendance-button123" ng-click="closeSelectItemsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ITEMS</button>'+
@@ -1682,6 +1691,89 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       });  
     });
   }
+
+  /*SAMU**************************************************************************/
+  $scope.students = [
+     {
+      name: "Adolfo",
+      surname: "A",
+      inClass: "true"
+    },
+    {
+      name: "Rodolfo",
+      surname: "B",
+      inClass: "true"
+    },
+    {
+      name: "Hitler",
+      surname: "C",
+      inClass: "true"
+    }
+  ];
+  $scope.studentsEvaluation=$scope.students;
+  $scope.items = [
+     {
+      name: "Item1",
+      defaultPoints: 4
+    },
+    {
+      name: "Item2",
+      defaultPoints: 5
+    },
+    {
+      name: "Item3",
+      defaultPoints: 8
+    }
+  ];
+  $scope.itemsForSelection = $scope.items;
+
+  $scope.inClass = function (student) {
+      var pos = $scope.students.indexOf(student);
+      if ($scope.students[pos].inClass === false) {
+        $scope.students[pos].inClass = true;
+      } else {
+        $scope.students[pos].inClass = false;
+      }
+}
+$scope.getSelectedStudents = function(){
+  $scope.studentsEvaluation=[];
+  for (var i = 0; i < $scope.students.length; i++) {
+      if($scope.students[i].inClass){
+          $scope.studentsEvaluation.push($scope.students[i]);
+      }
+      
+  }
+}
+
+$scope.getItemsForSelection = function(){
+  $scope.itemsForSelection=[];
+  for (var i = 0; i < $scope.items.length; i++) {
+      $scope.items[i].selected = true;
+      $scope.itemsForSelection.push($scope.items[i]);
+      
+      
+  }
+} 
+
+$scope.changeSelectItem = function(item){
+    var pos = $scope.itemsForSelection.indexOf(item);
+      if ($scope.itemsForSelection[pos].selected === false) {
+        $scope.itemsForSelection[pos].selected = true;
+      } else {
+        $scope.itemsForSelection[pos].selected = false;
+      }
+}
+
+$scope.itemsSelected = function(){
+    for (var i = 0; i < $scope.studentsEvaluation.length; i++){
+        for (var j = 0; j < $scope.itemsForSelection.length; j++){
+            //EVALUATION ACTION HERE
+        }
+    }
+}
+  /*FIN_SAMU******************************************************************************/
+
+
 
 
                                         /* FUNCTIONS IN TEACHER PROFILE */

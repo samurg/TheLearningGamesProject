@@ -120,8 +120,8 @@
         <button id="class-button29" ng-click="teamsForm()"  class="button button-light  button-outline">{{ 'TEAMS' | translate }}</button>
       </div>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalStudentDialog()">
-          <h2>{studentName} {studentSurname}</h2>
+        <ion-item ng-if="student.inClass" class="list-student" id="class-list-item7" ng-click="showModalStudentDialog()" ng-repeat="student in students">
+          <h2>{{student.name}} {{student.surname}}</h2>
           <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>

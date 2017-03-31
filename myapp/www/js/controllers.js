@@ -270,10 +270,10 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseArray', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, NgTableParams, $firebaseArray) {
+function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -833,7 +833,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
   */
 
-  $scope.attendanceModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.attendanceModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
       '<input class="dateInput" type="text" value="{{date | date:\'dd-MM-yyyy\'}}" readonly />'+
@@ -846,7 +846,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.selectStudentsModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.selectStudentsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
       '<ion-list id="attendance-list7" class="list-elements">'+
@@ -858,7 +858,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.selectItemsModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.selectItemsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<ion-list id="attendance-list7" class="list-elements">'+
         '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student">{itemName}</ion-checkbox>'+
@@ -869,13 +869,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newClassModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newClassModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_CLASS\' | translate }}</h3>'+
       '<form id="dataClassForm" class="list">'+
         '<label class="item item-input">'+
           '<span class="input-label">{{ \'CLASS_NAME\' | translate }}</span>'+
-          '<input type="text" placeholder="" ng-model="name">'+
+          '<input type="text" placeholder="" ng-model="className">'+
         "</label>"+
       "</form>"+
       "<div>"+
@@ -889,15 +889,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewClass()">{{ \'CANCEL\' | translate }}</button>'+
-            ''+
-            '<button class="button button-calm  button-block" ng-click="createClassroom(name) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="createClassroom(className) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.secondaryMenuModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.secondaryMenuModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'ASSIGN_STUDENT_TO_TEAM\' | translate }}</h3>'+
       '<form class="list">'+
@@ -918,13 +917,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalSecondary()">{{ \'CANCEL\' | translate }}</button>'+
-        ''+
         '<button class="button button-calm  button-block" ng-click="closeModalSecondary()">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
       '</ion-modal-view>';
 
-  $scope.studentDialogModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.studentDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h2>{studentName} {studentSurname}</h2>'+
       '<div class="list-student">'+
@@ -951,7 +949,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.quantityRandomTeamsModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.quantityRandomTeamsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>SELECCIONA CANTIDAD DE QUIPOS A CREAR</h3>'+
 	  '<input class="item item-input" id="quantityInput" type="number" ng-model="quantity">'+
@@ -962,7 +960,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.teamDialogModal = '<ion-modal-view title="Team Dialog" hide-nav-bar="true" >'+
+  $scope.teamDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{team.name}</h3>'+
       '<div class="list-student">'+
@@ -996,7 +994,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newTeamDialogModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newTeamDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>New Team</h3>'+
       '<div class="list-student">'+
@@ -1029,7 +1027,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.addStudentModal = '<ion-modal-view title="Add Student" hide-nav-bar="true" >'+
+  $scope.addStudentModal = '<ion-modal-view>'+
     '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
       '<h3>Add Students</h3>'+
       '<ion-list>'+
@@ -1041,7 +1039,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newMissionModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newMissionModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_MISSION\' | translate }}</h3>'+
         '<form id="newMissionForm" class="list">'+
@@ -1073,7 +1071,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.editMissionModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.editMissionModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{missionName}</h3>'+
         '<form id="editMissionForm" class="list">'+
@@ -1094,7 +1092,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '</form>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
       '<ion-list id="items-list9" class="list-student">'+
-        '<ion-item id="items-list-item15">{itemName}</ion-item>'+
+        '<ion-item id="items-list-item15" ng-click="itemsForm(); closeModalEditMission()">{itemName}</ion-item>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
         '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
@@ -1106,7 +1104,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newItemModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newItemModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
      '<h3>{{ \'NEW_ITEM\' | translate }}</h3>'+
       '<form id="newItemForm" class="list list-student fullScreen">'+
@@ -1140,7 +1138,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newAchievementModal = '<ion-modal-view hide-nav-bar="true" >'+
+  $scope.newAchievementModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_ACHIEVEMENT\' | translate }}</h3>'+
       '<form id="newAchievementForm" class="list">'+
@@ -1173,7 +1171,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.newRewardModal = '<ion-modal-view title="New Reward" hide-nav-bar="true" >'+
+  $scope.newRewardModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<form id="newRewardForm" class="list">'+
         '<h3>NUEVA RECOMPENSA</h3>'+
@@ -1203,7 +1201,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.editRewardModal = '<ion-modal-view title="New Reward" hide-nav-bar="true" >'+
+  $scope.editRewardModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<form id="editRewardForm" class="list">'+
         '<h3>{rewardName}</h3>'+
@@ -1599,6 +1597,24 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
   */
 
+  if (firebase.auth().currentUser === null) {
+    $state.go('login');
+  }
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      var sessionUser = firebase.auth().currentUser;
+      var teachersArray = $firebaseArray(teachersRef);
+      teachersArray.$loaded(function() {
+        $scope.teacher = teachersArray.$getRecord(sessionUser.uid);
+        $scope.getClassrooms();
+      })
+      console.log($scope.teacher);
+    } else {
+      
+    }
+  });
+
   var modalFirst;
   var modalMissions;
 
@@ -1607,14 +1623,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var teachersRef = firebase.database().ref('teachers');
   var studentsRef = firebase.database().ref('students');
   var classroomsRef = firebase.database().ref('classrooms');
-
-  if (firebase.auth().currentUser) {
-    $scope.sessionUser = firebase.auth().currentUser;
-  }
-
-  $scope.classrooms = [];
-  $scope.students = [];
-  
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
@@ -1626,10 +1634,51 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     if (firebase.auth().currentUser) {
       firebase.auth().signOut();
       $state.go('login');
+      $scope.teacherHomeForm();
     }
   }
 
                                         /* FUNCTIONS IN TEACHER HOME */
+
+  $scope.getClassrooms = function() {
+    $scope.classrooms = [];
+    var teacherClassroomsRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms');
+    var classroomKeys = $firebaseArray(teacherClassroomsRef);
+    classroomKeys.$loaded(function() {
+      for (i = 0 ; i < classroomKeys.length ; i++) {
+      var classKey = classroomKeys.$keyAt(i);
+      var loopClassroom = firebase.database().ref('classrooms/' + classKey);
+      loopClassroom.on('value', function(snapshot) {
+        $scope.classrooms.push(snapshot.val());
+      });
+    }
+    });
+  }
+
+  $scope.createClassroom = function(name) {
+    var classroomsNode = $firebaseArray(classroomsRef);
+    classroomsNode.$loaded(function() {
+      classroomsNode.$add({
+        'name' : name,
+        'teacher' : $scope.teacher.$id,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var idForClassroom = firebase.database().ref('classrooms/' + id + '/id');
+        idForClassroom.set(id);
+
+        var a = CryptoJS.SHA1(id + Date.now().toString()).toString();
+        var hash = a.substr(0, 10).toUpperCase();
+        var hashCodeForClassroom = firebase.database().ref('classrooms/' + id + '/hashCode');
+        hashCodeForClassroom.set(hash);
+
+        var newteacherClassroomRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms/' + id);
+        newteacherClassroomRef.set(true);
+
+        $scope.getClassrooms();
+      });  
+    });
+  }
 
 
                                         /* FUNCTIONS IN TEACHER PROFILE */
@@ -1850,7 +1899,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
   */
 
-  $scope.addClassModal = '<ion-modal-view hide-nav-bar="true">'+
+  $scope.addClassModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">INTRODUCE UN CODIGO DE CLASE</h3>'+
       '<form id="addClassHashCodeForm" class="list">'+
@@ -1865,7 +1914,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     '</ion-content>'+
   '</ion-modal-view>';
 
-  $scope.itemDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+  $scope.itemDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{itemName}</h3>'+
       '<label class="item item-input list-elements" id="signUp-input3">'+
@@ -1902,12 +1951,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
         '</span>'+
       '</label>'+
       '<div class="list-student">'+
-        '<button ng-click="closeModalItemDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+        '<button ng-click="closeModalItemDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
     '<ion-content>'+
   '</ion-modal-view>';
 
-  $scope.achievementDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+  $scope.achievementDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{achievementName}</h3>'+
       '<label class="item item-input list-elements" id="signUp-input3">'+
@@ -1929,12 +1978,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
         '</span>'+
       '</label>'+
       '<div class="list-student">'+
-        '<button ng-click="closeModalAchievementDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+        '<button ng-click="closeModalAchievementDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
     '<ion-content>'+
   '</ion-modal-view>';
 
-  $scope.missionDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+  $scope.missionDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{missionName}</h3>'+
       '<label class="item item-input list-elements">'+
@@ -1961,7 +2010,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     '<ion-content>'+
   '</ion-modal-view>';
 
-  $scope.rewardDialogModal = '<ion-modal-view hide-nav-bar="true">'+
+  $scope.rewardDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{rewardName}</h3>'+
       '<label class="item item-input list-elements">'+
@@ -1983,7 +2032,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
         '</span>'+
       '</label>'+
       '<div class="list-student">'+
-        '<button ng-click="closeModalRewardDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+        '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
     '<ion-content>'+
   '</ion-modal-view>';
@@ -2111,6 +2160,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     if (firebase.auth().currentUser) {
       firebase.auth().signOut();
       $state.go('login');
+      $scope.studentHomeForm();
     }
   }
 

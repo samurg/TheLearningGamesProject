@@ -1664,13 +1664,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       }).then(function(ref) {
         var id = ref.key;
 
-        var idForClassroom = firebase.database().ref('classrooms/' + id + '/id');
-        idForClassroom.set(id);
+        var idForClassroomRef = firebase.database().ref('classrooms/' + id + '/id');
+        idForClassroomRef.set(id);
 
         var a = CryptoJS.SHA1(id + Date.now().toString()).toString();
         var hash = a.substr(0, 10).toUpperCase();
-        var hashCodeForClassroom = firebase.database().ref('classrooms/' + id + '/hashCode');
-        hashCodeForClassroom.set(hash);
+        var hashCodeForClassroomRef = firebase.database().ref('classrooms/' + id + '/hashcode');
+        hashCodeForClassroomRef.set(hash);
+
+        var hashCodeRef = firebase.database().ref('hashcodes/' + hash + '/' + id);
+        hashCodeRef.set(true);
 
         var newteacherClassroomRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms/' + id);
         newteacherClassroomRef.set(true);

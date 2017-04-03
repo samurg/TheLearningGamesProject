@@ -83,3 +83,34 @@ var rootRef = firebase.database().ref();
       //No user is signed in.
     }
   });
+
+
+  $scope.getClassrooms = function() {
+    var teacherClassroomsRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms');
+    var classroomKeys = $firebaseArray(teacherClassroomsRef);
+    classroomKeys.$loaded(function() {
+      $scope.classrooms = [];
+      for (i = 0 ; i < classroomKeys.length ; i++) {
+      var classKey = classroomKeys.$keyAt(i);
+      var loopClassroom = firebase.database().ref('classrooms/' + classKey);
+      loopClassroom.on('value', function(snapshot) {
+        $scope.classrooms.push(snapshot.val());
+      });
+    }
+    }).then(function() {
+      $scope.getClassroomsForSelection();
+    });
+  }
+
+
+
+
+
+
+
+
+
+  var millisecondsToWait = 500;
+  setTimeout(function() {
+    // Whatever you want to do after the wait
+  }, millisecondsToWait);

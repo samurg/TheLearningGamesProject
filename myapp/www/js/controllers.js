@@ -272,10 +272,10 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray) {
+function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray, $ionicPopup) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -648,17 +648,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</ion-item>'+
       '<ion-item class="item item-toggle">NOTIFICACIONES'+
         '<label class="toggle toggle-assertive">'+
-          '<input type="checkbox">'+
+          '<input type="checkbox" ng-checked="classroom.notifications" ng-model="checkboxNotifications" ng-click="setNotifications(checkboxNotifications)">'+
           '<div class="track"><div class="handle"></div></div>'+
         '</label>'+
       '</ion-item>'+
       '<ion-item class="item item-toggle">APERTURA'+
         '<label class="toggle toggle-assertive">'+
-          '<input type="checkbox">'+
+          '<input type="checkbox" ng-checked="classroom.open" ng-model="checkboxOpening" ng-click="setOpening(checkboxOpening)">'+
           '<div class="track"><div class="handle"></div></div>'+
         '</label>'+
       '</ion-item>'+
-      '<ion-item ng-click="closePopoverClassStudents()">VER HASHCODE DE LA CLASE</ion-item>'+
+      '<ion-item ng-click="showHashcodePopup()">VER HASHCODE DE LA CLASE</ion-item>'+
       '<ion-item ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
@@ -1693,6 +1693,18 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
+                                        /* HASHCODE POPUP */
+
+  $scope.showHashcodePopup = function() {
+    var alertPopup = $ionicPopup.alert({
+      title: 'CODIGO DE LA CLASE',
+      template: $scope.classroom.hashcode,
+    });
+
+    alertPopup.then(function(res) {
+      $scope.closePopoverClassStudents();
+    });
+  };
 
                                         /* FUNCTIONS IN SETTINGS */
 
@@ -1733,6 +1745,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         'name' : name,
         'open' : true,
         'archived' : false,
+        'notifications' : true,
         'teacher' : $scope.teacher.$id,
       }).then(function(ref) {
         var id = ref.key;
@@ -1745,8 +1758,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var hashCodeForClassroomRef = firebase.database().ref('classrooms/' + id + '/hashcode');
         hashCodeForClassroomRef.set(hash);
 
-        var hashCodeRef = firebase.database().ref('hashcodes/' + hash + '/' + id);
-        hashCodeRef.set(true);
+        var hashCodeRef = firebase.database().ref('hashcodes/' + hash + '/id');
+        hashCodeRef.set(id);
 
         var newteacherClassroomRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms/' + id);
         newteacherClassroomRef.set(true);
@@ -1761,6 +1774,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
 
                                         /* FUNCTIONS IN CLASS */
+
+  $scope.setOpening = function(opening) {
+    var classOpeningRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/open');
+    classOpeningRef.set(opening);
+  }
+
+  $scope.setNotifications = function(notification) {
+    var classNotificationsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/notifications');
+    classNotificationsRef.set(notification);
+  }
 
   $scope.createNewStudent = function(name, surname, email, password) {
     var config = {
@@ -1793,6 +1816,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
             var newStudentClassRef = firebase.database().ref('students/' + sessionStudent.uid + '/classrooms/' + $scope.classroom.id);
             newStudentClassRef.set({
+              'id' : $scope.classroom.id,
               'totalPoints' : 0,
               'studentLevel' : 1,
               'inClass' : true,

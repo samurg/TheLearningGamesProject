@@ -11,11 +11,10 @@
       <ion-list id="teacherHome-list16" class="list-elements align-text-center">
         <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" ng-click="setClassroom(class)" ng-hide="class.archived">
           <span class="ion-university"></span><br>{{class.name}}
-          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">
-        <button id="teacherHome-button12" ng-click="showModalNewClass()"  class="button button-calm  button-block bold-font">{{ 'ADD_CLASS' | translate }}</button>
+        <button id="teacherHome-button12" ng-click="showModalNewClass()" class="button button-calm  button-block bold-font">{{ 'ADD_CLASS' | translate }}</button>
       </div>
       <button class="button button-positive button-float addButton" ng-click="showActionsheetTeacherHome()">
         <i class="icon ion-plus"></i>
@@ -119,9 +118,8 @@
         <button id="class-button29" ng-click="teamsForm()"  class="button button-light  button-outline">{{ 'TEAMS' | translate }}</button>
       </div>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalStudentDialog()">
-          <h2>{studentName} {studentSurname}</h2>
-          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="student in students" ng-click="showModalStudentDialog()">
+          <h2>{{student.name}} {{student.surname}}</h2>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">

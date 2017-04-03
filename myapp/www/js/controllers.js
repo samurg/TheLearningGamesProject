@@ -213,6 +213,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
             newTeacherRef.set({
               'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
               'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'email' : sessionUser.email,
               'school' : school,
             }).then(function() {
               $state.go('teacherHome', {teacherId : sessionUser.uid});
@@ -223,6 +224,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
             newStudentRef.set({
               'name' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
               'surname' : CryptoJS.AES.encrypt(name,sessionUser.uid).toString(),
+              'email' : sessionUser.email,
               'school' : school,
             }).then(function() {
               $state.go('studentHome', {studentId : sessionUser.uid});
@@ -884,7 +886,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             '<span class="input-label">{{ \'IMPORT_PREFERENCES_FROM\' | translate }}</span>'+
             '<select id="selectClass">'+
               '<option>{{ \'NONE\' | translate }}</option>'+
-              '<option>{classroom.name}</option>'+
+              '<option ng-repeat="class in classrooms">{{class.name}}</option>'+
             '</select>'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
@@ -921,6 +923,55 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
     '</ion-content>'+
       '</ion-modal-view>';
+
+  $scope.newStudentModal = '<ion-modal-view class="fondo">'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{{ \'NEW_STUDENT\' | translate }}</h3>'+
+      '<div class="list-student list-elements">'+
+        '<div class="avatar_content">'+
+          '<i class="icon ion-image"></i>'+
+        '</div>'+
+        '<button  class="button button-light  button-block button-outline">{{ \'TAKE_PICTURE\' | translate }}</button>'+
+        '<form class="list">'+
+          '<div class="button-bar action_buttons">'+
+            '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentEmail || !newStudentPassword || newStudentPassword!=newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
+          '</div>'+
+        '</form>'+
+      '</div>'+
+      '<div class="list-team list-elements">'+
+        '<ion-list>'+
+          '<form id="newStudentForm" class="list">'+
+            '<label class="item item-input list-elements" id="signUp-input3">'+
+              '<span class="input-label">'+
+                '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'NAME\' | translate }}</span>'+
+              '<input type="text" placeholder="" ng-model="newStudentName">'+
+            '</label>'+
+            '<label class="item item-input list-elements" id="signUp-input3">'+
+              '<span class="input-label">'+
+                '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'SURNAME\' | translate }}</span>'+
+              '<input type="text" placeholder="" ng-model="newStudentSurname">'+
+            '</label>'+
+            '<label class="item item-input list-elements" id="signUp-input5">'+
+              '<span class="input-label">'+
+                '<i class="icon ion-at"></i>&nbsp;&nbsp;{{ \'EMAIL\' | translate }}</span>'+
+              '<input type="email" placeholder="" ng-model="newStudentEmail">'+
+            '</label>'+
+            '<label class="item item-input list-elements" id="signUp-input6">'+
+              '<span class="input-label">'+
+                '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'PASSWORD\' | translate }}</span>'+
+              '<input type="password" placeholder="" ng-model="newStudentPassword">'+
+            '</label>'+
+            '<label class="item item-input list-elements" id="signUp-input7">'+
+              '<span class="input-label">'+
+                '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'CONFIRM_PASSWORD\' | translate }}</span>'+
+                '<input type="password" placeholder="" ng-model="newStudentPasswordRepeat">'+
+            '</label>'+
+          '</form>'+
+        '</ion-list>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>)';
 
   $scope.studentDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
@@ -1340,6 +1391,22 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       $scope.newStudentModal.show();
   }
 
+                                        /* NEW STUDENT DIALOG MODAL */
+
+  $scope.newStudentModal = $ionicModal.fromTemplate($scope.newStudentModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+    
+  $scope.showModalNewStudentDialog = function(){
+    $scope.newStudentModal.show();  
+  }
+    
+  $scope.closeModalNewStudentDialog = function(){
+    $scope.newStudentModal.hide();
+    $scope.clearFormNewStudent();
+  }
+
                                         /* STUDENT DIALOG MODAL */
 
   $scope.studentDialogModal = $ionicModal.fromTemplate($scope.studentDialogModal, {
@@ -1609,7 +1676,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         $scope.teacher = teachersArray.$getRecord(sessionUser.uid);
         $scope.getClassrooms();
       })
-      console.log($scope.teacher);
     } else {
       
     }
@@ -1640,6 +1706,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN TEACHER HOME */
 
+  $scope.setClassroom = function(classroom) {
+    $scope.classroom = classroom;
+    $scope.classForm();
+  }
+
   $scope.getClassrooms = function() {
     $scope.classrooms = [];
     var teacherClassroomsRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms');
@@ -1660,6 +1731,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     classroomsNode.$loaded(function() {
       classroomsNode.$add({
         'name' : name,
+        'open' : true,
+        'archived' : false,
         'teacher' : $scope.teacher.$id,
       }).then(function(ref) {
         var id = ref.key;
@@ -1688,6 +1761,68 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
 
                                         /* FUNCTIONS IN CLASS */
+
+  $scope.createNewStudent = function(name, surname, email, password) {
+    var config = {
+      apiKey: "AIzaSyBBKqBEuzK2MF9zm4V6u5BoqWWfdtQEF94",
+      authDomain: "thelearninggamesproject-99882.firebaseapp.com",
+      databaseURL: "https://thelearninggamesproject-99882.firebaseio.com",
+      storageBucket: "thelearninggamesproject-99882.appspot.com",
+      messagingSenderId: "451254044984",
+    };
+    var secondaryConnection = firebase.initializeApp(config, "Secondary");
+
+    secondaryConnection.auth().createUserWithEmailAndPassword(email, password).then(function(firebaseUser) {
+      var sessionStudent = secondaryConnection.auth().currentUser;
+      if (sessionStudent) {
+        //User is signed in.
+        sessionStudent.updateProfile({
+          displayName : name + ' ' + surname,
+          photoURL : 'https://easyeda.com/assets/static/images/avatar-default.png'
+        }).then(function() {
+          //Update successful.
+          var newStudentRef = firebase.database().ref('students/'+sessionStudent.uid);
+          newStudentRef.set({
+            'name' : CryptoJS.AES.encrypt(name,sessionStudent.uid).toString(),
+            'surname' : CryptoJS.AES.encrypt(name,sessionStudent.uid).toString(),
+            'email' : sessionStudent.email,
+            'school' : $scope.teacher.school,
+          }).then(function() {
+            var newClassStudentRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students/' + sessionStudent.uid);
+            newClassStudentRef.set(true);
+
+            var newStudentClassRef = firebase.database().ref('students/' + sessionStudent.uid + '/classrooms/' + $scope.classroom.id);
+            newStudentClassRef.set({
+              'totalPoints' : 0,
+              'studentLevel' : 1,
+              'inClass' : true,
+            });
+
+            secondaryConnection.auth().signOut();
+            $scope.closeModalNewStudentDialog();
+          });
+        });
+      } else {
+        //No user is signed in.
+      }
+    }).catch(function(error) {
+      if (error) {
+        switch (error.code) {
+      case "auth/weak-password":
+        alert("CORREO INVALIDO O NO EXISTENTE");
+        break;
+      case "auth/email-already-in-use":
+        alert("EL CORREO INDICADO YA SE ENCUETNRA EN USO");
+        break;
+      case "auth/invalid-email":
+        alert("EL CORREO INDICADO NO ES VALIDO");
+        break;
+      default:
+        alert("ERROR DESCONOCIDO");
+      }
+    }
+    });
+  }
 
 
                                         /* FUNCTIONS IN ITEMS */
@@ -2193,7 +2328,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
       };
 
       $scope.$on('changeLanguageEvent', function(event, args) {
-        console.log('He llegado al receptor de eventos');
         $scope.changeLanguage(args.language);
       });
 

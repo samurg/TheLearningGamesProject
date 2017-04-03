@@ -9,7 +9,6 @@
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentHome($event)"></a>
       </h3>
       <ion-list id="teacherHome-list16" class="list-elements align-text-center">
-        <ion-item ng-click="rulesItemsForm()"><span class="ion-university"></span><br>{classroomName}</ion-item>
         <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" ng-click="showAttendanceModal()">
           <span class="ion-university"></span><br>{{class.name}}
         </ion-item>

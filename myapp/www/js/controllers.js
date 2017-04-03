@@ -1869,10 +1869,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
 
 
-.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicPopover',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicPopover', '$firebaseArray',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
+function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $firebaseArray) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -2070,8 +2070,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
         '</label>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalAddClass() ; clearHashcodeForm()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!hashCode" ng-click="closeModalAddClass() ; clearHashcodeForm()">AÑADIR CLASE</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalAddClass()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!hashCode" ng-click="addClass(hashCode)">AÑADIR CLASE</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -2216,6 +2216,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
+	$scope.clearHashcodeForm();
   }
 
                                         /* ITEM DIALOG MODAL */
@@ -2310,7 +2311,32 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
   */
   
+  if (firebase.auth().currentUser === null) {
+    $state.go('login');
+  }
+  
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      var sessionUser = firebase.auth().currentUser;
+      var studentsArray = $firebaseArray(studentsRef);
+      studentsArray.$loaded(function() {
+        $scope.student = studentsArray.$getRecord(sessionUser.uid);
+		$scope.getClassrooms();
+      })
+    } else {
+      
+    }
+  });
+  
   var itemModal;
+  
+  var rootRef = firebase.database().ref();
+
+  var teachersRef = firebase.database().ref('teachers');
+  var studentsRef = firebase.database().ref('students');
+  var hashcodesRef = firebase.database().ref('hashcodes');
+  var classroomsRef = firebase.database().ref('classrooms');
+  
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
@@ -2325,6 +2351,54 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover) {
       $scope.studentHomeForm();
     }
   }
+  
+
+                                        /* FUNCTIONS IN CLASS */
+										
+	$scope.getClassrooms = function() {
+		$scope.classrooms = [];
+		var studentClassroomsRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms');
+		var classroomKeys = $firebaseArray(studentClassroomsRef);
+		classroomKeys.$loaded(function() {
+			for (i = 0 ; i < classroomKeys.length ; i++) {
+				var classKey = classroomKeys.$keyAt(i);
+				var loopClassroom = firebase.database().ref('classrooms/' + classKey);
+				loopClassroom.on('value', function(snapshot) {
+					$scope.classrooms.push(snapshot.val());
+				});
+			}
+		});
+	}
+										
+	$scope.addClass = function(hashcode){
+		var hashcodesArray = $firebaseArray(hashcodesRef);
+		hashcodesArray.$loaded(function() {
+			var classToAdd = hashcodesArray.$getRecord(hashcode);
+			
+			var classesRef = firebase.database().ref('classrooms/');
+			var classesArray = $firebaseArray(classesRef);
+			classesArray.$loaded(function() {
+				var classroom = classesArray.$getRecord(classToAdd.id);
+				if(classroom.open){
+					var studentToEditRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms/' + classToAdd.id);
+					studentToEditRef.set({
+						'id' : classToAdd.id,
+						'totalPoints' : 0,
+						'studentLevel' : 1,
+						'inClass' : true,
+					});
+					
+					var classToEditRef = firebase.database().ref('classrooms/' + classToAdd.id + '/students/' + $scope.student.$id);
+					classToEditRef.set(true);
+				} else {
+					alert('LA CLASE SE ENCUENTRA CERRADA');
+				}
+			}).then(function(){
+				$scope.getClassrooms();
+			})
+		})
+		$scope.closeModalAddClass();
+	}
 
 
 }])

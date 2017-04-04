@@ -997,12 +997,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.studentDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h2>{studentName} {studentSurname}</h2>'+
+      '<h2>{{student.name}} {{student.surname}}</h2>'+
       '<div class="list-student">'+
         '<div class="avatar_content">'+
           '<i class="icon ion-image" ></i>'+
         '</div>'+
-        '<button  class="button button-light  button-block button-outline">{{ \'VIEW_PROFILE\' | translate }}</button>'+
+        '<button  class="button button-light  button-block button-outline" ng-click="showModalStudentProfile()">{{ \'VIEW_PROFILE\' | translate }}</button>'+
         '<button ng-click="closeModalStudentDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
       '</div>'+
       '<div class="list-student list-elements">'+
@@ -1021,6 +1021,35 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
+
+  $scope.studentProfileModal = '<ion-modal-view>'+
+    '<ion-content>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">'+
+        '<a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>'+
+        '<h2>{{student.name}} {{student.surname}}</h2>'+
+      '</h3>'+
+      '<form id="studentProfileFormData" class="list">'+
+        '<ion-list id="signUp-list2">'+
+          '<ion-item class ="teacherAvatar">'+
+            '<img src={{student.avatar}} class="avatar">'+
+          '</ion-item>'+
+          '<label class="item item-input list-elements" id="signUp-input3">'+
+            '<span class="inputLabelProfile">'+
+              '<i class="icon ion-clipboard"></i>&nbsp;&nbsp;ESCUELA'+
+              '<p>{{student.school}}</p>'+
+            '</span>'+
+          '</label>'+
+          '<label class="item item-input list-elements" id="signUp-input5">'+
+            '<span class="inputLabelProfile">'+
+              '<i class="icon ion-at"></i>&nbsp;&nbsp;{{ \'EMAIL\' | translate }}'+
+              '<p>{{student.email}}</p>'+
+            '</span>'+
+          '</label>'+
+          '<button id="signUp-button8" class="button button-positive  button-block icon ion-arrow-return-left" ng-click="closeModalStudentProfile()"></button>'+
+        '</ion-list>'+
+      '</form>'
+    '</ion-content>'+
+  '</ion-modal-view>'
 
   $scope.quantityRandomTeamsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
@@ -1184,29 +1213,29 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemName}" ng-model="name">'+
+            '<input type="text" placeholder="{itemName}" ng-model="newItemName">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemDescription}" ng-model="description">'+
+            '<input type="text" placeholder="{itemDescription}" ng-model="newItemDescription">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemRequirements}" ng-model="requirements">'+
+            '<input type="text" placeholder="{itemRequirements}" ng-model="newItemRequirements">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemScore}" ng-model="score">'+
+            '<input type="text" placeholder="{itemScore}" ng-model="newItemScore">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemMaxScore}" ng-model="maxPoints">'+
+            '<input type="text" placeholder="{itemMaxScore}" ng-model="newItemMaxScore">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewItem()" ng-disabled="!name || !description || !requirements || !score || !maxPoints">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createItem(newItemName, newItemDescription, newItemRequirements, newItemScore, newItemMaxScore)" ng-disabled="!newItemName || !newItemDescription || !newItemRequirements || !newItemScore || !newItemMaxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1456,6 +1485,21 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     
   $scope.closeModalStudentDialog = function(){
     $scope.studentDialogModal.hide();
+  }
+
+                                        /* STUDENT PROFILE MODAL */
+
+  $scope.studentProfileModal = $ionicModal.fromTemplate($scope.studentProfileModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+ 
+  $scope.showModalStudentProfile = function(){
+    $scope.studentProfileModal.show();  
+  }
+    
+  $scope.closeModalStudentProfile = function(){
+    $scope.studentProfileModal.hide();
   }
   
                                           /* QUANTITY RANDOM TEAMS MODAL */
@@ -1740,6 +1784,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var teachersRef = firebase.database().ref('teachers');
   var studentsRef = firebase.database().ref('students');
   var classroomsRef = firebase.database().ref('classrooms');
+  var itemsRef = firebase.database().ref('items');
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
@@ -1772,6 +1817,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
     $scope.getStudents();
+    $scope.getItems();
   }
 
   $scope.getClassrooms = function() {
@@ -2007,7 +2053,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     var classOpeningRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/open');
     classOpeningRef.set(opening);
     $scope.classroom.open = opening;
-    console.log($scope.classroom);
   }
 
   $scope.setNotifications = function(notification) {
@@ -2017,7 +2062,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     var classNotificationsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/notifications');
     classNotificationsRef.set(notification);
     $scope.classroom.notification = notification;
-    console.log($scope.classroom);
   }
 
   $scope.createNewStudent = function(name, surname, email, password) {
@@ -2089,9 +2133,60 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   }
 
+  $scope.setStudent = function(student) {
+    $scope.student = student;
+    $scope.showModalStudentDialog();
+  }
+
 
                                         /* FUNCTIONS IN ITEMS */
 
+  $scope.createItem = function (name, description, requirements, score, maxScore) {
+    var itemsNode = $firebaseArray(itemsRef);
+    itemsNode.$loaded(function() {
+      itemsNode.$add({
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'score' : score,
+        'maxScore' : maxScore,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var idForItemRef = firebase.database().ref('items/' + id + '/id');
+        idForItemRef.set(id);
+
+        var classroomRef = firebase.database().ref('classrooms/' + $scope.classroom.id  + '/items/' + id);
+        classroomRef.set({
+          'id' : id,
+        });
+
+        $scope.closeModalNewItem();
+        $scope.getItems();
+      });  
+    });
+  }
+
+  $scope.getItems = function() {
+    var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
+    var itemKeys = $firebaseArray(classroomItemsRef);
+    itemKeys.$loaded(function() {
+      $scope.items = [];
+      for (i = 0 ; i < itemKeys.length ; i++) {
+        var itemKey = itemKeys.$keyAt(i);
+        var loopItem = firebase.database().ref('items/' + itemKey);
+        loopItem.on('value', function(snapshot) {
+          var item = snapshot.val();
+          $scope.items.push(item);
+          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$apply();
+          }
+        });
+      }
+    }).then(function() {
+
+    });
+  }
 
 }])
 
@@ -2448,7 +2543,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     *************************************EVERY MODAL FUNCTION GOES HERE*******************************
   */
 
-                                        /* STUDENT DIALOG MODAL */
+                                        /* ADD CLASS MODAL */
 
   $scope.addClassModal = $ionicModal.fromTemplate($scope.addClassModal, {
     scope: $scope,
@@ -2665,54 +2760,98 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       $scope.studentHomeForm();
     }
   }
+
+                                          /* FUNCTIONS IN HOME */
+
+  $scope.setClassroom = function(classroom) {
+    $scope.classroom = classroom;
+    $scope.classroomData = null;
+    var loopClassroom = firebase.database().ref('students/' + sessionUser.uid + '/classrooms/' + $scope.classroom.id);
+      loopClassroom.on('value', function(snapshot) {
+        $scope.classroomData = snapshot.val();
+    });
+    $scope.getItems();
+  }
+
+  $scope.getClassrooms = function() {
+    var studentClassroomsRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms');
+    var classroomKeys = $firebaseArray(studentClassroomsRef);
+    classroomKeys.$loaded(function() {
+      $scope.classrooms = [];
+      for (i = 0 ; i < classroomKeys.length ; i++) {
+        var classKey = classroomKeys.$keyAt(i);
+        var loopClassroom = firebase.database().ref('classrooms/' + classKey);
+        loopClassroom.on('value', function(snapshot) {
+          $scope.classrooms.push(snapshot.val());
+        });
+      }
+    });
+  }
+                    
+  $scope.addClass = function(hashcode){
+    var hashcodesArray = $firebaseArray(hashcodesRef);
+    hashcodesArray.$loaded(function() {
+      var classToAdd = hashcodesArray.$getRecord(hashcode);
+      
+      var classesRef = firebase.database().ref('classrooms/');
+      var classesArray = $firebaseArray(classesRef);
+      classesArray.$loaded(function() {
+        var classroom = classesArray.$getRecord(classToAdd.id);
+        if(classroom.open){
+          var studentToEditRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms/' + classToAdd.id);
+          studentToEditRef.set({
+            'id' : classToAdd.id,
+            'totalPoints' : 0,
+            'studentLevel' : 1,
+            'inClass' : true,
+          });
+          
+          var classToEditRef = firebase.database().ref('classrooms/' + classToAdd.id + '/students/' + $scope.student.$id);
+          classToEditRef.set(true);
+        } else {
+          alert('LA CLASE SE ENCUENTRA CERRADA');
+        }
+      }).then(function(){
+        $scope.getClassrooms();
+      })
+    })
+    $scope.closeModalAddClass();
+  }
   
 
                                         /* FUNCTIONS IN CLASS */
 										
-	$scope.getClassrooms = function() {
-		var studentClassroomsRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms');
-		var classroomKeys = $firebaseArray(studentClassroomsRef);
-		classroomKeys.$loaded(function() {
-      $scope.classrooms = [];
-			for (i = 0 ; i < classroomKeys.length ; i++) {
-				var classKey = classroomKeys.$keyAt(i);
-				var loopClassroom = firebase.database().ref('classrooms/' + classKey);
-				loopClassroom.on('value', function(snapshot) {
-					$scope.classrooms.push(snapshot.val());
-				});
-			}
-		});
-	}
-										
-	$scope.addClass = function(hashcode){
-		var hashcodesArray = $firebaseArray(hashcodesRef);
-		hashcodesArray.$loaded(function() {
-			var classToAdd = hashcodesArray.$getRecord(hashcode);
-			
-			var classesRef = firebase.database().ref('classrooms/');
-			var classesArray = $firebaseArray(classesRef);
-			classesArray.$loaded(function() {
-				var classroom = classesArray.$getRecord(classToAdd.id);
-				if(classroom.open){
-					var studentToEditRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms/' + classToAdd.id);
-					studentToEditRef.set({
-						'id' : classToAdd.id,
-						'totalPoints' : 0,
-						'studentLevel' : 1,
-						'inClass' : true,
-					});
-					
-					var classToEditRef = firebase.database().ref('classrooms/' + classToAdd.id + '/students/' + $scope.student.$id);
-					classToEditRef.set(true);
-				} else {
-					alert('LA CLASE SE ENCUENTRA CERRADA');
-				}
-			}).then(function(){
-				$scope.getClassrooms();
-			})
-		})
-		$scope.closeModalAddClass();
-	}
+	$scope.getItems = function() {
+    var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
+    var itemKeys = $firebaseArray(classroomItemsRef);
+    itemKeys.$loaded(function() {
+      $scope.items = [];
+      for(i = 0 ; i < itemKeys.length ; i++) {
+        var itemKey = itemKeys.$keyAt(i);
+        var loopItems = firebase.database().ref('items/' + itemKey);
+        loopItems.on('value', function(snapshot) {
+          /* SE NECESITA QUE EL ESTUDIANTE DESBLOQUEE EL LOGRO PARA SACAR LA PUNTUACION QUE TIENE EN EL MISMO
+          var itemStudent = firebase.database().ref('students/' + $scope.student.id + '/items/' + itemKey);
+          itemStudent.on('value', function(snapshot1) {
+            $scope.items.push({
+              id : snapshot.val().id,
+              description : snapshot.val().description,
+              requirements : snapshot.val().requirements,
+              score : snapshot.val().score,
+              maxScore : snapshot.val().maxScore,
+              studentsPoints : snapshot1.val()
+            })
+          });*/
+          $scope.items.push(snapshot.val());
+          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$apply();
+          }
+        });
+      }
+    }).then(function() {
+      $scope.rulesItemsForm();
+    });
+  }
 
 
 }])

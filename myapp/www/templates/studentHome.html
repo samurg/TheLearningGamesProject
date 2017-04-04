@@ -9,7 +9,7 @@
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentHome($event)"></a>
       </h3>
       <ion-list id="teacherHome-list16" class="list-elements align-text-center">
-        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" ng-click="showAttendanceModal()">
+        <ion-item id="teacherHome-list-item47" ng-repeat="class in classrooms" ng-click="setClassroom(class)">
           <span class="ion-university"></span><br>{{class.name}}
         </ion-item>
       </ion-list>
@@ -122,7 +122,7 @@
     <div ng-show="rulesItemsView">
       <h3 id="class-heading2">
         <a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>
-        <span ng-click="classForm()">{classroomName}</span>
+        <span ng-click="classForm()">{{classroom.name}}</span>
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
         <p>{{ 'RULES' | translate }}</p>
       </h3>
@@ -133,15 +133,21 @@
       <div>
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="inputLabelProfile">
+            <i class="icon ion-thumbsup"></i>&nbsp;&nbsp;NIVEL EN CLASE
+            <span>{{classroomData.studentLevel}}</span>
+          </span>
+        </label>
+        <label class="item item-input list-elements" id="signUp-input3">
+          <span class="inputLabelProfile">
             <i class="icon ion-thumbsup"></i>&nbsp;&nbsp;PUNTOS TOTALES
-            <span>{studentTotalPoints}</span>
+            <span>{{classroomData.totalPoints}}</span>
           </span>
         </label>
       </div>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalItemDialog()">
-          <h2>{itemName}</h2>
-          <p>{studentPoints}</p>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="item in items" ng-click="showModalItemDialog()">
+          <h2>{{item.name}}</h2>
+          <p>{{studentPoints}}</p>
         </ion-item>
       </ion-list>
     </div>

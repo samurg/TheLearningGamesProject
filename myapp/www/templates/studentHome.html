@@ -107,13 +107,13 @@
         <ion-list class="list-elements align-text-center">
           <ion-item ng-click="profileForm()">{{'PROFILE'| translate}}</ion-item>
           <ion-item ng-click="openPopoverLanguages($event)">{{'LANGUAGES'| translate}}</ion-item>
-          <ion-item>AYUDA</ion-item>
-          <ion-item>TERMINOS Y CONDICIONES</ion-item>
-          <ion-item>ACERCA DE</ion-item>
+          <ion-item ng-controller="settingsCtrl" ng-click="showHelpPopup()">AYUDA</ion-item>
+          <ion-item ng-controller="settingsCtrl" ng-click="showTermsPopup()">TERMINOS Y CONDICIONES</ion-item>
+          <ion-item ng-controller="settingsCtrl" ng-click="showAboutPopup()">ACERCA DE</ion-item>
         </ion-list>
       </div>
       <div class="button-bar action_buttons">
-        <a id="teacherSettings-button81" id="teacherSettings-btn81" class="button button-assertive  button-block button-clear icon ion-ios-close-empty logout" ng-click="logOut(); studentHomeForm()">&nbsp;{{ 'LOG_OUT' | translate }}</a>
+        <a id="teacherSettings-button81" id="teacherSettings-btn81" class="button button-assertive  button-block button-clear icon ion-ios-close-empty logout" ng-click="logOut()">&nbsp;{{ 'LOG_OUT' | translate }}</a>
       </div>
     </div>
 

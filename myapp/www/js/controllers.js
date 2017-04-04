@@ -295,6 +295,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.achievementsView = false;
     $scope.missionsView = false;
     $scope.rewardShopView = false;
+    $scope.archivedClassroomsToShow = false;
   }
 
   $scope.teacherHomeForm = function(){
@@ -454,6 +455,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       },
       destructiveButtonClicked: function() {
         //DELETE STUDENTS ACTION
+        $scope.showSelectStudentsModal();
         return true;
       }
     });
@@ -653,7 +655,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-list class="list-elements">'+
       '<ion-item>IMPORTAR</ion-item>'+
       '<ion-item>EXPORTAR</ion-item>'+
-      '<ion-item>VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
       '<ion-item ng-click="settingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
@@ -873,11 +876,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.selectStudentsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">SELECCIONA ESTUDIANTES</h3>'+
       '<ion-list id="attendance-list7" class="list-elements">'+
-        '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-checked="student.inClass">{studentName}{studentSurname}</ion-checkbox>'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="studentForSelection in studentsForSelection" ng-click="changeSelectedStudent(studentForSelection)" ng-checked="studentForSelection.selected">{{studentForSelection.name}} {{studentForSelection.surname}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button id="attendance-button123" ng-click="closeSelectStudentsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
+      '<button class="button button-calm  button-block" ng-click="closeSelectStudentsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectStudents()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ALUMNOS</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1814,6 +1819,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN TEACHER HOME */
 
+  $scope.backToTeacherHome = function() {
+    $scope.getClassrooms();
+    $scope.teacherHomeForm();
+  }
+
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
     $scope.getStudents();
@@ -1920,6 +1930,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   }
 
+  $scope.showArchivedClassrooms = function(value) {
+    $scope.archivedClassroomsToShow = value;
+    $scope.closePopoverTeacherHome();
+  }
+
   $scope.duplicateClassroom = function(classroom) {
     //DUPLICATE ACTION GOES HERE
   }
@@ -2022,6 +2037,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                         /* FUNCTIONS IN CLASS */
 
 
+  $scope.setStudent = function(student) {
+    $scope.student = student;
+    $scope.showModalStudentDialog();
+  }
+  
   $scope.getStudents = function() {
     var classroomStudentsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students');
     var studentKeys = $firebaseArray(classroomStudentsRef);
@@ -2039,11 +2059,19 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
             $scope.$apply();
           }
+          $scope.getStudentsForSelection();
         });
       }
     }).then(function() {
       $scope.classForm();
     });
+  }
+
+  $scope.getStudentsForSelection = function() {
+    $scope.studentsForSelection = $scope.students;
+    for (var element in $scope.studentsForSelection) {
+      element.selected = false;
+    }
   }
 
   $scope.setOpening = function(opening) {
@@ -2132,10 +2160,42 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
     });
   }
+  
+  $scope.changeSelectedStudent = function(position){
+    var pos = $scope.studentsForSelection.indexOf(position);
+    if ($scope.studentsForSelection[pos].selected === false) {
+      $scope.studentsForSelection[pos].selected = true;
+    } else {
+      $scope.studentsForSelection[pos].selected = false;
+    }
+  }
 
-  $scope.setStudent = function(student) {
-    $scope.student = student;
-    $scope.showModalStudentDialog();
+  $scope.selectStudents = function() {
+    $scope.closeSelectStudentsModal();
+    for (var element in $scope.studentsForSelection) {
+      if ($scope.studentsForSelection[element].selected === true) {
+        $scope.deleteStudent($scope.studentsForSelection[element]);
+      }
+    }
+    $scope.studentsForSelection = $scope.students;
+  }
+
+  $scope.deleteStudent = function(student) {
+
+    var studentClassRef = firebase.database().ref('students/' + student.id + '/classrooms/' + $scope.classroom.id);
+    studentClassRef.remove();
+
+    var classStudentRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students/' + student.id);
+    classStudentRef.remove();
+    
+    //ELIMINAR LOS ITEMS DE LA CALSE DEL ESTUDIANTE students/studentID/items/'EACHitemINCLASS'
+
+    //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
+
+    //ELIMINAR AL ESTUDIANTE DE LOS EQUIPOS DE LA CLASE teams/'EACHteamINCLASS'/students/studentID
+    //ELIMINAR LOS EQUIPOS DE LA CLASE DEL ESTUDIANTE students/studentID/teams/'EACHteam'
+
+    $scope.getStudents();
   }
 
 
@@ -2871,15 +2931,85 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
 
 
+.controller('settingsCtrl', ['$scope', '$ionicPopup',
+  function($scope, $ionicPopup) {
+
+    $scope.showHelpPopup = function() {
+      $ionicPopup.alert({
+        title: 'AYUDA',
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu tristique nulla. Vestibulum nulla risus, tincidunt a ante at, euismod auctor diam. Etiam blandit velit ipsum, non accumsan ligula mattis facilisis. Nulla tristique facilisis nisl. Maecenas venenatis ipsum quis metus ultrices faucibus. Donec arcu risus, mollis facilisis massa sit amet, posuere efficitur mi. Praesent elementum justo nec felis accumsan consectetur. Cras rutrum lacinia magna, eu bibendum erat finibus vitae. Vestibulum iaculis sem sit amet ex ornare ornare. Vestibulum sodales velit non mauris pretium finibus.',
+        buttons: [{
+            text: 'Okay',
+            type: 'button-positive'
+          },
+        ]
+      }).then(function(res) {
+        if(res) {
+        } else {
+        }
+      });
+    }
+
+    $scope.showTermsPopup = function() {
+      $ionicPopup.alert({
+        title: 'TERMINOS Y CONDICIONES',
+        content: 'Sed cursus rhoncus porta. Aenean sed ante a sem molestie posuere. In maximus sem justo, eu ultrices leo tincidunt sed. Nulla feugiat convallis luctus. Donec vitae sodales augue. Fusce tortor neque, tincidunt id felis vel, tincidunt aliquam nisl. Fusce maximus aliquam sodales.',
+        buttons: [{
+            text: 'Okay',
+            type: 'button-positive'
+          },
+        ]
+      }).then(function(res) {
+        if(res) {
+        } else {
+        }
+      });
+    }
+
+    $scope.showAboutPopup = function() {
+      $ionicPopup.alert({
+        title: 'ACERCA DE',
+        content: 'Quisque convallis scelerisque lorem, et accumsan erat porttitor quis. Aenean tincidunt iaculis risus, eu aliquet turpis scelerisque at. Etiam est nisi, maximus sed ultricies quis, ornare et ex. Nam at fermentum arcu. Nullam risus ipsum, convallis et tortor in, tempor blandit tortor. Cras non viverra est, vel pellentesque lectus. Sed libero mi, tristique quis interdum sit amet, ornare at libero. Suspendisse cursus rutrum lectus, sit amet interdum nunc egestas in. Maecenas vitae luctus ligula. Donec vehicula mi sed leo elementum dictum. In magna dui, lobortis vitae dui at, viverra mattis erat. Aenean sit amet justo a ex porta scelerisque. Praesent nec rutrum urna, sed accumsan lorem.'
+        +''
+        +'Nullam ultrices tempor sem, ac lacinia ligula consectetur at. Quisque non elit sit amet dui tincidunt accumsan non ac lectus. Donec sit amet arcu finibus, commodo elit finibus, tincidunt dolor. Cras nec velit eget nibh sodales faucibus a pellentesque diam. Etiam volutpat tortor at varius euismod. Suspendisse eget justo quis enim ornare pellentesque. Vestibulum congue sed orci vel scelerisque. Vivamus ac accumsan nulla. Etiam euismod tortor in velit facilisis tristique.',
+        buttons: [{
+            text: 'Okay',
+            type: 'button-positive'
+          },
+        ]
+      }).then(function(res) {
+        if(res) {
+        } else {
+        }
+      });
+    }
+
+}])
+
+
+
+//                                  []
+//                                  []
+//                                  []
+//                                  []
+//                        [][][][][][][][][][][]
+//                                  []
+//                                  []
+//                                  []
+//                                  []
+//                                  []
+
+
+
 .controller('changeLanguageCtrl', ['$translate', '$scope',
   function ($translate, $scope) {
  
-      $scope.changeLanguage = function (langKey) {
-        $translate.use(langKey);
-      };
+    $scope.changeLanguage = function (langKey) {
+      $translate.use(langKey);
+    };
 
-      $scope.$on('changeLanguageEvent', function(event, args) {
-        $scope.changeLanguage(args.language);
-      });
+    $scope.$on('changeLanguageEvent', function(event, args) {
+      $scope.changeLanguage(args.language);
+    });
 
 }])

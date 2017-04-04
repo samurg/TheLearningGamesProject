@@ -1728,6 +1728,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var modalMissions;
 
   var sessionUser;
+  var secondaryConnection = null;
 
   var rootRef = firebase.database().ref();
 
@@ -1764,9 +1765,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                         /* FUNCTIONS IN TEACHER HOME */
 
   $scope.setClassroom = function(classroom) {
-    console.log('Setter');
     $scope.classroom = classroom;
-    console.log('getStudents Call');
     $scope.getStudents();
   }
 
@@ -1929,14 +1928,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var studentKey = studentKeys.$keyAt(i);
         var loopStudent = firebase.database().ref('students/' + studentKey);
         loopStudent.on('value', function(snapshot) {
-          console.log('Repeticion: ' + i);
           $scope.students.push(snapshot.val());
+          //$scope.$digest();
+          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$apply();
+          }
         });
       }
     }).then(function() {
-      console.log('then');
-      console.log($scope.students);
-      console.log('classForm');
       $scope.classForm();
     });
   }
@@ -1952,14 +1951,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.createNewStudent = function(name, surname, email, password) {
-    var config = {
-      apiKey: "AIzaSyBBKqBEuzK2MF9zm4V6u5BoqWWfdtQEF94",
-      authDomain: "thelearninggamesproject-99882.firebaseapp.com",
-      databaseURL: "https://thelearninggamesproject-99882.firebaseio.com",
-      storageBucket: "thelearninggamesproject-99882.appspot.com",
-      messagingSenderId: "451254044984",
-    };
-    var secondaryConnection = firebase.initializeApp(config, "Secondary");
+
+    if (secondaryConnection == null) {
+      var config = {
+        apiKey: "AIzaSyBBKqBEuzK2MF9zm4V6u5BoqWWfdtQEF94",
+        authDomain: "thelearninggamesproject-99882.firebaseapp.com",
+        databaseURL: "https://thelearninggamesproject-99882.firebaseio.com",
+        storageBucket: "thelearninggamesproject-99882.appspot.com",
+        messagingSenderId: "451254044984",
+      };
+      secondaryConnection = firebase.initializeApp(config, "Secondary");
+    }
 
     secondaryConnection.auth().createUserWithEmailAndPassword(email, password).then(function(firebaseUser) {
       var sessionStudent = secondaryConnection.auth().currentUser;

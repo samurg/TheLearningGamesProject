@@ -1886,16 +1886,22 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.deleteClassroom = function(classroom) {
+
+    var student = null;
+    for (student in $scope.classroom.students) {
+      var studentClassToDeleteRef = firebase.database().ref('students/' + student + '/classrooms/' + $scope.classroom.id);
+      studentClassToDeleteRef.remove();
+    }
+
+    var teacherClassToDelefeRef = firebase.database().ref('teachers/' + sessionUser.uid + '/classrooms/' + $scope.classroom.id);
+    teacherClassToDelefeRef.remove();
+
+    var classroomHascodeRef = firebase.database().ref('hashcodes/' + $scope.classroom.hashcode);
+    classroomHascodeRef.remove();
+
     var classToDeleteRef = firebase.database().ref('classrooms/' + classroom.id);
     classToDeleteRef.remove();
 
-    var teacherClassToDelefeRef = firebase.database().ref('teachers/' + sessionUser.uid + '/classrooms/' + classroom.id);
-    teacherClassToDelefeRef.remove();
-
-    /*for (var student in $scope.classroom.students) {
-      var studentClassToDeleteRef = firebase.database().ref('students/' + student + '/classrooms/' + classroom.id);
-      studentClassToDeleteRef.remove();
-    }*/
     /*for (var item in $scope.classroom.items) {
       var classItemToDeleteRef = firebase.database().ref('items/' + item);
       classItemToDeleteRef.remove();
@@ -2283,6 +2289,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     $scope.rulesAchievementsView = false;
     $scope.rewardShopView = false;
     $scope.missionsView = false;
+    $scope.archivedClassroomsToShow = false;
   }
 
   $scope.studentHomeForm = function() {
@@ -2349,7 +2356,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
   $scope.templateStudentHomePopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverStudentHome()">VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
+      '<ion-item ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
       '<ion-item ng-click="settingsForm(); closePopoverStudentHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
@@ -2823,6 +2831,11 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
                                           /* FUNCTIONS IN HOME */
 
+  $scope.backToStudentHome = function() {
+    $scope.getClassrooms();
+    $scope.studentHomeForm();
+  }
+
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
     $scope.classroomData = null;
@@ -2846,6 +2859,11 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         });
       }
     });
+  }
+
+  $scope.showArchivedClassrooms = function(value) {
+    $scope.archivedClassroomsToShow = value;
+    $scope.closePopoverStudentHome();
   }
                     
   $scope.addClass = function(hashcode){

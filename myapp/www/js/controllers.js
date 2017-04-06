@@ -242,7 +242,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
       if (error) {
         switch (error.code) {
 			case "auth/weak-password":
-				alert("CORREO INVALIDO O NO EXISTENTE");
+				alert("LA CONTRASEÑA DEBE SER DE AL MENOS 6 CARACTERES");
 				break;
 			case "auth/email-already-in-use":
 				alert("EL CORREO INDICADO YA SE ENCUETNRA EN USO");
@@ -962,7 +962,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form class="list">'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentEmail || !newStudentPassword || newStudentPassword!=newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentEmail || !newStudentPassword || newStudentPassword != newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -1030,7 +1030,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.studentProfileModal = '<ion-modal-view>'+
     '<ion-content>'+
       '<h3 id="teams-heading5" class="teams-hdg5">'+
-        '<a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>'+
+        '<a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="teacherHomeForm() ; closeModalStudentProfile() ; closeModalStudentDialog()"></a>'+
         '<h2>{{student.name}} {{student.surname}}</h2>'+
       '</h3>'+
       '<form id="studentProfileFormData" class="list">'+
@@ -1819,11 +1819,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN TEACHER HOME */
 
-  $scope.backToTeacherHome = function() {
-    $scope.getClassrooms();
-    $scope.teacherHomeForm();
-  }
-
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
     $scope.getStudents();
@@ -1839,11 +1834,22 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var classKey = classroomKeys.$keyAt(i);
         var loopClassroom = firebase.database().ref('classrooms/' + classKey);
         loopClassroom.on('value', function(snapshot) {
-          $scope.classrooms.push(snapshot.val());
+          var change = false;
+          var index = -1;
+          for(j = 0 ; j < $scope.classrooms.length ; j++) {
+            if($scope.classrooms[j].id == snapshot.val().id) {
+              change = true;
+              index = j;
+            }
+          }
+          if(!change) {
+            $scope.classrooms.push(snapshot.val());            
+          } else {
+            $scope.classrooms[index] = snapshot.val();
+          }
+          $scope.getClassroomsForSelection();
         });
       }
-    }).then(function() {
-      $scope.getClassroomsForSelection();
     });
   }
 
@@ -1925,14 +1931,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.archiveClassroom = function(classroom) {
     var classroomToArchiveRef = firebase.database().ref('classrooms/' + classroom.id + '/archived');
     classroomToArchiveRef.set(true).then(function() {
-      $scope.getClassrooms();
     });
   }
 
   $scope.unArchiveClassroom = function(classroom) {
     var classroomToArchiveRef = firebase.database().ref('classrooms/' + classroom.id + '/archived');
     classroomToArchiveRef.set(false).then(function() {
-      $scope.getClassrooms();
     });
   }
 
@@ -2057,11 +2061,22 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var studentKey = studentKeys.$keyAt(i);
         var loopStudent = firebase.database().ref('students/' + studentKey);
         loopStudent.on('value', function(snapshot) {
+          var change = false;
+          var index = -1;
           var student = snapshot.val();
           student.name = CryptoJS.AES.decrypt(student.name, student.id).toString(CryptoJS.enc.Utf8);
           student.surname =CryptoJS.AES.decrypt(student.surname, student.id).toString(CryptoJS.enc.Utf8);
-          $scope.students.push(student);
-          //$scope.$digest();
+          for(j = 0 ; j < $scope.students.length ; j++) {
+            if($scope.students[j].id == student.id) {
+              change = true;
+              index = j;
+            }
+          }
+          if(!change) {
+            $scope.students.push(student);
+          } else {
+            $scope.students[index] = student
+          }
           if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
             $scope.$apply();
           }
@@ -2095,7 +2110,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
     var classNotificationsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/notifications');
     classNotificationsRef.set(notification);
-    $scope.classroom.notification = notification;
+    $scope.classroom.notifications = notification;
   }
 
   $scope.createNewStudent = function(name, surname, email, password) {
@@ -2152,7 +2167,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       if (error) {
         switch (error.code) {
       case "auth/weak-password":
-        alert("CORREO INVALIDO O NO EXISTENTE");
+        alert("LA CONTRASEÑA DEBE SER DE AL MENOS 6 CARACTERES");
         break;
       case "auth/email-already-in-use":
         alert("EL CORREO INDICADO YA SE ENCUETNRA EN USO");
@@ -2207,6 +2222,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN ITEMS */
 
+  $scope.getItemsForSelection = function() {
+    $scope.itemsForSelection = $scope.items;
+    for (var element in $scope.itemsForSelection) {
+      element.selected = false;
+    }
+  }
+
   $scope.createItem = function (name, description, requirements, score, maxScore) {
     var itemsNode = $firebaseArray(itemsRef);
     itemsNode.$loaded(function() {
@@ -2242,15 +2264,23 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var itemKey = itemKeys.$keyAt(i);
         var loopItem = firebase.database().ref('items/' + itemKey);
         loopItem.on('value', function(snapshot) {
+          var change = false;
+          var index = -1;
           var item = snapshot.val();
-          $scope.items.push(item);
-          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-            $scope.$apply();
+          for(j = 0 ; j < $scope.items.length ; j++){
+            if(item.id == $scope.items[j].id){
+              change = true;
+              index = j;
+            }
           }
+          if(!change){
+            $scope.items.push(item);  
+          } else {
+            $scope.items[index] = item;
+          }
+          $scope.getItemsForSelection();
         });
       }
-    }).then(function() {
-
     });
   }
 
@@ -2519,11 +2549,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
           '<p>{itemScore}</p>'+
         '</span>'+
       '</label>'+
-      '<ion-toggle toggle-class="toggle-calm">USAR PARA NIVEL</ion-toggle>'+
-      '<div class="list-student">'+
-        '<button ng-click="closeModalItemDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
-      '</div>'+
-    '<ion-content>'+
+      '<ion-toggle toggle-class="toggle-calm" ng-disabled="true">USAR PARA NIVEL</ion-toggle>'+
+      '<button ng-click="closeModalItemDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.achievementDialogModal = '<ion-modal-view>'+
@@ -2547,10 +2575,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
           '<p>{achievementMaxLevel}</p>'+
         '</span>'+
       '</label>'+
-      '<div class="list-student">'+
-        '<button ng-click="closeModalAchievementDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
-      '</div>'+
-    '<ion-content>'+
+      '<button ng-click="closeModalAchievementDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.missionDialogModal = '<ion-modal-view>'+
@@ -2572,12 +2598,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       '<ion-list id="items-list9" class="list-student">'+
         '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{itemName}</ion-item>'+
       '</ion-list>'+
-      
-      '<div class="list-student">'+
-        '<button ng-click="closeModalMissionDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
-      '</div>'+
-
-    '<ion-content>'+
+      '<button ng-click="closeModalMissionDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.rewardDialogModal = '<ion-modal-view>'+
@@ -2601,10 +2623,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
           '<p>{rewardPrice}</p>'+
         '</span>'+
       '</label>'+
-      '<div class="list-student">'+
-        '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
-      '</div>'+
-    '<ion-content>'+
+      '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
+    '</ion-content>'+
   '</ion-modal-view>';
 
   /*
@@ -2818,7 +2838,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     });
   }
 
-
                                         /* FUNCTIONS IN SETTINGS */
 
   $scope.logOut = function() {
@@ -2830,11 +2849,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   }
 
                                           /* FUNCTIONS IN HOME */
-
-  $scope.backToStudentHome = function() {
-    $scope.getClassrooms();
-    $scope.studentHomeForm();
-  }
 
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
@@ -2855,7 +2869,19 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         var classKey = classroomKeys.$keyAt(i);
         var loopClassroom = firebase.database().ref('classrooms/' + classKey);
         loopClassroom.on('value', function(snapshot) {
-          $scope.classrooms.push(snapshot.val());
+          var change = false;
+          var index = -1;
+          for(j = 0 ; j < $scope.classrooms.length ; j++) {
+            if($scope.classrooms[j].id == snapshot.val().id) {
+              change = true;
+              index = j;
+            }
+          }
+          if(!change) {
+            $scope.classrooms.push(snapshot.val());            
+          } else {
+            $scope.classrooms[index] = snapshot.val();
+          }
         });
       }
     });
@@ -2896,7 +2922,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     $scope.closeModalAddClass();
   }
   
-
                                         /* FUNCTIONS IN CLASS */
 										
 	$scope.getItems = function() {

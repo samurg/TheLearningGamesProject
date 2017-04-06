@@ -68,7 +68,7 @@
         </ion-list>
         <div class="button-bar action_buttons">
           <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm()">{{ 'CANCEL' | translate }}</button>
-          <button id="signUp-button9" ng-disabled="!teacherName && !teacherSurname && !teacherSchool && !teacherAvatar" id="signUp-btn9" class="button button-calm button-block" ng-click="editTeacherData(teacherName, teacherSurname, teacherSchool, teacherAvatar)">{{ 'SAVE_CHANGES' | translate }}</button>
+          <button id="signUp-button9" ng-disabled="!teacherName && !teacherSurname && !teacherSchool && !teacherAvatar" id="signUp-btn9" class="button button-calm button-block" ng-click="editTeacherData(teacherName, teacherSurname,teacherSchool, teacherAvatar)">{{ 'SAVE_CHANGES' | translate }}</button>
         </div>
       </form>
       <form id="teacherProfileFormPassword">
@@ -246,11 +246,11 @@
             </label>
             <label class="item item-input list-elements">
               <span class="input-label">{{ 'MAX_SCORE' | translate }}</span>
-              <input type="text" placeholder="{{item.maxScore}}" ng-model="itemMaxScore">
+              <input type="number" placeholder="{{item.maxScore}}" ng-model="itemMaxScore">
             </label>
             <label class="item item-input list-elements">
               <span class="input-label">{{ 'SCORE' | translate }}</span>
-              <input type="text" placeholder="{{item.score}}" ng-model="itemScore">
+              <input type="number" placeholder="{{item.score}}" ng-model="itemScore">
             </label>
             <ion-toggle toggle-class="toggle-calm" ng-model="itemUseForLevel" ng-checked="item.useForLevel">USAR PARA NIVEL</ion-toggle>
           </ion-list>

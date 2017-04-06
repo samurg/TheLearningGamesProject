@@ -65,7 +65,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         var teachersArray = $firebaseArray(teachersRef);
         teachersArray.$loaded(function() {
           if (teachersArray.$getRecord(sessionUser.uid)) {
-            $state.go('teacherHome', {teacherId : sessionUser.uid});
+            $state.go('teacherHome');
             $scope.clearFormTeacher();
           } else {
             alert('NO EXISTE CUENTA DE PROFESOR');
@@ -110,7 +110,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         var studentsArray = $firebaseArray(studentsRef);
         studentsArray.$loaded(function() {
           if (studentsArray.$getRecord(sessionUser.uid)) {
-            $state.go('studentHome', {studentId : sessionUser.uid});
+            $state.go('studentHome');
             $scope.clearFormStudent();
           } else {
             alert('NO EXISTE CUENTA DE ALUMNO');
@@ -168,6 +168,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 	$scope.clearForm = function(){
     var form = document.getElementById("signUp-form2");
+    var selectGenre = document.getElementById("selectGenre").selectedIndex = 0;
     form.reset();
   }
 
@@ -186,7 +187,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
 
-  $scope.registerUser = function(name, surname, email, password, school, avatar) {
+  $scope.registerUser = function(name, surname, email, password, school, avatar, genre) {
 
     if (firebase.auth().currentUser) {
       firebase.auth().signOut();
@@ -216,8 +217,9 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'email' : sessionUser.email,
               'school' : school,
               'avatar' : avatar,
+              'genre' : genre,
             }).then(function() {
-              $state.go('teacherHome', {teacherId : sessionUser.uid});
+              $state.go('teacherHome');
               $scope.clearForm();
             });
           } else if (signUpType === 'student') { //STUDENT
@@ -229,14 +231,13 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'email' : sessionUser.email,
               'school' : school,
               'avatar' : avatar,
+              'genre' : genre,
             }).then(function() {
-              $state.go('studentHome', {studentId : sessionUser.uid});
+              $state.go('studentHome');
               $scope.clearForm();
             });
           }
         });
-      } else {
-        //No user is signed in.
       }
     }).catch(function(error) {
       if (error) {
@@ -956,7 +957,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form class="list">'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentEmail || !newStudentPassword || newStudentPassword != newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentGenre || !newStudentEmail || !newStudentPassword || newStudentPassword != newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentGenre, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -972,6 +973,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
               '<span class="input-label">'+
                 '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'SURNAME\' | translate }}</span>'+
               '<input type="text" placeholder="" ng-model="newStudentSurname">'+
+            '</label>'+
+            '<label class="item item-input item-select">'+
+              '<span class="input-label">GENERO</span>'+
+                '<i class="icon ion-transgender"></i></span>'+
+              '<select id="selectGenre" ng-model="newStudentGenre">'+
+                  '<option>MUJER</option>'+
+                  '<option>HOMBRE</option>'+
+              '</select>'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input5">'+
               '<span class="input-label">'+
@@ -1224,11 +1233,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemScore}" ng-model="newItemScore">'+
+            '<input type="number" placeholder="{itemScore}" ng-model="newItemScore">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemMaxScore}" ng-model="newItemMaxScore">'+
+            '<input type="number" placeholder="{itemMaxScore}" ng-model="newItemMaxScore">'+
           '</label>'+
           '<ion-toggle toggle-class="toggle-calm" ng-model="newItemUseForLevel">USAR PARA NIVEL</ion-toggle>'+
         '</ion-list>'+
@@ -1262,7 +1271,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">MÁXIMO NIVEL</span>'+
-          '<input type="text" placeholder="{achievementMaxLevel}" ng-model="maxLevel">'+
+          '<input type="number" placeholder="{achievementMaxLevel}" ng-model="maxLevel">'+
         '</label>'+
       '</ion-list>'+
       '</form>'+
@@ -1292,7 +1301,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PRECIO</span>'+
-            '<input type="text" placeholder="PRECIO" ng-model="rewardPrice">'+
+            '<input type="number" placeholder="PRECIO" ng-model="rewardPrice">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
@@ -1322,7 +1331,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PRECIO</span>'+
-            '<input type="text" placeholder="{{reward.price}}" ng-model="editRewardPrice">'+
+            '<input type="number" placeholder="{{reward.price}}" ng-model="editRewardPrice">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
@@ -1782,8 +1791,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         $scope.teacher.surname = CryptoJS.AES.decrypt($scope.teacher.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
         $scope.getClassrooms();
       })
-    } else {
-      
     }
   });
 
@@ -1828,13 +1835,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
                                         /* FUNCTIONS IN TEACHER HOME */
-
-  $scope.setClassroom = function(classroom) {
-    $scope.classroom = classroom;
-    $scope.getStudents();
-    $scope.getItems();
-    $scope.getRewards();
-  }
 
   $scope.getClassrooms = function() {
     var teacherClassroomsRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms');
@@ -1939,6 +1939,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.getClassrooms();
   }
 
+  $scope.setClassroom = function(classroom) {
+    $scope.classroom = classroom;
+    $scope.getStudents();
+    $scope.getItems();
+    $scope.getRewards();
+  }
+
   $scope.archiveClassroom = function(classroom) {
     var classroomToArchiveRef = firebase.database().ref('classrooms/' + classroom.id + '/archived');
     classroomToArchiveRef.set(true).then(function() {
@@ -1958,15 +1965,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.duplicateClassroom = function(classroom) {
     //DUPLICATE ACTION GOES HERE
-  }
-
-  $scope.changeSelectedClassroom = function(position){
-    var pos = $scope.classroomsForSelection.indexOf(position);
-    if ($scope.classroomsForSelection[pos].selected === false) {
-      $scope.classroomsForSelection[pos].selected = true;
-    } else {
-      $scope.classroomsForSelection[pos].selected = false;
-    }
   }
 
   $scope.selectClassrooms = function() {
@@ -1998,6 +1996,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       }
     }
   }
+
+  $scope.changeSelectedClassroom = function(position){
+    var pos = $scope.classroomsForSelection.indexOf(position);
+    if ($scope.classroomsForSelection[pos].selected === false) {
+      $scope.classroomsForSelection[pos].selected = true;
+    } else {
+      $scope.classroomsForSelection[pos].selected = false;
+    }
+  }
+
+  
 
 
                                         /* FUNCTIONS IN TEACHER PROFILE */
@@ -2057,12 +2066,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN CLASS */
 
-
-  $scope.setStudent = function(student) {
-    $scope.student = student;
-    $scope.showModalStudentDialog();
-  }
-  
   $scope.getStudents = function() {
     var classroomStudentsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students');
     var studentKeys = $firebaseArray(classroomStudentsRef);
@@ -2108,25 +2111,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.setOpening = function(opening) {
-    if(opening == undefined){
-      opening = false;
-    }
-    var classOpeningRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/open');
-    classOpeningRef.set(opening);
-    $scope.classroom.open = opening;
-  }
-
-  $scope.setNotifications = function(notification) {
-    if(notification == undefined){
-      notification = false;
-    }
-    var classNotificationsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/notifications');
-    classNotificationsRef.set(notification);
-    $scope.classroom.notifications = notification;
-  }
-
-  $scope.createNewStudent = function(name, surname, email, password) {
+  $scope.createNewStudent = function(name, surname, genre, email, password) {
 
     if (secondaryConnection == null) {
       var config = {
@@ -2156,6 +2141,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             'email' : sessionStudent.email,
             'school' : $scope.teacher.school,
             'avatar' : sessionStudent.photoURL,
+            'genre' : genre
           }).then(function() {
             var newClassStudentRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students/' + sessionStudent.uid);
             newClassStudentRef.set(true);
@@ -2173,8 +2159,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             $scope.getStudents();
           });
         });
-      } else {
-        //No user is signed in.
       }
     }).catch(function(error) {
       if (error) {
@@ -2194,25 +2178,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
     });
   }
-  
-  $scope.changeSelectedStudent = function(position){
-    var pos = $scope.studentsForSelection.indexOf(position);
-    if ($scope.studentsForSelection[pos].selected === false) {
-      $scope.studentsForSelection[pos].selected = true;
-    } else {
-      $scope.studentsForSelection[pos].selected = false;
-    }
-  }
-
-  $scope.selectStudents = function() {
-    $scope.closeSelectStudentsModal();
-    for (var element in $scope.studentsForSelection) {
-      if ($scope.studentsForSelection[element].selected === true) {
-        $scope.deleteStudent($scope.studentsForSelection[element]);
-      }
-    }
-    $scope.studentsForSelection = $scope.students;
-  }
 
   $scope.deleteStudent = function(student) {
     var studentClassRef = firebase.database().ref('students/' + student.id + '/classrooms/' + $scope.classroom.id);
@@ -2231,11 +2196,82 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.getStudents();
   }
 
+  $scope.setStudent = function(student) {
+    $scope.student = student;
+    $scope.showModalStudentDialog();
+  }
+
+  $scope.setOpening = function(opening) {
+    if(opening == undefined){
+      opening = false;
+    }
+    var classOpeningRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/open');
+    classOpeningRef.set(opening);
+    $scope.classroom.open = opening;
+  }
+
+  $scope.setNotifications = function(notification) {
+    if(notification == undefined){
+      notification = false;
+    }
+    var classNotificationsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/notifications');
+    classNotificationsRef.set(notification);
+    $scope.classroom.notifications = notification;
+  }
+
+  $scope.selectStudents = function() {
+    $scope.closeSelectStudentsModal();
+    for (var element in $scope.studentsForSelection) {
+      if ($scope.studentsForSelection[element].selected === true) {
+        $scope.deleteStudent($scope.studentsForSelection[element]);
+      }
+    }
+    $scope.studentsForSelection = $scope.students;
+  }
+  
+  $scope.changeSelectedStudent = function(position){
+    var pos = $scope.studentsForSelection.indexOf(position);
+    if ($scope.studentsForSelection[pos].selected === false) {
+      $scope.studentsForSelection[pos].selected = true;
+    } else {
+      $scope.studentsForSelection[pos].selected = false;
+    }
+  }
+
+  
+  
+
                                         /* FUNCTIONS IN ITEMS */
 
-  $scope.setItem = function(item) {
-    $scope.item = item;
-    $scope.itemsForm();
+  $scope.getItems = function() {
+    var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
+    var itemKeys = $firebaseArray(classroomItemsRef);
+    itemKeys.$loaded(function() {
+      $scope.items = [];
+      for (i = 0 ; i < itemKeys.length ; i++) {
+        var itemKey = itemKeys.$keyAt(i);
+        var loopItem = firebase.database().ref('items/' + itemKey);
+        loopItem.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var item = snapshot.val();
+            for(j = 0 ; j < $scope.items.length ; j++){
+              if(item.id == $scope.items[j].id){
+                change = true;
+                index = j;
+              }
+            }
+            if(!change){
+              $scope.items.push(item);  
+            } else {
+              $scope.items[index] = item;
+            }
+            $scope.getItemsForSelection();
+          }
+        });
+      }
+    });
   }
 
   $scope.getItemsForSelection = function() {
@@ -2270,6 +2306,25 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         $scope.getItems();
       });  
     });
+  }
+
+  $scope.deleteItem = function(item) {
+    var itemRef = firebase.database().ref('items/' + item.id);
+    itemRef.remove();
+
+    var classItemRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items/' + item.id);
+    classItemRef.remove();
+    
+    //ELIMINAR LOS ITEMS DE ESTUDIANTES 
+
+    //ELIMINAR LOS LOGROS DEL ITEM EN ESTUDIANTES
+
+    $scope.getItems();
+  }
+
+  $scope.setItem = function(item) {
+    $scope.item = item;
+    $scope.itemsForm();
   }
 
   $scope.editItem = function(name, description, requirements, score, maxScore, useForLevel) {
@@ -2324,43 +2379,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.rulesForm();
   }
 
-  $scope.getItems = function() {
-    var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
-    var itemKeys = $firebaseArray(classroomItemsRef);
-    itemKeys.$loaded(function() {
-      $scope.items = [];
-      for (i = 0 ; i < itemKeys.length ; i++) {
-        var itemKey = itemKeys.$keyAt(i);
-        var loopItem = firebase.database().ref('items/' + itemKey);
-        loopItem.on('value', function(snapshot) {
-          if (snapshot.val() != null) {
-            var change = false;
-            var index = -1;
-            var item = snapshot.val();
-            for(j = 0 ; j < $scope.items.length ; j++){
-              if(item.id == $scope.items[j].id){
-                change = true;
-                index = j;
-              }
-            }
-            if(!change){
-              $scope.items.push(item);  
-            } else {
-              $scope.items[index] = item;
-            }
-            $scope.getItemsForSelection();
-          }
-        });
-      }
-    });
-  }
+  
 
                                         /* FUNCTIONS IN REWARDS */
-
-  $scope.setReward = function(reward) {
-    $scope.reward = reward;
-    $scope.showModalEditReward();
-  }
 
   $scope.getRewards = function() {
     var classroomRewardsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/rewards');
@@ -2391,17 +2412,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         });
       }
     });
-  }
-  
-                                            /* FUNCTIONS IN ITEMS VIEW*/
-
-  $scope.setUseLevel = function(useForLevel) {
-    if(useForLevel == undefined) {
-      useForLevel = false;
-    }
-    var itemUseLevelRef = firebase.database().ref('items/' + $scope.item.id + '/useForLevel');
-    itemUseLevelRef.set(useForLevel);
-    $scope.item.useForLevel = useForLevel;
   }
 
   $scope.getRewardsForSelection = function() {
@@ -2435,33 +2445,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   }
 
-  $scope.changeSelectedReward = function(position){
-    var pos = $scope.rewardsForSelection.indexOf(position);
-    if ($scope.rewardsForSelection[pos].selected === false) {
-      $scope.rewardsForSelection[pos].selected = true;
-    } else {
-      $scope.rewardsForSelection[pos].selected = false;
-    }
-  }
-
-  $scope.selectRewards = function() {
-    $scope.closeSelectRewardsModal();
-    if ($scope.actionSheetRewardsType === 'delete') {
-      for (var element in $scope.rewardsForSelection) {
-        if ($scope.rewardsForSelection[element].selected === true) {
-          $scope.deleteReward($scope.rewardsForSelection[element]);
-        }
-      }
-    $scope.rewardsForSelection = $scope.rewards;
-    } else if ($scope.actionSheetRewardsType === 'duplicate') {
-      for (var element in $scope.rewardsForSelection) {
-        if ($scope.rewardsForSelection[element].selected === true) {
-          $scope.duplicateReward($scope.rewardsForSelection[element]);
-        }
-      }
-    }
-  }
-
   $scope.deleteReward = function(reward) {
     var classroomRewardRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/rewards/' + reward.id);
     classroomRewardRef.remove();
@@ -2476,6 +2459,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }*/
 
     $scope.getRewards();
+  }
+
+  $scope.setReward = function(reward) {
+    $scope.reward = reward;
+    $scope.showModalEditReward();
   }
 
   $scope.editRewardData = function(name, description, permission, price) {
@@ -2523,6 +2511,33 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     alert('DATOS CAMBIADOS');
   }
 
+  $scope.selectRewards = function() {
+    $scope.closeSelectRewardsModal();
+    if ($scope.actionSheetRewardsType === 'delete') {
+      for (var element in $scope.rewardsForSelection) {
+        if ($scope.rewardsForSelection[element].selected === true) {
+          $scope.deleteReward($scope.rewardsForSelection[element]);
+        }
+      }
+    $scope.rewardsForSelection = $scope.rewards;
+    } else if ($scope.actionSheetRewardsType === 'duplicate') {
+      for (var element in $scope.rewardsForSelection) {
+        if ($scope.rewardsForSelection[element].selected === true) {
+          $scope.duplicateReward($scope.rewardsForSelection[element]);
+        }
+      }
+    }
+  }
+
+  $scope.changeSelectedReward = function(position){
+    var pos = $scope.rewardsForSelection.indexOf(position);
+    if ($scope.rewardsForSelection[pos].selected === false) {
+      $scope.rewardsForSelection[pos].selected = true;
+    } else {
+      $scope.rewardsForSelection[pos].selected = false;
+    }
+  }
+
 }])
 
 
@@ -2555,7 +2570,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     $scope.settingsView = false;
     $scope.classView = false;
     $scope.rulesItemsView = false;
-    $scope.rulesAchievementsView = false;
+    $scope.itemsView = false;
     $scope.rewardShopView = false;
     $scope.missionsView = false;
     $scope.archivedClassroomsToShow = false;
@@ -2997,8 +3012,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         $scope.student.surname = CryptoJS.AES.decrypt($scope.student.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
 		    $scope.getClassrooms();
       })
-    } else {
-      
     }
   });
   
@@ -3084,17 +3097,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
                                           /* FUNCTIONS IN HOME */
 
-  $scope.setClassroom = function(classroom) {
-    $scope.classroom = classroom;
-    $scope.classroomData = null;
-    var loopClassroom = firebase.database().ref('students/' + sessionUser.uid + '/classrooms/' + $scope.classroom.id);
-      loopClassroom.on('value', function(snapshot) {
-        $scope.classroomData = snapshot.val();
-    });
-    $scope.getItems();
-    $scope.rulesItemsForm();
-  }
-
   $scope.getClassrooms = function() {
     var studentClassroomsRef = firebase.database().ref('students/' + $scope.student.$id + '/classrooms');
     var classroomKeys = $firebaseArray(studentClassroomsRef);
@@ -3124,11 +3126,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     });
   }
 
-  $scope.showArchivedClassrooms = function(value) {
-    $scope.archivedClassroomsToShow = value;
-    $scope.closePopoverStudentHome();
-  }
-                    
   $scope.addClass = function(hashcode){
     var hashcodesArray = $firebaseArray(hashcodesRef);
     hashcodesArray.$loaded(function() {
@@ -3158,15 +3155,28 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     })
     $scope.closeModalAddClass();
   }
+
+  $scope.setClassroom = function(classroom) {
+    $scope.classroom = classroom;
+    $scope.classroomData = null;
+    var loopClassroom = firebase.database().ref('students/' + sessionUser.uid + '/classrooms/' + $scope.classroom.id);
+      loopClassroom.on('value', function(snapshot) {
+        $scope.classroomData = snapshot.val();
+    });
+    $scope.getItems();
+    $scope.rulesItemsForm();
+  }
+
+  $scope.showArchivedClassrooms = function(value) {
+    $scope.archivedClassroomsToShow = value;
+    $scope.closePopoverStudentHome();
+  }
+                    
+  
   
                                         /* FUNCTIONS IN CLASS */
 
-  $scope.setItem = function(item) {
-    $scope.item = item;
-    $scope.itemsForm();
-  }
-										
-	$scope.getItems = function() {
+  $scope.getItems = function() {
     var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
     var itemKeys = $firebaseArray(classroomItemsRef);
     itemKeys.$loaded(function() {
@@ -3221,7 +3231,13 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       }
     });
   }
-  }])
+
+  $scope.setItem = function(item) {
+    $scope.item = item;
+    $scope.itemsForm();
+  }
+
+}])
 
 
 

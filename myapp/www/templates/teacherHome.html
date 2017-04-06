@@ -324,7 +324,6 @@
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalEditMission()">
           <h2>{missionName}</h2>
-          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">
@@ -345,9 +344,8 @@
         <p>TIENDA DE RECOMPENSAS</p>
       </h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalEditReward()">
-          <h2>{rewardName}</h2>
-          <ion-option-button class="button-assertive">{{ 'DELETE' | translate }}</ion-option-button>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewards" ng-click="setReward(reward)">
+          <h2>{{reward.name}}</h2>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">

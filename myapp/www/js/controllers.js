@@ -1230,11 +1230,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
             '<input type="text" placeholder="{itemMaxScore}" ng-model="newItemMaxScore">'+
           '</label>'+
+          '<ion-toggle toggle-class="toggle-calm" ng-model="newItemUseForLevel">USAR PARA NIVEL</ion-toggle>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="createItem(newItemName, newItemDescription, newItemRequirements, newItemScore, newItemMaxScore)" ng-disabled="!newItemName || !newItemDescription || !newItemRequirements || !newItemScore || !newItemMaxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createItem(newItemName, newItemDescription, newItemRequirements, newItemScore, newItemMaxScore, newItemUseForLevel)" ng-disabled="!newItemName || !newItemDescription || !newItemRequirements || !newItemScore || !newItemMaxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -2233,6 +2234,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN ITEMS */
 
+  $scope.setItem = function(item) {
+    $scope.item = item;
+    $scope.itemsForm();
+  }
+
   $scope.getItemsForSelection = function() {
     $scope.itemsForSelection = $scope.items;
     for (var element in $scope.itemsForSelection) {
@@ -2240,7 +2246,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.createItem = function (name, description, requirements, score, maxScore) {
+  $scope.createItem = function (name, description, requirements, score, maxScore, useForLevel) {
     var itemsNode = $firebaseArray(itemsRef);
     itemsNode.$loaded(function() {
       itemsNode.$add({
@@ -2249,6 +2255,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         'requirements' : requirements,
         'score' : score,
         'maxScore' : maxScore,
+        'useForLevel' : useForLevel
       }).then(function(ref) {
         var id = ref.key;
 
@@ -2264,6 +2271,58 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         $scope.getItems();
       });  
     });
+  }
+
+  $scope.editItem = function(name, description, requirements, score, maxScore, useForLevel) {
+    if(name != undefined && description != undefined && requirements != undefined && score != undefined && maxScore != undefined){
+      var itemRef = firebase.database().ref('items/' + $scope.item.id);
+      if(useForLevel != $scope.item.useForLevel && useForLevel != undefined) {
+        var itemUse = useForLevel
+      } else {
+        var itemUse = $scope.item.useForLevel
+      }
+      var itemEdit = {
+        'id' : $scope.item.id,
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'score' : score,
+        'maxScore' : maxScore,
+        'useForLevel' : itemUse,
+      };
+      itemRef.set(itemEdit);
+    } else {
+      if(name != undefined) {
+        var itemNameRef = firebase.database().ref('items/' + $scope.item.id + '/name');
+        itemNameRef.set(name);
+      }
+
+      if(description != undefined) {
+        var itemDescriptionRef = firebase.database().ref('items/' + $scope.item.id + '/description');
+        itemDescriptionRef.set(description);
+      }
+
+      if(requirements != undefined) {
+        var itemRequirementsRef = firebase.database().ref('items/' + $scope.item.id + '/requirements');
+        itemRequirementsRef.set(requirements);
+      }
+
+      if(score != undefined) {
+        var itemScoreRef = firebase.database.ref('items/' + $scope.item.id + '/score');
+        itemScoreRef.set(score);
+      }
+
+      if(maxScore != undefined) {
+        var itemMaxScoreRef = firebase.database().ref('items/' + $scope.item.id + '/maxScore');
+        itemMaxScoreRef.set(maxScore);
+      }
+
+      if(useForLevel != $scope.item.useForLevel && useForLevel != undefined) {
+        var itemUseLevelRef = firebase.database().ref('items/' + $scope.item.id + '/useForLevel');
+        itemUseLevelRef.set(useForLevel);
+      }
+    }
+    $scope.rulesForm();
   }
 
   $scope.getItems = function() {
@@ -2333,6 +2392,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         });
       }
     });
+  }
+  
+                                            /* FUNCTIONS IN ITEMS VIEW*/
+
+  $scope.setUseLevel = function(useForLevel) {
+    if(useForLevel == undefined) {
+      useForLevel = false;
+    }
+    var itemUseLevelRef = firebase.database().ref('items/' + $scope.item.id + '/useForLevel');
+    itemUseLevelRef.set(useForLevel);
+    $scope.item.useForLevel = useForLevel;
   }
 
   $scope.getRewardsForSelection = function() {
@@ -2520,9 +2590,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     $scope.rulesItemsView = true;
   }
 
-  $scope.rulesAchievementsForm = function() {
+  $scope.itemsForm = function() {
     $scope.allFalse();
-    $scope.rulesAchievementsView = true;
+    $scope.itemsView = true;
   }
 
   $scope.rewardShopForm = function() {
@@ -2717,38 +2787,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         '<button class="button button-calm  button-block" ng-click="closeModalAddClass()">{{ \'CANCEL\' | translate }}</button>'+
         '<button class="button button-calm  button-block" ng-disabled="!hashCode" ng-click="addClass(hashCode)">AÑADIR CLASE</button>'+
       '</div>'+
-    '</ion-content>'+
-  '</ion-modal-view>';
-
-  $scope.itemDialogModal = '<ion-modal-view>'+
-    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{itemName}</h3>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
-          '<p>{itemDescription}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
-          '<p>{itemRequirements}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'MAX_SCORE\' | translate }}'+
-          '<p>{itemMaxScore}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'SCORE\' | translate }}'+
-          '<p>{itemScore}</p>'+
-        '</span>'+
-      '</label>'+
-      '<ion-toggle toggle-class="toggle-calm" ng-disabled="true">USAR PARA NIVEL</ion-toggle>'+
-      '<button ng-click="closeModalItemDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
   '</ion-modal-view>';
 
@@ -3056,6 +3094,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         $scope.classroomData = snapshot.val();
     });
     $scope.getItems();
+    $scope.rulesItemsForm();
   }
 
   $scope.getClassrooms = function() {
@@ -3121,6 +3160,11 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   }
   
                                         /* FUNCTIONS IN CLASS */
+
+  $scope.setItem = function(item) {
+    $scope.item = item;
+    $scope.itemsForm();
+  }
 										
 	$scope.getItems = function() {
     var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
@@ -3128,34 +3172,54 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     itemKeys.$loaded(function() {
       $scope.items = [];
       for(i = 0 ; i < itemKeys.length ; i++) {
+        $scope.itemsLocked = [];
+        $scope.itemsUnlocked = [];
         var itemKey = itemKeys.$keyAt(i);
-        var loopItems = firebase.database().ref('items/' + itemKey);
-        loopItems.on('value', function(snapshot) {
-          /* SE NECESITA QUE EL ESTUDIANTE DESBLOQUEE EL LOGRO PARA SACAR LA PUNTUACION QUE TIENE EN EL MISMO
-          var itemStudent = firebase.database().ref('students/' + $scope.student.id + '/items/' + itemKey);
-          itemStudent.on('value', function(snapshot1) {
-            $scope.items.push({
-              id : snapshot.val().id,
-              description : snapshot.val().description,
-              requirements : snapshot.val().requirements,
-              score : snapshot.val().score,
-              maxScore : snapshot.val().maxScore,
-              studentsPoints : snapshot1.val()
-            })
-          });*/
-          $scope.items.push(snapshot.val());
-          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-            $scope.$apply();
-          }
+        var loopItemsRef = firebase.database().ref('items/' + itemKey);
+        loopItemsRef.on('value', function(snapshot) {
+          var itemStudentRef = firebase.database().ref('students' + $scope.student.id + '/items');
+          var itemStudentArray = $firebaseArray(itemStudentRef);
+          itemStudentArray.$loaded (function() {
+            var itemStudent = itemStudentArray.$getRecord(itemKey);
+            if(itemStudent == null){
+              var change = false;
+              var index = -1;
+              var item = snapshot.val();
+              for(j = 0 ; j < $scope.itemsLocked.length ; j++){
+                if(item.id == $scope.itemsLocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = 0;
+                }
+              }
+              if (!change) {
+                $scope.itemsLocked.push(item);
+              } else {
+                $scope.itemsLocked[index] = item;
+              }
+            } else {
+              var change = false;
+              var index = -1;
+              var item = snapshot.val();
+              for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
+                if(item.id == $scope.itemsUnlocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = 0;
+                }
+              }
+              if (!change) {
+                $scope.itemsUnlocked.push(item);
+              } else {
+                $scope.itemsUnlocked[index] = item;
+              }
+            }
+          });
         });
       }
-    }).then(function() {
-      $scope.rulesItemsForm();
     });
   }
-
-
-}])
+  }])
 
 
 

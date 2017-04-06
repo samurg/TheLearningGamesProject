@@ -1411,7 +1411,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 		$scope.editMissionModal.show();
   }
 
-                                        /* SELECT STUDENTS MODAL */
+                                        /* SELECT REWARDS MODAL */
+
   $scope.selectRewardsModal = $ionicModal.fromTemplate($scope.selectRewardsModal, {
     scope: $scope,
     animation: 'slide-in-up'
@@ -1904,7 +1905,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.deleteClassroom = function(classroom) {
-
     for (var student in classroom.students) {
       var studentClassToDeleteRef = firebase.database().ref('students/' + student + '/classrooms/' + classroom.id);
       studentClassToDeleteRef.remove();
@@ -2215,7 +2215,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.deleteStudent = function(student) {
-
     var studentClassRef = firebase.database().ref('students/' + student.id + '/classrooms/' + $scope.classroom.id);
     studentClassRef.remove();
 
@@ -2464,7 +2463,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.deleteReward = function(reward) {
-
     var classroomRewardRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/rewards/' + reward.id);
     classroomRewardRef.remove();
 
@@ -3106,18 +3104,20 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         var classKey = classroomKeys.$keyAt(i);
         var loopClassroom = firebase.database().ref('classrooms/' + classKey);
         loopClassroom.on('value', function(snapshot) {
-          var change = false;
-          var index = -1;
-          for(j = 0 ; j < $scope.classrooms.length ; j++) {
-            if($scope.classrooms[j].id == snapshot.val().id) {
-              change = true;
-              index = j;
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            for(j = 0 ; j < $scope.classrooms.length ; j++) {
+              if($scope.classrooms[j].id == snapshot.val().id) {
+                change = true;
+                index = j;
+              }
             }
-          }
-          if(!change) {
-            $scope.classrooms.push(snapshot.val());            
-          } else {
-            $scope.classrooms[index] = snapshot.val();
+            if(!change) {
+              $scope.classrooms.push(snapshot.val());            
+            } else {
+              $scope.classrooms[index] = snapshot.val();
+            }
           }
         });
       }
@@ -3177,44 +3177,46 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         var itemKey = itemKeys.$keyAt(i);
         var loopItemsRef = firebase.database().ref('items/' + itemKey);
         loopItemsRef.on('value', function(snapshot) {
-          var itemStudentRef = firebase.database().ref('students' + $scope.student.id + '/items');
-          var itemStudentArray = $firebaseArray(itemStudentRef);
-          itemStudentArray.$loaded (function() {
-            var itemStudent = itemStudentArray.$getRecord(itemKey);
-            if(itemStudent == null){
-              var change = false;
-              var index = -1;
-              var item = snapshot.val();
-              for(j = 0 ; j < $scope.itemsLocked.length ; j++){
-                if(item.id == $scope.itemsLocked[j].id){
-                    change = true;
-                    index = j;
-                    item.studentPoints = 0;
+          if (snapshot.val() != null) {
+            var itemStudentRef = firebase.database().ref('students' + $scope.student.id + '/items');
+            var itemStudentArray = $firebaseArray(itemStudentRef);
+            itemStudentArray.$loaded (function() {
+              var itemStudent = itemStudentArray.$getRecord(itemKey);
+              if(itemStudent == null){
+                var change = false;
+                var index = -1;
+                var item = snapshot.val();
+                for(j = 0 ; j < $scope.itemsLocked.length ; j++){
+                  if(item.id == $scope.itemsLocked[j].id){
+                      change = true;
+                      index = j;
+                      item.studentPoints = 0;
+                  }
+                }
+                if (!change) {
+                  $scope.itemsLocked.push(item);
+                } else {
+                  $scope.itemsLocked[index] = item;
+                }
+              } else {
+                var change = false;
+                var index = -1;
+                var item = snapshot.val();
+                for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
+                  if(item.id == $scope.itemsUnlocked[j].id){
+                      change = true;
+                      index = j;
+                      item.studentPoints = 0;
+                  }
+                }
+                if (!change) {
+                  $scope.itemsUnlocked.push(item);
+                } else {
+                  $scope.itemsUnlocked[index] = item;
                 }
               }
-              if (!change) {
-                $scope.itemsLocked.push(item);
-              } else {
-                $scope.itemsLocked[index] = item;
-              }
-            } else {
-              var change = false;
-              var index = -1;
-              var item = snapshot.val();
-              for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
-                if(item.id == $scope.itemsUnlocked[j].id){
-                    change = true;
-                    index = j;
-                    item.studentPoints = 0;
-                }
-              }
-              if (!change) {
-                $scope.itemsUnlocked.push(item);
-              } else {
-                $scope.itemsUnlocked[index] = item;
-              }
-            }
-          });
+            });
+          }
         });
       }
     });

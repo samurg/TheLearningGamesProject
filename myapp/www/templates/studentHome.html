@@ -134,10 +134,7 @@
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
         <p>{{ 'RULES' | translate }}</p>
       </h3>
-      <div id="class-button-bar5" class="button-bar">
-        <button id="class-button26" ng-click="rulesItemsForm()" class="button button-light  button-outline">{{ 'ITEMS' | translate }}</button>
-        <button id="class-button29" ng-click="rulesAchievementsForm()" class="button button-light  button-outline">{{ 'ACHIEVEMENTS' | translate }}</button>
-      </div>
+      <button id="class-button26" ng-click="rulesItemsForm()" class="button button-light  button-outline">{{ 'ITEMS' | translate }}</button>
       <div>
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="inputLabelProfile">
@@ -152,32 +149,75 @@
           </span>
         </label>
       </div>
+      <h3 id="teacherHome-heading1" class="margin-top-null">ITEMS DESBLOQUEADOS</h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-repeat="item in items" ng-click="showModalItemDialog()">
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="item in itemsUnlocked" ng-click="setItem(item)">
           <h2>{{item.name}}</h2>
-          <p>{{studentPoints}}</p>
+          <p>{{item.studentPoints}}</p>
+        </ion-item>
+      </ion-list>
+      <h3 id="teacherHome-heading1" class="margin-top-null">ITEMS BLOQUEADOS</h3>
+      <ion-list id="teacherHome-list16" class="list-elements align-text-center">
+        <ion-item id="teacherHome-list-item47" class="list-student" ng-repeat="item in itemsLocked" ng-click="setItem(item)">
+          <h2>{{item.name}}</h2>
+          <p>{{item.studentPoints}}</p>
         </ion-item>
       </ion-list>
     </div>
 
-    <!-- Rules Achievements Page -->
+    <!-- Items Page -->
 
-    <div ng-show="rulesAchievementsView">
-      <h3 id="teams-heading5" class="teams-hdg5">
+    <div ng-show="itemsView">
+      <h3 id="achievements-heading13" class="achievements-hdg13">
         <a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>
-        <span ng-click="rulesItemsForm()">{classroomName}</span>
+        <span ng-click="classForm()">{{classroom.name}}</span>
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
-        <p>{{ 'RULES' | translate }}</p>
+        <p>{{item.name}}</p>
       </h3>
-      <div id="class-button-bar5" class="button-bar">
-        <button id="class-button26" ng-click="rulesItemsForm()"  class="button button-light  button-outline">{{ 'ITEMS' | translate }}</button>
-        <button id="class-button29" ng-click="rulesAchievementsForm()"  class="button button-light  button-outline">{{ 'ACHIEVEMENTS' | translate }}</button>
+      <div class="list-student list-elements">
+        <div class="avatar_content">
+          <img src={{item.picture}} class="avatar">
+        </div>
       </div>
-      <ion-list id="teams-list10" class="list-elements">
-        <ion-item class="item-thumbnail-left  list-student" id="teams-list-item21" ng-click="showModalAchievementDialog()">
+      <div class="list-team list-elements">
+        <form id="editItemForm" class="list list-student fullScreen">
+          <ion-list>
+            <label class="item item-input list-elements">
+              <span class="input-label">{{ 'NAME' | translate }}</span>
+              <p>{{item.name}}</p>
+            </label>
+            <label class="item item-input list-elements">
+              <span class="input-label">{{ 'DESCRIPTION' | translate }}</span>
+              <p>{{item.description}}</p>
+            </label>
+            <label class="item item-input list-elements">
+              <span class="input-label">{{ 'REQUIREMENTS' | translate }}</span>
+              <p>{{item.requirements}}</p>
+            </label>
+            <label class="item item-input list-elements">
+              <span class="input-label">{{ 'MAX_SCORE' | translate }}</span>
+              <p>{{item.maxScore}}</p>
+            </label>
+            <label class="item item-input list-elements">
+              <span class="input-label">{{ 'SCORE' | translate }}</span>
+              <p>{{item.score}}</p>
+            </label>
+            <ion-toggle toggle-class="toggle-calm" ng-model="itemUseForLevel" ng-disabled="true" ng-checked="item.useForLevel">USAR PARA NIVEL</ion-toggle>
+          </ion-list>
+        </form>
+      </div>
+      <h3 id="teams-heading5" class="teams-hdg5">{{ 'ACHIEVEMENTS' | translate }}</h3>
+      <ion-list id="items-list9" class="list-elements align-text-center">
+        <ion-item ng-click="achievementsForm()">
           <h2>{achievementName}</h2>
         </ion-item>
+        <ion-item id="items-list-item15" class="list-item" ng-click="achievementsForm()" ng-repeat="achievement in achievements">
+          <h2>{{achievementName}}</h2>
+        </ion-item>
       </ion-list>
+      <button class="button button-positive button-float addButton" ng-click="showActionsheetAchievements()">
+          <i class="icon ion-plus"></i>
+      </button>
     </div>
 
     <!-- Reward Shop Page -->
@@ -185,7 +225,7 @@
     <div ng-show="rewardShopView">
       <h3 id="class-heading2">
         <a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>
-        <span ng-click="rulesItemsForm()">{classroomName}</span>
+        <span ng-click="rulesItemsForm()">{{classroom.name}}</span>
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
         <p>TIENDA DE RECOMPENSAS</p>
       </h3>
@@ -202,7 +242,7 @@
     <div ng-show="missionsView">
       <h3 id="class-heading2">
         <a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>
-        <span ng-click="rulesItemsForm()">{classroomName}</span>
+        <span ng-click="rulesItemsForm()">{{classroom.name}}</span>
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverMissions($event)"></a>
         <p>MISIONES PENDIENTES</p>
       </h3>

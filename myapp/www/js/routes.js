@@ -21,13 +21,13 @@ angular.module('app.routes', [])
   })
 
   .state('teacherHome', {
-    url: '/teacherHome/{teacherId}',
+    url: '/teacherHome',
     templateUrl: 'templates/teacherHome.html',
     controller: 'teacherHomeCtrl'
   })
 
   .state('studentHome', {
-    url: '/studentHome/{studentId}',
+    url: '/studentHome',
     templateUrl: 'templates/studentHome.html',
     controller: 'studentHomeCtrl'
   })

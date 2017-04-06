@@ -15,6 +15,14 @@
             <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'SURNAME' | translate }}</span>
           <input type="text" placeholder="" ng-model="surname">
         </label>
+        <label class="item item-input list-elements" id="signUp-input3">
+          <span class="input-label">
+            <i class="icon ion-transgender"></i>&nbsp;&nbsp;GENERO</span>
+          <select id="selectGenre" ng-model="genre">
+              <option>MUJER</option>
+              <option>HOMBRE</option>
+          </select>
+        </label>
         <label class="item item-input list-elements" id="signUp-input5">
           <span class="input-label">
             <i class="icon ion-at"></i>&nbsp;&nbsp;{{ 'EMAIL' | translate }}</span>
@@ -41,7 +49,7 @@
           <input type="text" placeholder="" ng-model="avatar">
         </label>
       </ion-list>
-      <button id="signUp-button9" ng-disabled="!name || !surname || !email || !password || password!=passwordRepeat || !passwordRepeat" id="signUp-btn9" class="button button-calm button-large button-block" ng-click="registerUser(name, surname, email, password, school, avatar)">{{ 'SIGN_UP' | translate }}</button>
+      <button id="signUp-button9" ng-disabled="!name || !surname || !genre || !email || !password || password!=passwordRepeat || !passwordRepeat" id="signUp-btn9" class="button button-calm button-large button-block" ng-click="registerUser(name, surname, email, password, school, avatar, genre)">{{ 'SIGN_UP' | translate }}</button>
       <a ui-sref="login" id="signUp-button11" class="button button-light  button-block button-clear icon ion-ios-arrow-forward" ng-click="clearForm()">{{ 'ALREADY_HAVE_AN_ACCOUNT' | translate }}</a>
     </form>
   </ion-content>

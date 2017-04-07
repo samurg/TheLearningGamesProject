@@ -893,7 +893,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<form id="dataClassForm" class="list">'+
         '<label class="item item-input">'+
           '<span class="input-label">{{ \'CLASS_NAME\' | translate }}</span>'+
-          '<input type="text" placeholder="" ng-model="modelNewClass.name">'+
+          '<input type="text" placeholder="{{ \'CLASS_NAME\' | translate }}" ng-model="modelNewClass.name">'+
         "</label>"+
       "</form>"+
       "<div>"+
@@ -961,27 +961,27 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             '<label class="item item-input list-elements" id="signUp-input3">'+
               '<span class="input-label">'+
                 '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'NAME\' | translate }}</span>'+
-              '<input type="text" placeholder="" ng-model="modelNewStudent.name">'+
+              '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewStudent.name">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input3">'+
               '<span class="input-label">'+
                 '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'SURNAME\' | translate }}</span>'+
-              '<input type="text" placeholder="" ng-model="modelNewStudent.surname">'+
+              '<input type="text" placeholder="{{ \'SURNAME\' | translate }}" ng-model="modelNewStudent.surname">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input5">'+
               '<span class="input-label">'+
                 '<i class="icon ion-at"></i>&nbsp;&nbsp;{{ \'EMAIL\' | translate }}</span>'+
-              '<input type="email" placeholder="" ng-model="modelNewStudent.email">'+
+              '<input type="email" placeholder="{{ \'EMAIL\' | translate }}" ng-model="modelNewStudent.email">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input6">'+
               '<span class="input-label">'+
                 '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'PASSWORD\' | translate }}</span>'+
-              '<input type="password" placeholder="" ng-model="modelNewStudent.password">'+
+              '<input type="password" placeholder="{{ \'PASSWORD\' | translate }}" ng-model="modelNewStudent.password">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input7">'+
               '<span class="input-label">'+
                 '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'CONFIRM_PASSWORD\' | translate }}</span>'+
-                '<input type="password" placeholder="" ng-model="modelNewStudent.passwordRepeat">'+
+                '<input type="password" placeholder="{{ \'CONFIRM_PASSWORD\' | translate }}" ng-model="modelNewStudent.passwordRepeat">'+
             '</label>'+
           '</form>'+
         '</ion-list>'+
@@ -1067,11 +1067,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 			'<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
 			'<label class="item item-input list-elements">'+
 				'<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-				'<input type="text" placeholder="{teamName}" ng-model="modelTeamDialog.name">'+
+				'<input type="text" placeholder="{team.name}" ng-model="modelTeamDialog.name">'+
 			'</label>'+
 			'<label class="item item-input list-elements">'+
 				'<span class="input-label">OBJETIVO</span>'+
-				'<input type="text" placeholder="{teamObjective}" ng-model="modelTeamDialog.objective">'+
+				'<input type="text" placeholder="{team.objective}" ng-model="modelTeamDialog.objective">'+
 			'</label>'+
 			'<div class="button-bar action_buttons">'+
 				'<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
@@ -1099,11 +1099,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form id="newTeamForm" class="list">'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{teamName}" ng-model="modelNewTeamDialog.name">'+
+            '<input type="text" placeholder="{ \'NAME\' | translate }}" ng-model="modelNewTeamDialog.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">OBJETIVO</span>'+
-            '<input type="text" placeholder="{teamObjective}" ng-model="modelNewTeamDialog.objective">'+
+            '<input type="text" placeholder="OBJETIVO" ng-model="modelNewTeamDialog.objective">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
@@ -1135,16 +1135,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form id="newMissionForm" class="list">'+
           '<ion-list>'+
           '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{missionName}" ng-model="modelNewMission.name">'+
+            '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewMission.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">RECOMPENSA</span>'+
-            '<input type="text" placeholder="{missionReward}" ng-model="modelNewMission.reward">'+
+            '<input type="text" placeholder="RECOMPENSA" ng-model="modelNewMission.reward">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-            '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="modelNewMission.additionalPoints">'+
+            '<input type="text" placeholder="PUNTOS ADICIONALES (OPCIONAL)" ng-model="modelNewMission.additionalPoints">'+
           '</label>'+
         '</form>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
@@ -1168,15 +1168,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '<ion-list>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-              '<input type="text" placeholder="{missionName}" ng-model="modelEditMission.name">'+
+              '<input type="text" placeholder="{mission.name}" ng-model="modelEditMission.name">'+
             '</label>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">RECOMPENSA</span>'+
-              '<input type="text" placeholder="{missionReward}" ng-model="modelEditMission.reward">'+
+              '<input type="text" placeholder="{mission.reward}" ng-model="modelEditMission.reward">'+
             '</label>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-              '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="modelEditMission.additionalPoints">'+
+              '<input type="text" placeholder="{mission.additionalPoints}" ng-model="modelEditMission.additionalPoints">'+
             '</label>'+
           '</ion-list>'+
         '</form>'+
@@ -1201,23 +1201,23 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemName}" ng-model="modelNewItem.name">'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewItem.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemDescription}" ng-model="modelNewItem.description">'+
+            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="modelNewItem.description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemRequirements}" ng-model="modelNewItem.requirements">'+
+            '<input type="text" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewItem.requirements">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-            '<input type="number" placeholder="{itemScore}" ng-model="modelNewItem.score">'+
+            '<input type="number" placeholder="{{ \'SCORE\' | translate }}" ng-model="modelNewItem.score">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="number" placeholder="{itemMaxScore}" ng-model="modelNewItem.maxScore">'+
+            '<input type="number" placeholder="{{ \'MAX_SCORE\' | translate }}" ng-model="modelNewItem.maxScore">'+
           '</label>'+
           '<ion-toggle toggle-class="toggle-calm" ng-model="modelNewItem.useForLevel">USAR PARA NIVEL</ion-toggle>'+
         '</ion-list>'+
@@ -1234,30 +1234,35 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<h3>{{ \'NEW_ACHIEVEMENT\' | translate }}</h3>'+
       '<form id="newAchievementForm" class="list">'+
         '<ion-list>'+
-        '<ion-item class ="teacherAvatar">'+
-          '<img src={achievementBadge} class="avatar">'+
-        '</ion-item>'+
         '<label class="item item-input list-elements">'+
-          '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-          '<input type="text" placeholder="{achievementName}" ng-model="modelNewAchievement.name">'+
+          '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+          '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewAchievement.name">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievementDescription}" ng-model="modelNewAchievement.description">'+
+          '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="modelNewAchievement.description">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievementRequirements}" ng-model="modelNewAchievement.requirements">'+
+          '<input type="text" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewAchievement.requirements">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">PUNTOS NECESARIOS PARA PASAR DE NIVEL</span>'+
+          '<input type="number" placeholder="PUNTOS NECESARIOS PARA PASAR DE NIVEL" ng-model="modelNewAchievement.pointsToLevel">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">MÁXIMO NIVEL</span>'+
-          '<input type="number" placeholder="{achievementMaxLevel}" ng-model="modelNewAchievement.maxLevel">'+
+          '<input type="number" placeholder="MÁXIMO NIVEL" ng-model="modelNewAchievement.maxLevel">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">MEDALLA</span>'+
+          '<input type="number" placeholder="MEDALLA" ng-model="modelNewAchievement.badge">'+
         '</label>'+
       '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-    '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()" ng-disabled="!modelNewAchievement.name || !modelNewAchievement.description || !modelNewAchievement.requirements || !modelNewAchievement.maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block"  ng-click="createAchievement(modelNewAchievement.name, modelNewAchievement.description, modelNewAchievement.requirements, modelNewAchievement.pointsToLevel, modelNewAchievement.maxLevel, modelNewAchievement.badge)" ng-disabled="!modelNewAchievement.name || !modelNewAchievement.description || !modelNewAchievement.requirements || !modelNewAchievement.pointsToLevel || !modelNewAchievement.maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1714,6 +1719,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var studentsRef = firebase.database().ref('students');
   var classroomsRef = firebase.database().ref('classrooms');
   var itemsRef = firebase.database().ref('items');
+  var achievementsRef = firebase.database().ref('achievements/');
   var rewardsRef = firebase.database().ref('rewards');
 
   /*
@@ -2258,6 +2264,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.setItem = function(item) {
     $scope.item = item;
+    $scope.getAchievements();
     $scope.itemsForm();
   }
 
@@ -2338,6 +2345,147 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     } else {
       $scope.itemsForSelection[pos].selected = false;
     }
+  }
+
+  
+  
+
+                                        /* FUNCTIONS IN ACHIEVEMENTS */
+
+  $scope.getAchievements = function() {
+    var itemAchievemntsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements');
+    var achievementKeys = $firebaseArray(itemAchievemntsRef);
+    achievementKeys.$loaded(function() {
+      $scope.achievements = [];
+      for (i = 0 ; i < achievementKeys.length ; i++) {
+        var achievementKey = achievementKeys.$keyAt(i);
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
+          if(snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var achievement = snapshot.val();
+            for(j = 0 ; j < $scope.achievements.length ; j++) {
+              if(achievement.id == $scope.achievements[j].id) {
+                change = true;
+                index = j;
+              }
+            }
+            if(!change) {
+              $scope.achievements.push(achievement);
+            } else {
+              $scope.achievements[index] = achievement;
+            }
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
+            }
+            $scope.getAchievementsForSelection();
+          }
+        });
+
+      }
+    });
+  }
+
+  $scope.getAchievementsForSelection = function() {
+    $scope.achievementsForSelection = $scope.rewards;
+    for (var element in $scope.achievementsForSelection) {
+      element.selected = false;
+    }
+  }
+
+  $scope.createAchievement = function(name, description, requirements, pointsToLevel, maxLevel, badge) {
+    if(badge == undefined){
+      badge = 'https://easyeda.com/assets/static/images/avatar-default.png'
+    }
+
+    var achievementsNode = $firebaseArray(achievementsRef);
+    achievementsNode.$loaded(function() {
+      achievementsNode.$add({
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'pointsToLevel' : pointsToLevel,
+        'maxLevel' : maxLevel,
+        'badge' : badge,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var idForAchievementRef = firebase.database().ref('achievements/' + id + '/id');
+        idForAchievementRef.set(id);
+
+        var itemsAchievementsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements/' + id + '/id');
+        itemsAchievementsRef.set(id);
+
+        $scope.closeModalNewAchievement();
+        $scope.getAchievements();
+      });  
+    });
+  }
+
+  $scope.deleteAchievement = function(achievement) {
+    var itemAchievementRef = firebase.database().ref('items/' + $scope.item.id + '/achievements/' + achievement.id);
+    itemAchievementRef.remove();
+
+    var achievementToDeleteRef = firebase.database().ref('achievements/' + achievement.id);
+    achievementToDeleteRef.remove();
+
+    //THINGS TO DO
+    //ELIMINAR LOS LOGROS DEL ESTUDIANTE
+
+    $scope.getAchievements();
+  }
+
+  $scope.setAchievement = function(achievement) {
+    $scope.achievement = achievement;
+    $scope.achievementsForm();
+  }
+
+  $scope.editAchievement = function(name, description, requirements, pointsToLevel, maxLevel, badge) {
+    if(name != undefined && description != undefined && requirements != undefined && pointsToLevel != undefined && maxLevel != undefined && badge != undefined){
+      var achievementRef = firebase.database().ref('achievements/' + $scope.achievement.id);
+      var achievementEdit = {
+        'id' : $scope.achievement.id,
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'pointsToLevel' : pointsToLevel,
+        'maxLevel' : maxLevel,
+        'badge' : badge,
+      };
+      achievementRef.set(achievementEdit);
+    } else {
+      if(name != undefined) {
+        var achievementNameRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/name');
+        achievementNameRef.set(name);
+      }
+
+      if(description != undefined) {
+        var achievementDescriptionRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/description');
+        achievementDescriptionRef.set(description);
+      }
+
+      if(requirements != undefined) {
+        var achievementRequirementsRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/requirements');
+        achievementRequirementsRef.set(requirements);
+      }
+
+      if(pointsToLevel != undefined) {
+        var achievementPointsToLevelRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/pointsToLevel');
+        achievementPointsToLevelRef.set(pointsToLevel);
+      }
+
+      if(maxLevel != undefined) {
+        var achievementMaxLevelRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/maxLevel');
+        achievementMaxLevelRef.set(maxLevel);
+      }
+
+      if(badge != undefined) {
+        var achievementBadgeRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/badge');
+        achievementBadgeRef.set(badge);
+      }
+    }
+    $scope.itemsForm();
   }
 
   
@@ -2775,47 +2923,58 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.achievementDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{achievementName}</h3>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
-          '<p>{achievementDescription}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
-          '<p>{achievementRequirements}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;MAXIMO NIVEL'+
-          '<p>{achievementMaxLevel}</p>'+
-        '</span>'+
-      '</label>'+
+      '<h3>{{achievement.name}}</h3>'+
+      '<ion-list>'+
+        '<ion-item class ="teacherAvatar">'+
+          '<img src={{achievement.badge}} class="avatar">'+
+        '</ion-item>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
+            '<p>{{achievement.description}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
+            '<p>{{achievement.requirements}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PUNTOS NECESARIOS PARA PASAR DE NIVEL'+
+            '<p>{{achievement.pointsToLevel}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;MAXIMO NIVEL'+
+            '<p>{{achievement.maxLevel}}</p>'+
+          '</span>'+
+        '</label>'+
+      '</ion-list>'+
       '<button ng-click="closeModalAchievementDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.missionDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{missionName}</h3>'+
+      '<h3>{mission.name}</h3>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;RECOMPENSA'+
-          '<p>{missionReward}</p>'+
+          '<p>{mission.reward}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PUNTOS ADICIONALES'+
-          '<p>{missionAdditionalPoints}</p>'+
+          '<p>{mission.additionalPoints}</p>'+
         '</span>'+
       '</label>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
       '<ion-list id="items-list9" class="list-student">'+
-        '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{itemName}</ion-item>'+
+        '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{item.name}</ion-item>'+
       '</ion-list>'+
       '<button ng-click="closeModalMissionDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
@@ -2823,23 +2982,23 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.rewardDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{rewardName}</h3>'+
+      '<h3>{{reward.name}}</h3>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
-          '<p>{rewardDescription}</p>'+
+          '<p>{{reward.description}}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PERMISO'+
-          '<p>{rewardPermission}</p>'+
+          '<p>{{reward.permission}}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PRECIO'+
-          '<p>{rewardPrice}</p>'+
+          '<p>{{reward.price}}</p>'+
         '</span>'+
       '</label>'+
       '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
@@ -3140,7 +3299,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   
   
 
-                                        /* FUNCTIONS IN CLASS */
+                                        /* FUNCTIONS IN ITEMS */
 
   $scope.getItems = function() {
     var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
@@ -3200,7 +3359,49 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.setItem = function(item) {
     $scope.item = item;
+    $scope.getAchievements();
     $scope.itemsForm();
+  }
+                    
+  
+  
+
+                                        /* FUNCTIONS IN ACHIEVEMENTS */
+
+  $scope.getAchievements = function() {
+    var itemAchievemntsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements');
+    var achievementKeys = $firebaseArray(itemAchievemntsRef);
+    achievementKeys.$loaded(function() {
+      $scope.achievements = [];
+      for (i = 0 ; i < achievementKeys.length ; i++) {
+        var achievementKey = achievementKeys.$keyAt(i);
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
+          if(snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var achievement = snapshot.val();
+            for(j = 0 ; j < $scope.achievements.length ; j++) {
+              if(achievement.id == $scope.achievements[j].id) {
+                change = true;
+                index = j;
+              }
+            }
+            if(!change) {
+              $scope.achievements.push(achievement);
+            } else {
+              $scope.achievements[index] = achievement;
+            }
+          }
+        });
+
+      }
+    });
+  }
+
+   $scope.setAchievement = function(achievement) {
+    $scope.achievement = achievement;
+    $scope.showModalAchievementDialog();
   }
 
 

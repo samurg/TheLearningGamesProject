@@ -15,30 +15,12 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
   $scope.teacherForm = function(){
     $scope.loginType=true;
     $scope.loginType2=false;
-    $scope.clearFormTeacher();
     $scope.modelLoginTeacher = {};
     sharedData.setData('teacher');
   }
   $scope.studentForm = function(){
     $scope.loginType=false;
     $scope.loginType2=true;
-    $scope.clearFormStudent();
-    sharedData.setData('student');
-  }
-
-  /*
-    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
-  */
-	
-	$scope.clearFormTeacher = function(){
-    var form = document.getElementById("teacherLoginForm");
-    form.reset();
-    $scope.modelLoginTeacher = {};
-  }
-
-  $scope.clearFormStudent = function(){
-    var form = document.getElementById("studentLoginForm");
-    form.reset();
     $scope.modelLoginStudent = {};
     sharedData.setData('student');
   }
@@ -1434,11 +1416,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   })
 
   $scope.showModalNewClass = function(){
+    $scope.modelNewClass = {};
     $scope.newClassModal.show();  
   }
     
   $scope.closeModalNewClass = function(){
-    $scope.modelNewClass = {};
     $scope.newClassModal.hide();
   }
 
@@ -1478,12 +1460,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalNewStudentDialog = function(){
+    $scope.modelNewStudent = {};
     $scope.newStudentModal.show();  
   }
     
   $scope.closeModalNewStudentDialog = function(){
     $scope.newStudentModal.hide();
-    $scope.modelNewStudent = {};
   }
 
                                         /* STUDENT DIALOG MODAL */
@@ -1524,11 +1506,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalQuantityRandomTeams = function(){
+    $scope.modelQuantity = {};
     $scope.quantityRandomTeamsModal.show();  
   }
     
   $scope.closeModalQuantityRandomTeams = function(){
-    $scope.modelQuantity = {};
     $scope.quantityRandomTeamsModal.hide();
   }
 
@@ -1540,11 +1522,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalTeamDialog = function(){
+    $scope.modelTeamDialog = {};
     $scope.teamDialogModal.show();  
   }
     
   $scope.closeModalTeamDialog = function(){
-    $scope.modelTeamDialog = {};
     $scope.teamDialogModal.hide();
   }
 
@@ -1556,11 +1538,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewTeamDialog = function(){
+    $scope.modelNewTeamDialog = {};
     $scope.newTeamDialogModal.show();  
   }
     
   $scope.closeModalNewTeamDialog = function(){
-    $scope.modelNewTeamDialog = {};
     $scope.newTeamDialogModal.hide();
   }
 
@@ -1625,11 +1607,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewItem = function(){
+    $scope.modelNewItem = {};
     $scope.newItemModal.show();  
   }
     
   $scope.closeModalNewItem = function(){
-    $scope.modelNewItem = {};
     $scope.newItemModal.hide();
   }
 
@@ -1641,11 +1623,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewAchievement = function(){
+    $scope.modelNewAchievement = {};
     $scope.newAchievementModal.show();  
   }
     
   $scope.closeModalNewAchievement = function(){
-    $scope.modelNewAchievement = {};
     $scope.newAchievementModal.hide();
   }
 
@@ -1656,11 +1638,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewReward = function(){
+    $scope.modelNewReward = {};
     $scope.newRewardModal.show();  
   }
     
   $scope.closeModalNewReward = function(){
-    $scope.modelNewReward = {};
     $scope.newRewardModal.hide();
   }
 
@@ -1672,11 +1654,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
  
   $scope.showModalEditReward = function(){
+    $scope.modelEditReward = {};
     $scope.editRewardModal.show();  
   }
     
   $scope.closeModalEditReward = function(){
-    $scope.modelEditReward = {};
     $scope.editRewardModal.hide();
   }
 
@@ -2811,12 +2793,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   });
  
   $scope.showModalAddClass = function(){
+    $scope.modelAddClass = {};
     $scope.addClassModal.show();  
   }
     
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
-    $scope.modelAddClass = {};
   }
 
                                         /* ITEM DIALOG MODAL */

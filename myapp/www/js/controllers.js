@@ -15,30 +15,14 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
   $scope.teacherForm = function(){
     $scope.loginType=true;
     $scope.loginType2=false;
-    $scope.clearFormTeacher();
+    $scope.modelLoginTeacher = {};
     sharedData.setData('teacher');
   }
   $scope.studentForm = function(){
     $scope.loginType=false;
     $scope.loginType2=true;
-    $scope.clearFormStudent();
-    sharedData.setData('student');
-  }
-
-  /*
-    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
-  */
-	
-	$scope.clearFormTeacher = function(){
-    var form = document.getElementById("teacherLoginForm");
-    form.reset();
-    $scope.modelLoginTeacher = {};
-  }
-
-  $scope.clearFormStudent = function(){
-    var form = document.getElementById("studentLoginForm");
-    form.reset();
     $scope.modelLoginStudent = {};
+    sharedData.setData('student');
   }
 
   /*
@@ -68,7 +52,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         teachersArray.$loaded(function() {
           if (teachersArray.$getRecord(sessionUser.uid)) {
             $state.go('teacherHome');
-            $scope.clearFormTeacher();
+            $scope.modelLoginTeacher = {};
           } else {
             alert('NO EXISTE CUENTA DE PROFESOR');
           }
@@ -113,7 +97,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         studentsArray.$loaded(function() {
           if (studentsArray.$getRecord(sessionUser.uid)) {
             $state.go('studentHome');
-            $scope.clearFormStudent();
+            $scope.modelLoginStudent = {};
           } else {
             alert('NO EXISTE CUENTA DE ALUMNO');
           }
@@ -168,10 +152,9 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
 
-	$scope.clearForm = function(){
-    var form = document.getElementById("signUp-form2");
-    form.reset();
+  $scope.clearForm = function() {
     $scope.modelSignUp = {};
+    $state.go('login');
   }
 
   /*
@@ -179,6 +162,12 @@ function ($scope, $stateParams, $http, $state, sharedData) {
   */
 
   var signUpType = sharedData.getData();
+
+  if (signUpType != 'teacher' && signUpType != 'student') {
+    $state.go('login');
+  }
+
+  $scope.modelSignUp = {};
 
   var rootRef = firebase.database().ref();
 
@@ -221,7 +210,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'avatar' : avatar,
             }).then(function() {
               $state.go('teacherHome');
-              $scope.clearForm();
+              $scope.modelSignUp = {};
             });
           } else if (signUpType === 'student') { //STUDENT
             var newStudentRef = firebase.database().ref('students/'+sessionUser.uid);
@@ -234,7 +223,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'avatar' : avatar,
             }).then(function() {
               $state.go('studentHome');
-              $scope.clearForm();
+              $scope.modelSignUp = {};
             });
           }
         });
@@ -276,10 +265,10 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', '$ionicPopup', 'sharedData', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray, $ionicPopup) {
+function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray, $ionicPopup, sharedData) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -306,14 +295,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.profileForm = function(){
     $scope.allFalse();
+    $scope.modelProfile = {};
     $scope.profileView = true;
     if($scope.teacher.name.length > 32){
       $scope.teacher.name = CryptoJS.AES.decrypt($scope.teacher.name, sessionUser.uid).toString(CryptoJS.enc.Utf8);
       $scope.teacher.surname = CryptoJS.AES.decrypt($scope.teacher.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
     }
-    $scope.clearFormTeacherProfileData();
-    $scope.clearFormTeacherProfilePassword();
-    $scope.clearFormTeacherProfileEmail();
   }
 
   $scope.settingsForm = function(){
@@ -338,14 +325,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.itemsForm = function() {
     $scope.allFalse();
+    $scope.modelItem = {};
     $scope.itemsView = true;
-    $scope.clearFormEditItem();
   }
 
   $scope.achievementsForm = function() {
     $scope.allFalse();
+    $scope.modelAchievement = {};
     $scope.achievementsView = true;
-    $scope.clearFormEditAchievement();
   }
 
   $scope.missionsForm = function() {
@@ -1087,9 +1074,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+          '<ion-item class="list-student-team">{student.name}</ion-item>'+
         '</ion-list>'+
         '<button ng-click="showModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
       '</div>'+
@@ -1121,9 +1106,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+          '<ion-checkbox class="list-student-team" ng-repeat="student in students">{{student.name}}</ion-checkbox>'+
         '</ion-list>'+
       '</div>'+
     '</ion-content>'+
@@ -1133,9 +1116,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
       '<h3>Add Students</h3>'+
       '<ion-list>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+        '<ion-checkbox class="list-student-team" ng-repeat="student in students">{{student.name}}</ion-checkbox>'+
       '</ion-list>'+
       '<button ng-click="closeModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
     '</ion-content>'+
@@ -1435,11 +1416,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   })
 
   $scope.showModalNewClass = function(){
+    $scope.modelNewClass = {};
     $scope.newClassModal.show();  
   }
     
   $scope.closeModalNewClass = function(){
-    $scope.clearFormNewClass();
     $scope.newClassModal.hide();
   }
 
@@ -1479,12 +1460,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalNewStudentDialog = function(){
+    $scope.modelNewStudent = {};
     $scope.newStudentModal.show();  
   }
     
   $scope.closeModalNewStudentDialog = function(){
     $scope.newStudentModal.hide();
-    $scope.clearFormNewStudent();
   }
 
                                         /* STUDENT DIALOG MODAL */
@@ -1525,11 +1506,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalQuantityRandomTeams = function(){
+    $scope.modelQuantity = {};
     $scope.quantityRandomTeamsModal.show();  
   }
     
   $scope.closeModalQuantityRandomTeams = function(){
-    $scope.clearFormQuantityRandomTeams();
     $scope.quantityRandomTeamsModal.hide();
   }
 
@@ -1541,11 +1522,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalTeamDialog = function(){
+    $scope.modelTeamDialog = {};
     $scope.teamDialogModal.show();  
   }
     
   $scope.closeModalTeamDialog = function(){
-    $scope.clearFormDialogTeam();
     $scope.teamDialogModal.hide();
   }
 
@@ -1557,11 +1538,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewTeamDialog = function(){
+    $scope.modelNewTeamDialog = {};
     $scope.newTeamDialogModal.show();  
   }
     
   $scope.closeModalNewTeamDialog = function(){
-    $scope.clearFormNewTeam();
     $scope.newTeamDialogModal.hide();
   }
 
@@ -1588,12 +1569,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewMission = function(){
+    if(modalMissions == 0){
+      $scope.modelNewMission = {};  
+    }
     $scope.newMissionModal.show();  
   }
     
   $scope.closeModalNewMission = function(){
-    $scope.clearFormNewMission();
     $scope.newMissionModal.hide();
+    modalMissions == 0;
   }
 
                                         /* EDIT MISSION MODAL */
@@ -1604,12 +1588,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalEditMission = function(){
+    if(modalMissions == 0){
+      $scope.modelEditMission = {};  
+    }
     $scope.editMissionModal.show();  
   }
     
   $scope.closeModalEditMission = function(){
-    $scope.clearFormEditMission();
     $scope.editMissionModal.hide();
+    modalMissions = 0;
   }
 
                                         /* NEW ITEM MODAL */
@@ -1620,11 +1607,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewItem = function(){
+    $scope.modelNewItem = {};
     $scope.newItemModal.show();  
   }
     
   $scope.closeModalNewItem = function(){
-    $scope.clearFormNewItem();
     $scope.newItemModal.hide();
   }
 
@@ -1636,11 +1623,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewAchievement = function(){
+    $scope.modelNewAchievement = {};
     $scope.newAchievementModal.show();  
   }
     
   $scope.closeModalNewAchievement = function(){
-    $scope.clearFormNewAchievement();
     $scope.newAchievementModal.hide();
   }
 
@@ -1651,11 +1638,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewReward = function(){
+    $scope.modelNewReward = {};
     $scope.newRewardModal.show();  
   }
     
   $scope.closeModalNewReward = function(){
-    $scope.clearFormNewReward();
     $scope.newRewardModal.hide();
   }
 
@@ -1667,11 +1654,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
  
   $scope.showModalEditReward = function(){
+    $scope.modelEditReward = {};
     $scope.editRewardModal.show();  
   }
     
   $scope.closeModalEditReward = function(){
-    $scope.clearFormEditReward();
     $scope.editRewardModal.hide();
   }
 
@@ -1679,106 +1666,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
 
-  $scope.clearFormNewClass = function(){
-    var form = document.getElementById("dataClassForm");
-    form.reset();
-    $scope.modelNewClass = {};
-    document.getElementById("selectClass").selectedIndex = 0;
-  }
 
   $scope.clearFormSecundaryModal = function(){
     var selectTeam = document.getElementById("selectTeam").selectedIndex = 0;
     var selectCopy = document.getElementById("selectCopy").selectedIndex = 0;
-  }
-
-  $scope.clearFormNewStudent = function(){
-    var form = document.getElementById("newStudentForm");
-    form.reset();
-    $scope.modelNewStudent = {};
-  }
-  
-  $scope.clearFormQuantityRandomTeams = function(){
-	  var input = document.getElementById("quantityInput");
-	  input.value = "";
-    $scope.modelQuantity = {};
-  }
-
-  $scope.clearFormDialogTeam = function(){
-    var form = document.getElementById("teamDialogForm");
-    form.reset();
-    $scope.modelTeamDialog = {};
-  }
-  
-  $scope.clearFormNewTeam = function(){
-	  var form = document.getElementById("newTeamForm");
-	  form.reset();
-    $scope.modelNewTeamDialog = {};
-  }
-
-  $scope.clearFormTeacherProfileData  = function(){
-    var form = document.getElementById('teacherProfileFormData');
-    form.reset();
-    $scope.modelProfile = {};
-  }
-
-  $scope.clearFormTeacherProfilePassword  = function(){
-    var form = document.getElementById('teacherProfileFormPassword');
-    form.reset();
-    $scope.modelProfile = {};
-  }
-
-  $scope.clearFormTeacherProfileEmail  = function(){
-    var form = document.getElementById('teacherProfileFormEmail');
-    form.reset();
-    $scope.modelProfile = {};
-  }
-
-  $scope.clearFormNewMission = function(){
-    var form = document.getElementById("newMissionForm");
-    form.reset();
-    $scope.modelNewMission = {};
-  }
-  
-  $scope.clearFormEditMission = function(){
-	  var form = document.getElementById("editMissionForm");
-	  form.reset();
-    $scope.modelEditMission = {};
-  }
-
-  $scope.clearFormNewItem = function(){
-    var form = document.getElementById("newItemForm");
-    form.reset();
-    $scope.modelNewItem = {};
-  }
-  
-  $scope.clearFormEditItem = function(){
-	  var form = document.getElementById("editItemForm");
-	  form.reset();
-    $scope.modelItem = {};
-  }
-
-  $scope.clearFormNewAchievement = function(){
-    var form = document.getElementById("newAchievementForm");
-    form.reset();
-    $scope.modelNewAchievement = {};
-  }
-  
-  $scope.clearFormEditAchievement = function(){
-	  var form = document.getElementById("editAchievementForm");
-	  form.reset();
-    $scope.modelAchievement = {};
-  }
-
-  $scope.clearFormNewReward = function(){
-    var form = document.getElementById("newRewardForm");
-    form.reset();
-    $scope.modelNewReward = {};
-  }
-  
-  $scope.clearFormEditReward = function(){
-	  var form = document.getElementById("editRewardForm");
-	  form.reset();
-    $scope.modelEditReward = {};
   }
 
   /*
@@ -1790,7 +1681,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
+    if (user && sharedData.getData() === 'teacher') {
       sessionUser = firebase.auth().currentUser;
       var teachersArray = $firebaseArray(teachersRef);
       teachersArray.$loaded(function() {
@@ -1803,7 +1694,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   var modalFirst;
-  var modalMissions;
+  var modalMissions = 0;
 
   var sessionUser;
   var secondaryConnection = null;
@@ -2489,7 +2380,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.editRewardData = function(name, description, permission, price) {
     if (name != undefined && description != undefined && permission != undefined && price != undefined) {
-      console.log('cambio el objeto entero');
       var reward = {
         'id' : $scope.reward.id,
         'name' : name,
@@ -2501,28 +2391,24 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       rewardRef.set(reward);
     } else {
       if (name != undefined) {
-        console.log('cambio nombre');
         $scope.reward.name = name;
         var rewardNameRef = firebase.database().ref('rewards/' + $scope.reward.id + '/name');
         rewardNameRef.set(name);
       }
 
       if (description != undefined) {
-        console.log('cambio descripcion');
         $scope.reward.description = description;
         var rewardDescriptionRef = firebase.database().ref('rewards/' + $scope.reward.id + '/description');
         rewardDescriptionRef.set(description);
       }
 
       if (permission != undefined) {
-        console.log('cambio permiso');
         $scope.reward.permission = permission;
         var rewardPermissionRef = firebase.database().ref('rewards/' + $scope.reward.id + '/permission');
         rewardPermissionRef.set(permission);
       }
 
       if (price != undefined) {
-        console.log('cambio precio');
         $scope.reward.price = price;
         var rewardPriceRef = firebase.database().ref('rewards/' + $scope.reward.id + '/price');
         rewardPriceRef.set(price);
@@ -2576,10 +2462,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
 
 
-.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicPopover', '$firebaseArray',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicPopover', '$firebaseArray', 'sharedData',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $firebaseArray) {
+function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $firebaseArray, sharedData) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -2608,9 +2494,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       $scope.student.name = CryptoJS.AES.decrypt($scope.student.name, sessionUser.uid).toString(CryptoJS.enc.Utf8);
       $scope.student.surname = CryptoJS.AES.decrypt($scope.student.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
     }
-    $scope.clearFormStudentProfileData();
-    $scope.clearFormStudentProfilePassword();
-    $scope.clearFormStudentProfileEmail();
+    $scope.modelProfile = {};
     $scope.profileView = true;
   }
 
@@ -2909,12 +2793,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   });
  
   $scope.showModalAddClass = function(){
+    $scope.modelAddClass = {};
     $scope.addClassModal.show();  
   }
     
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
-	$scope.clearHashcodeForm();
   }
 
                                         /* ITEM DIALOG MODAL */
@@ -2984,40 +2868,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   $scope.closeModalRewardDialog = function(){
     $scope.rewardDialogModal.hide();
   }
-
-  /*
-    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
-  */
-
-  $scope.clearForm  = function(){
-    var form = document.getElementById('studentHome-form1');
-    form.reset();
-    $state.go('studentHome');
-  }
-  
-  $scope.clearHashcodeForm = function(){
-	  var form = document.getElementById("addClassHashCodeForm");
-	  form.reset();
-    $scope.modelAddClass = {};
-  }
-  
-  $scope.clearFormStudentProfileData  = function(){
-    var form = document.getElementById('studentProfileFormData');
-    form.reset();
-    $scope.modelProfile = {};
-  }
-
-  $scope.clearFormStudentProfilePassword  = function(){
-    var form = document.getElementById('studentProfileFormPassword');
-    form.reset();
-    $scope.modelProfile = {};
-  }
-
-  $scope.clearFormStudentProfileEmail  = function(){
-    var form = document.getElementById('studentProfileFormEmail');
-    form.reset();
-    $scope.modelProfile = {};
-  }
   
   /*
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
@@ -3028,7 +2878,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   }
   
   firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
+    if (user && sharedData.getData() === 'student') {
       sessionUser = firebase.auth().currentUser;
       var studentsArray = $firebaseArray(studentsRef);
       studentsArray.$loaded(function() {

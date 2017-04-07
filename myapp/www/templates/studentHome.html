@@ -209,10 +209,10 @@
       <h3 id="teams-heading5" class="teams-hdg5">{{ 'ACHIEVEMENTS' | translate }}</h3>
       <ion-list id="items-list9" class="list-elements align-text-center">
         <ion-item ng-click="showModalAchievementDialog()">
-          <h2>{achievementName}</h2>
+          <h2>{achievement.name}</h2>
         </ion-item>
-        <ion-item id="items-list-item15" class="list-item" ng-click="showModalAchievementDialog()" ng-repeat="achievement in achievements">
-          <h2>{{achievementName}}</h2>
+        <ion-item id="items-list-item15" class="list-item" ng-click="setAchievement(achievement)" ng-repeat="achievement in achievements">
+          <h2>{{achievement.name}}</h2>
         </ion-item>
       </ion-list>
       <button ng-click="rulesItemsForm()" class="button button-positive button-block icon ion-arrow-return-left"></button>
@@ -229,8 +229,8 @@
       </h3>
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalRewardDialog()">
-          <h2>{rewardName}</h2>
-          <p>({rewardPrice})</p>
+          <h2>{reward.name}</h2>
+          <p>{reward.price}</p>
         </ion-item>
       </ion-list>
     </div>
@@ -246,7 +246,7 @@
       </h3>
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalMissionDialog()">
-          <h2>{missionName}</h2>
+          <h2>{mission.name}</h2>
         </ion-item>
       </ion-list>
     </div>

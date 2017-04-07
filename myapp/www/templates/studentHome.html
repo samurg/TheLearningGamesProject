@@ -228,11 +228,14 @@
         <p>TIENDA DE RECOMPENSAS</p>
       </h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalRewardDialog()">
-          <h2>{rewardName}</h2>
-          <p>({rewardPrice})</p>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewards" ng-click="showModalRewardDialog()">
+          <h2>{{reward.name}}</h2>
+          <p>({{reward.price}})</p>
         </ion-item>
       </ion-list>
+      <button class="button button-positive button-float addButton" ng-click="showActionsheetRewards()">
+        <i class="icon ion-plus"></i>
+      </button>
     </div>
 
     <!-- Missions Page -->

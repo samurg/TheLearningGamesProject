@@ -41,30 +41,30 @@
           <label class="item item-input list-elements" id="signUp-input3">
             <span class="inputLabelProfile">
               <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'NAME' | translate }}
-              <input id="inputName" type="text" placeholder="{{student.name}}" ng-model="studentName">
+              <input id="inputName" type="text" placeholder="{{student.name}}" ng-model="modelProfile.name">
             </span>
           </label>
           <label class="item item-input list-elements" id="signUp-input3">
             <span class="inputLabelProfile">
               <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'SURNAME' | translate }}
-              <input id="inputSurname" type="text" placeholder="{{student.surname}}" ng-model="studentSurname">
+              <input id="inputSurname" type="text" placeholder="{{student.surname}}" ng-model="modelProfile.surname">
             </span>
           </label>
           <label class="item item-input list-elements" id="signUp-input3">
             <span class="inputLabelProfile">
               <i class="icon ion-clipboard"></i>&nbsp;&nbsp;ESCUELA
-              <input id="inputAvatar" type="text" placeholder="{{student.school}}" ng-model="studentSchool">
+              <input id="inputAvatar" type="text" placeholder="{{student.school}}" ng-model="modelProfile.school">
             </span>
           </label>
           <label class="item item-input list-elements" id="signUp-input3">
             <span class="inputLabelProfile">
               <i class="icon ion-image"></i>&nbsp;&nbsp;{{ 'AVATAR' | translate }}
-              <input id="inputAvatar" type="text" placeholder="{{student.avatar}}" ng-model="studentAvatar">
+              <input id="inputAvatar" type="text" placeholder="{{student.avatar}}" ng-model="modelProfile.avatar">
             </span>
           </label>
           <div class="button-bar action_buttons">
             <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm()">{{ 'CANCEL' | translate }}</button>
-            <button id="signUp-button9" ng-disabled="!studentName && !studentSurname && !studentSchool && !studentAvatar" id="signUp-btn9" class="button button-calm button-block" ng-click="editStudentData(studentName, studentSurname, studentSchool, studentAvatar)">{{ 'SAVE_CHANGES' | translate }}</button>
+            <button id="signUp-button9" ng-disabled="!modelProfile.name && !modelProfile.surname && !modelProfile.school && !modelProfile.avatar" id="signUp-btn9" class="button button-calm button-block" ng-click="editStudentData(modelProfile.name, modelProfile.surname, modelProfile.school, modelProfile.avatar)">{{ 'SAVE_CHANGES' | translate }}</button>
           </div>
         </ion-list>
       </form>
@@ -73,18 +73,18 @@
           <label class="item item-input list-elements" id="signUp-input6">
             <span class="inputLabelProfile">
               <i class="icon ion-locked"></i>&nbsp;&nbsp;{{ 'PASSWORD' | translate }}
-              <input id="inputPassword" type="password" placeholder="{{student.password}}" ng-model="studentPassword" ng-minlenght="6">
+              <input id="inputPassword" type="password" placeholder="{{student.password}}" ng-model="modelProfile.password" ng-minlenght="6">
             </span>
           </label>
           <label class="item item-input list-elements" id="signUp-input7">
             <span class="inputLabelProfile">
               <i class="icon ion-locked"></i>&nbsp;&nbsp;{{ 'CONFIRM_PASSWORD' | translate }}
-              <input id="inputRepeatpassword" type="password" placeholder="{{student.password}}" ng-model="studentPasswordRepeat" ng-minlenght="6">
+              <input id="inputRepeatpassword" type="password" placeholder="{{student.password}}" ng-model="modelProfile.passwordRepeat" ng-minlenght="6">
             </span>
           </label>
           <div class="button-bar action_buttons">
             <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm()">{{ 'CANCEL' | translate }}</button>
-            <button id="signUp-button9" ng-disabled="!studentPassword || !studentPasswordRepeat || !studentPassword == studentPasswordRepeat" id="signUp-btn9" class="button button-calm button-block" ng-click="updateStudentPassword(studentPassword)">CONFIRMAR</button>
+            <button id="signUp-button9" ng-disabled="!modelProfile.password || !modelProfile.passwordRepeat || !modelProfile.password == modelProfile.passwordRepeat" id="signUp-btn9" class="button button-calm button-block" ng-click="updateStudentPassword(modelProfile.password)">CONFIRMAR</button>
           </div>
         </ion-list>
       </form>
@@ -93,12 +93,12 @@
           <label class="item item-input list-elements" id="signUp-input5">
             <span class="inputLabelProfile">
               <i class="icon ion-at"></i>&nbsp;&nbsp;{{ 'EMAIL' | translate }}
-              <input id="inputEmail" type="email" placeholder="{{student.email}}" ng-model="studentEmail">
+              <input id="inputEmail" type="email" placeholder="{{student.email}}" ng-model="modelProfile.email">
             </span>
           </label>
           <div class="button-bar action_buttons">
             <button id="signUp-button8" class="button button-calm button-block" ng-click="settingsForm()">{{ 'CANCEL' | translate }}</button>
-            <button id="signUp-button9" ng-disabled="!studentEmail" id="signUp-btn9" class="button button-calm button-block" ng-click="updateStudentEmail(studentEmail)">CONFIRMAR</button>
+            <button id="signUp-button9" ng-disabled="!modelProfile.email" id="signUp-btn9" class="button button-calm button-block" ng-click="updateStudentEmail(modelProfile.email)">CONFIRMAR</button>
           </div>
         </ion-list>
       </form>
@@ -202,23 +202,20 @@
               <span class="input-label">{{ 'SCORE' | translate }}</span>
               <p>{{item.score}}</p>
             </label>
-            <ion-toggle toggle-class="toggle-calm" ng-model="itemUseForLevel" ng-disabled="true" ng-checked="item.useForLevel">USAR PARA NIVEL</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="modelItem.useForLevel" ng-disabled="true" ng-checked="item.useForLevel">USAR PARA NIVEL</ion-toggle>
           </ion-list>
         </form>
       </div>
       <h3 id="teams-heading5" class="teams-hdg5">{{ 'ACHIEVEMENTS' | translate }}</h3>
       <ion-list id="items-list9" class="list-elements align-text-center">
-        <ion-item ng-click="achievementsForm()">
-          <h2>{achievementName}</h2>
+        <ion-item ng-click="showModalAchievementDialog()">
+          <h2>{achievement.name}</h2>
         </ion-item>
-        <ion-item id="items-list-item15" class="list-item" ng-click="achievementsForm()" ng-repeat="achievement in achievements">
-          <h2>{{achievementName}}</h2>
+        <ion-item id="items-list-item15" class="list-item" ng-click="setAchievement(achievement)" ng-repeat="achievement in achievements">
+          <h2>{{achievement.name}}</h2>
         </ion-item>
       </ion-list>
       <button ng-click="rulesItemsForm()" class="button button-positive button-block icon ion-arrow-return-left"></button>
-      <button class="button button-positive button-float addButton" ng-click="showActionsheetAchievements()">
-          <i class="icon ion-plus"></i>
-      </button>
     </div>
 
     <!-- Reward Shop Page -->
@@ -231,11 +228,14 @@
         <p>TIENDA DE RECOMPENSAS</p>
       </h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalRewardDialog()">
-          <h2>{rewardName}</h2>
-          <p>({rewardPrice})</p>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewards" ng-click="showModalRewardDialog()">
+          <h2>{{reward.name}}</h2>
+          <p>({{reward.price}})</p>
         </ion-item>
       </ion-list>
+      <button class="button button-positive button-float addButton" ng-click="showActionsheetRewards()">
+        <i class="icon ion-plus"></i>
+      </button>
     </div>
 
     <!-- Missions Page -->
@@ -249,7 +249,7 @@
       </h3>
       <ion-list id="class-list5" class="list-elements">
         <ion-item class="list-student" id="class-list-item7" ng-click="showModalMissionDialog()">
-          <h2>{missionName}</h2>
+          <h2>{mission.name}</h2>
         </ion-item>
       </ion-list>
     </div>

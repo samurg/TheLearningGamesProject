@@ -15,28 +15,14 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
   $scope.teacherForm = function(){
     $scope.loginType=true;
     $scope.loginType2=false;
-    $scope.clearFormTeacher();
+    $scope.modelLoginTeacher = {};
     sharedData.setData('teacher');
   }
   $scope.studentForm = function(){
     $scope.loginType=false;
     $scope.loginType2=true;
-    $scope.clearFormStudent();
+    $scope.modelLoginStudent = {};
     sharedData.setData('student');
-  }
-
-  /*
-    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
-  */
-	
-	$scope.clearFormTeacher = function(){
-    var form = document.getElementById("teacherLoginForm");
-    form.reset();
-  }
-
-  $scope.clearFormStudent = function(){
-    var form = document.getElementById("studentLoginForm");
-    form.reset();
   }
 
   /*
@@ -66,7 +52,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         teachersArray.$loaded(function() {
           if (teachersArray.$getRecord(sessionUser.uid)) {
             $state.go('teacherHome');
-            $scope.clearFormTeacher();
+            $scope.modelLoginTeacher = {};
           } else {
             alert('NO EXISTE CUENTA DE PROFESOR');
           }
@@ -111,7 +97,7 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
         studentsArray.$loaded(function() {
           if (studentsArray.$getRecord(sessionUser.uid)) {
             $state.go('studentHome');
-            $scope.clearFormStudent();
+            $scope.modelLoginStudent = {};
           } else {
             alert('NO EXISTE CUENTA DE ALUMNO');
           }
@@ -166,10 +152,9 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
 
-	$scope.clearForm = function(){
-    var form = document.getElementById("signUp-form2");
-    var selectGenre = document.getElementById("selectGenre").selectedIndex = 0;
-    form.reset();
+  $scope.clearForm = function() {
+    $scope.modelSignUp = {};
+    $state.go('login');
   }
 
   /*
@@ -177,6 +162,12 @@ function ($scope, $stateParams, $http, $state, sharedData) {
   */
 
   var signUpType = sharedData.getData();
+
+  if (signUpType != 'teacher' && signUpType != 'student') {
+    $state.go('login');
+  }
+
+  $scope.modelSignUp = {};
 
   var rootRef = firebase.database().ref();
 
@@ -187,7 +178,7 @@ function ($scope, $stateParams, $http, $state, sharedData) {
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
 
-  $scope.registerUser = function(name, surname, email, password, school, avatar, genre) {
+  $scope.registerUser = function(name, surname, email, password, school, avatar) {
 
     if (firebase.auth().currentUser) {
       firebase.auth().signOut();
@@ -217,10 +208,9 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'email' : sessionUser.email,
               'school' : school,
               'avatar' : avatar,
-              'genre' : genre,
             }).then(function() {
               $state.go('teacherHome');
-              $scope.clearForm();
+              $scope.modelSignUp = {};
             });
           } else if (signUpType === 'student') { //STUDENT
             var newStudentRef = firebase.database().ref('students/'+sessionUser.uid);
@@ -231,10 +221,9 @@ function ($scope, $stateParams, $http, $state, sharedData) {
               'email' : sessionUser.email,
               'school' : school,
               'avatar' : avatar,
-              'genre' : genre,
             }).then(function() {
               $state.go('studentHome');
-              $scope.clearForm();
+              $scope.modelSignUp = {};
             });
           }
         });
@@ -276,10 +265,10 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
 
 
-.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('teacherHomeCtrl', ['$scope', '$stateParams', '$ionicModal', '$http', '$state', '$ionicPopover', '$ionicActionSheet', '$firebaseObject', '$firebaseArray', '$ionicPopup', 'sharedData', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray, $ionicPopup) {
+function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ionicActionSheet, $firebaseObject, $firebaseArray, $ionicPopup, sharedData) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -306,14 +295,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.profileForm = function(){
     $scope.allFalse();
+    $scope.modelProfile = {};
     $scope.profileView = true;
     if($scope.teacher.name.length > 32){
       $scope.teacher.name = CryptoJS.AES.decrypt($scope.teacher.name, sessionUser.uid).toString(CryptoJS.enc.Utf8);
       $scope.teacher.surname = CryptoJS.AES.decrypt($scope.teacher.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
     }
-    $scope.clearFormTeacherProfileData();
-    $scope.clearFormTeacherProfilePassword();
-    $scope.clearFormTeacherProfileEmail();
   }
 
   $scope.settingsForm = function(){
@@ -338,14 +325,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.itemsForm = function() {
     $scope.allFalse();
+    $scope.modelItem = {};
     $scope.itemsView = true;
-    $scope.clearFormEditItem();
   }
 
   $scope.achievementsForm = function() {
     $scope.allFalse();
+    $scope.modelAchievement = {};
     $scope.achievementsView = true;
-    $scope.clearFormEditAchievement();
   }
 
   $scope.missionsForm = function() {
@@ -516,12 +503,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       buttonClicked: function(index) {
         if (index === 0) {
           //DUPLICATE ITEMS ACTION
+          $scope.actionSheetItemsType = 'duplicate';
+          $scope.showSelectItemsModal();
         }
 
         return true;
       },
       destructiveButtonClicked: function() {
         //DELETE ITEMS ACTION
+        $scope.actionSheetItemsType = 'delete';
+        $scope.showSelectItemsModal();
         return true;
       }
     });
@@ -669,7 +660,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-list class="list-elements">'+
       '<ion-item ng-click="closePopoverClassTeams()">IMPORTAR</ion-item>'+
       '<ion-item ng-click="closePopoverClassTeams()">EXPORTAR</ion-item>'+
-      '<ion-toggle ng-model="checkboxNotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
+      '<ion-toggle ng-model="modelcheckboxotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
       '<ion-item ng-click="closePopoverClassTeams()">VER HASHCODES</ion-item>'+
       '<ion-item ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
@@ -871,11 +862,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.selectItemsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">SELECCIONA ITEMS</h3>'+
       '<ion-list id="attendance-list7" class="list-elements">'+
-        '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student">{itemName}</ion-checkbox>'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkItem" class="list-student" ng-repeat="itemForSelection in itemsForSelection" ng-click="changeSelectedItem(itemForSelection)" ng-checked="itemForSelection.selected">{{itemForSelection.name}} {{itemForSelection.score}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button id="attendance-button123" ng-click="closeSelectItemsModal()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ITEMS</button>'+
+      '<button class="button button-calm  button-block" ng-click="closeSelectItemsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectItems()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR ITEMS</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -899,7 +893,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<form id="dataClassForm" class="list">'+
         '<label class="item item-input">'+
           '<span class="input-label">{{ \'CLASS_NAME\' | translate }}</span>'+
-          '<input type="text" placeholder="" ng-model="className">'+
+          '<input type="text" placeholder="{{ \'CLASS_NAME\' | translate }}" ng-model="modelNewClass.name">'+
         "</label>"+
       "</form>"+
       "<div>"+
@@ -913,7 +907,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewClass()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-click="createClassroom(className) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-click="createClassroom(modelNewClass.name) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -957,7 +951,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form class="list">'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewStudentDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!newStudentName || !newStudentSurname || !newStudentGenre || !newStudentEmail || !newStudentPassword || newStudentPassword != newStudentPasswordRepeat || !newStudentPasswordRepeat" ng-click="createNewStudent(newStudentName, newStudentSurname, newStudentGenre, newStudentEmail, newStudentPassword)">{{ \'GENERATE\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!modelNewStudent.name || !modelNewStudent.surname || !modelNewStudent.email || !modelNewStudent.password || modelNewStudent.password != modelNewStudent.passwordRepeat || !modelNewStudent.passwordRepeat" ng-click="createNewStudent(modelNewStudent.name, modelNewStudent.surname, modelNewStudent.email, modelNewStudent.password)">{{ \'GENERATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
@@ -967,35 +961,27 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             '<label class="item item-input list-elements" id="signUp-input3">'+
               '<span class="input-label">'+
                 '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'NAME\' | translate }}</span>'+
-              '<input type="text" placeholder="" ng-model="newStudentName">'+
+              '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewStudent.name">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input3">'+
               '<span class="input-label">'+
                 '<i class="icon ion-person"></i>&nbsp;&nbsp;{{ \'SURNAME\' | translate }}</span>'+
-              '<input type="text" placeholder="" ng-model="newStudentSurname">'+
-            '</label>'+
-            '<label class="item item-input item-select">'+
-              '<span class="input-label">GENERO</span>'+
-                '<i class="icon ion-transgender"></i></span>'+
-              '<select id="selectGenre" ng-model="newStudentGenre">'+
-                  '<option>MUJER</option>'+
-                  '<option>HOMBRE</option>'+
-              '</select>'+
+              '<input type="text" placeholder="{{ \'SURNAME\' | translate }}" ng-model="modelNewStudent.surname">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input5">'+
               '<span class="input-label">'+
                 '<i class="icon ion-at"></i>&nbsp;&nbsp;{{ \'EMAIL\' | translate }}</span>'+
-              '<input type="email" placeholder="" ng-model="newStudentEmail">'+
+              '<input type="email" placeholder="{{ \'EMAIL\' | translate }}" ng-model="modelNewStudent.email">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input6">'+
               '<span class="input-label">'+
                 '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'PASSWORD\' | translate }}</span>'+
-              '<input type="password" placeholder="" ng-model="newStudentPassword">'+
+              '<input type="password" placeholder="{{ \'PASSWORD\' | translate }}" ng-model="modelNewStudent.password">'+
             '</label>'+
             '<label class="item item-input list-elements" id="signUp-input7">'+
               '<span class="input-label">'+
                 '<i class="icon ion-locked"></i>&nbsp;&nbsp;{{ \'CONFIRM_PASSWORD\' | translate }}</span>'+
-                '<input type="password" placeholder="" ng-model="newStudentPasswordRepeat">'+
+                '<input type="password" placeholder="{{ \'CONFIRM_PASSWORD\' | translate }}" ng-model="modelNewStudent.passwordRepeat">'+
             '</label>'+
           '</form>'+
         '</ion-list>'+
@@ -1062,7 +1048,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.quantityRandomTeamsModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>SELECCIONA CANTIDAD DE QUIPOS A CREAR</h3>'+
-	  '<input class="item item-input" id="quantityInput" type="number" ng-model="quantity">'+
+	  '<input class="item item-input" id="quantityInput" type="number" ng-model="modelQuantity.quantity">'+
 	  '<div class="button-bar action_buttons">'+
 		'<button class="button button-calm  button-block" ng-click="closeModalQuantityRandomTeams()">{{ \'CANCEL\' | translate }}</button>'+
 		'<button class="button button-calm  button-block" ng-click="closeModalQuantityRandomTeams()">{{ \'EDIT_TEAM\' | translate }}</button>'+
@@ -1079,25 +1065,23 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '</div>'+
 		'<form id="teamDialogForm">'+
 			'<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
-			  '<label class="item item-input list-elements">'+
+			'<label class="item item-input list-elements">'+
 				'<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-				'<input type="text" placeholder="{teamName}" ng-model="name">'+
-			  '</label>'+
-			  '<label class="item item-input list-elements">'+
+				'<input type="text" placeholder="{team.name}" ng-model="modelTeamDialog.name">'+
+			'</label>'+
+			'<label class="item item-input list-elements">'+
 				'<span class="input-label">OBJETIVO</span>'+
-				'<input type="text" placeholder="{teamObjective}" ng-model="objective">'+
-			  '</label>'+
-			  '<div class="button-bar action_buttons">'+
+				'<input type="text" placeholder="{team.objective}" ng-model="modelTeamDialog.objective">'+
+			'</label>'+
+			'<div class="button-bar action_buttons">'+
 				'<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
-				'<button class="button button-calm  button-block" ng-disabled="!name && !objective" ng-click="closeModalTeamDialog()">{{ \'EDIT_TEAM\' | translate }}</button>'+
-			  '</div>'+
+				'<button class="button button-calm  button-block" ng-disabled="!modelTeamDialog.name && !modelTeamDialog.objective" ng-click="closeModalTeamDialog()">{{ \'EDIT_TEAM\' | translate }}</button>'+
+			'</div>'+
 		'</form>'+
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+          '<ion-item class="list-student-team">{student.name}</ion-item>'+
         '</ion-list>'+
         '<button ng-click="showModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
       '</div>'+
@@ -1115,23 +1099,21 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form id="newTeamForm" class="list">'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{teamName}" ng-model="name">'+
+            '<input type="text" placeholder="{ \'NAME\' | translate }}" ng-model="modelNewTeamDialog.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">OBJETIVO</span>'+
-            '<input type="text" placeholder="{teamObjective}" ng-model="objective">'+
+            '<input type="text" placeholder="OBJETIVO" ng-model="modelNewTeamDialog.objective">'+
           '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!name || !objective" ng-click="closeModalNewTeamDialog()">{{ \'ACCEPT\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!modelNewTeamDialog.name || !modelNewTeamDialog.objective" ng-click="closeModalNewTeamDialog()">{{ \'ACCEPT\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-          '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+          '<ion-checkbox class="list-student-team" ng-repeat="student in students">{{student.name}}</ion-checkbox>'+
         '</ion-list>'+
       '</div>'+
     '</ion-content>'+
@@ -1141,9 +1123,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
       '<h3>Add Students</h3>'+
       '<ion-list>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
-        '<ion-checkbox class="list-student-team">{student.name}</ion-checkbox>'+
+        '<ion-checkbox class="list-student-team" ng-repeat="student in students">{{student.name}}</ion-checkbox>'+
       '</ion-list>'+
       '<button ng-click="closeModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
     '</ion-content>'+
@@ -1155,16 +1135,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<form id="newMissionForm" class="list">'+
           '<ion-list>'+
           '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{missionName}" ng-model="name">'+
+            '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewMission.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">RECOMPENSA</span>'+
-            '<input type="text" placeholder="{missionReward}" ng-model="reward">'+
+            '<input type="text" placeholder="RECOMPENSA" ng-model="modelNewMission.reward">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-            '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="additionalPoints">'+
+            '<input type="text" placeholder="PUNTOS ADICIONALES (OPCIONAL)" ng-model="modelNewMission.additionalPoints">'+
           '</label>'+
         '</form>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
@@ -1176,7 +1156,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!name || !reward || !additionalPoints" ng-click="closeModalNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelNewMission.name || !modelNewMission.reward || !modelNewMission.additionalPoints" ng-click="closeModalNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1188,15 +1168,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '<ion-list>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-              '<input type="text" placeholder="{missionName}" ng-model="name">'+
+              '<input type="text" placeholder="{mission.name}" ng-model="modelEditMission.name">'+
             '</label>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">RECOMPENSA</span>'+
-              '<input type="text" placeholder="{missionReward}" ng-model="reward">'+
+              '<input type="text" placeholder="{mission.reward}" ng-model="modelEditMission.reward">'+
             '</label>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-              '<input type="text" placeholder="{missionAdditionalPoints}" ng-model="additionalPoints">'+
+              '<input type="text" placeholder="{mission.additionalPoints}" ng-model="modelEditMission.additionalPoints">'+
             '</label>'+
           '</ion-list>'+
         '</form>'+
@@ -1209,7 +1189,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</div>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalEditMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!name && !reward && !additionalPoints" ng-click="closeModalEditMission()">EDITAR MISIÓN</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelEditMission.name && !modelEditMission.reward && !modelEditMission.additionalPoints" ng-click="closeModalEditMission()">EDITAR MISIÓN</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1221,30 +1201,30 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemName}" ng-model="newItemName">'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewItem.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemDescription}" ng-model="newItemDescription">'+
+            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="modelNewItem.description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-            '<input type="text" placeholder="{itemRequirements}" ng-model="newItemRequirements">'+
+            '<input type="text" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewItem.requirements">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'SCORE\' | translate }}</span>'+
-            '<input type="number" placeholder="{itemScore}" ng-model="newItemScore">'+
+            '<input type="number" placeholder="{{ \'SCORE\' | translate }}" ng-model="modelNewItem.score">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'MAX_SCORE\' | translate }}</span>'+
-            '<input type="number" placeholder="{itemMaxScore}" ng-model="newItemMaxScore">'+
+            '<input type="number" placeholder="{{ \'MAX_SCORE\' | translate }}" ng-model="modelNewItem.maxScore">'+
           '</label>'+
-          '<ion-toggle toggle-class="toggle-calm" ng-model="newItemUseForLevel">USAR PARA NIVEL</ion-toggle>'+
+          '<ion-toggle toggle-class="toggle-calm" ng-model="modelNewItem.useForLevel">USAR PARA NIVEL</ion-toggle>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="createItem(newItemName, newItemDescription, newItemRequirements, newItemScore, newItemMaxScore, newItemUseForLevel)" ng-disabled="!newItemName || !newItemDescription || !newItemRequirements || !newItemScore || !newItemMaxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createItem(modelNewItem.name, modelNewItem.description, modelNewItem.requirements, modelNewItem.score, modelNewItem.maxScore, modelNewItem.useForLevel)" ng-disabled="!modelNewItem.name || !modelNewItem.description || !modelNewItem.requirements || !modelNewItem.score || !modelNewItem.maxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1254,30 +1234,35 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<h3>{{ \'NEW_ACHIEVEMENT\' | translate }}</h3>'+
       '<form id="newAchievementForm" class="list">'+
         '<ion-list>'+
-        '<ion-item class ="teacherAvatar">'+
-          '<img src={achievementBadge} class="avatar">'+
-        '</ion-item>'+
         '<label class="item item-input list-elements">'+
-          '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-          '<input type="text" placeholder="{achievementName}" ng-model="name">'+
+          '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+          '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewAchievement.name">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievementDescription}" ng-model="description">'+
+          '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="modelNewAchievement.description">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-          '<input type="text" placeholder="{achievementRequirements}" ng-model="requirements">'+
+          '<input type="text" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewAchievement.requirements">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">PUNTOS NECESARIOS PARA PASAR DE NIVEL</span>'+
+          '<input type="number" placeholder="PUNTOS NECESARIOS PARA PASAR DE NIVEL" ng-model="modelNewAchievement.pointsToLevel">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">MÁXIMO NIVEL</span>'+
-          '<input type="number" placeholder="{achievementMaxLevel}" ng-model="maxLevel">'+
+          '<input type="number" placeholder="MÁXIMO NIVEL" ng-model="modelNewAchievement.maxLevel">'+
+        '</label>'+
+        '<label class="item item-input list-elements">'+
+          '<span class="input-label">MEDALLA</span>'+
+          '<input type="number" placeholder="MEDALLA" ng-model="modelNewAchievement.badge">'+
         '</label>'+
       '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
-    '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()" ng-disabled="!name || !description || !requirements || !maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="closeModalNewAchievement()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block"  ng-click="createAchievement(modelNewAchievement.name, modelNewAchievement.description, modelNewAchievement.requirements, modelNewAchievement.pointsToLevel, modelNewAchievement.maxLevel, modelNewAchievement.badge)" ng-disabled="!modelNewAchievement.name || !modelNewAchievement.description || !modelNewAchievement.requirements || !modelNewAchievement.pointsToLevel || !modelNewAchievement.maxLevel">{{ \'ADD_ACHIEVEMENT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1289,25 +1274,25 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="rewardName">'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewReward.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="rewardDescription">'+
+            '<input type="text" placeholder="{{ \'DESCRIPTION\' | translate }}" ng-model="modelNewReward.description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PERMISO</span>'+
-            '<input type="text" placeholder="PERMISO" ng-model="rewardPermission">'+
+            '<input type="text" placeholder="PERMISO" ng-model="modelNewReward.permission">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PRECIO</span>'+
-            '<input type="number" placeholder="PRECIO" ng-model="rewardPrice">'+
+            '<input type="number" placeholder="PRECIO" ng-model="modelNewReward.price">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewReward()" >{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="createReward(rewardName, rewardDescription, rewardPermission, rewardPrice)" ng-disabled=" !rewardName || !rewardDescription || !rewardPermission || !rewardPrice">{{ \'ACCEPT\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createReward(modelNewReward.name, modelNewReward.description, modelNewReward.permission, modelNewReward.price)" ng-disabled=" !modelNewReward.name || !modelNewReward.description || !modelNewReward.permission || !modelNewReward.price">{{ \'ACCEPT\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1319,25 +1304,25 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-            '<input type="text" placeholder="{{reward.name}}" ng-model="editRewardName">'+
+            '<input type="text" placeholder="{{reward.name}}" ng-model="modelEditReward.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'DESCRIPTION\' | translate }}</span>'+
-            '<input type="text" placeholder="{{reward.description}}" ng-model="editRewardDescription">'+
+            '<input type="text" placeholder="{{reward.description}}" ng-model="modelEditReward.description">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PERMISO</span>'+
-            '<input type="text" placeholder="{{reward.permission}}" ng-model="editRewardPermission">'+
+            '<input type="text" placeholder="{{reward.permission}}" ng-model="modelEditReward.permission">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">PRECIO</span>'+
-            '<input type="number" placeholder="{{reward.price}}" ng-model="editRewardPrice">'+
+            '<input type="number" placeholder="{{reward.price}}" ng-model="modelEditReward.price">'+
           '</label>'+
         '</ion-list>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalEditReward()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!editRewardName && !editRewardDescription && !editRewardPermission && !editRewardPrice" ng-click="editRewardData(editRewardName, editRewardDescription, editRewardPermission, editRewardPrice)">EDITAR RECOMPENSA</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelEditReward.name && !modelEditReward.description && !modelEditReward.permission && !modelEditReward.price" ng-click="editRewardData(modelEditReward.name, modelEditReward.description, modelEditReward.permission, modelEditReward.price)">EDITAR RECOMPENSA</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1402,22 +1387,24 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.showSelectItemsModal = function(){
 	  if($scope.newMissionModal.isShown()){
-		$scope.newMissionModal.hide();
-		modalMissions = 1;
+		  $scope.newMissionModal.hide();
+		  modalMissions = 1;
 	  }
 	  if($scope.editMissionModal.isShown()){
-		$scope.editMissionModal.hide();
-		modalMissions = 2;
+		  $scope.editMissionModal.hide();
+		  modalMissions = 2;
 	  }
     $scope.selectItemsModal.show();
   }
     
   $scope.closeSelectItemsModal = function(){
     $scope.selectItemsModal.hide();
-	if(modalMissions == 1)
-		$scope.newMissionModal.show();
-	if(modalMissions == 2)
-		$scope.editMissionModal.show();
+  	if(modalMissions == 1) {
+  		$scope.newMissionModal.show();
+    }
+  	if(modalMissions == 2) {
+  		$scope.editMissionModal.show();
+    }
   }
 
                                         /* SELECT REWARDS MODAL */
@@ -1443,11 +1430,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   })
 
   $scope.showModalNewClass = function(){
+    $scope.modelNewClass = {};
     $scope.newClassModal.show();  
   }
     
   $scope.closeModalNewClass = function(){
-	$scope.clearFormNewClass();
     $scope.newClassModal.hide();
   }
 
@@ -1487,12 +1474,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalNewStudentDialog = function(){
+    $scope.modelNewStudent = {};
     $scope.newStudentModal.show();  
   }
     
   $scope.closeModalNewStudentDialog = function(){
     $scope.newStudentModal.hide();
-    $scope.clearFormNewStudent();
   }
 
                                         /* STUDENT DIALOG MODAL */
@@ -1533,11 +1520,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
     
   $scope.showModalQuantityRandomTeams = function(){
+    $scope.modelQuantity = {};
     $scope.quantityRandomTeamsModal.show();  
   }
     
   $scope.closeModalQuantityRandomTeams = function(){
-	$scope.clearFormQuantityRandomTeams();
     $scope.quantityRandomTeamsModal.hide();
   }
 
@@ -1549,11 +1536,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalTeamDialog = function(){
+    $scope.modelTeamDialog = {};
     $scope.teamDialogModal.show();  
   }
     
   $scope.closeModalTeamDialog = function(){
-	$scope.clearFormDialogTeam();
     $scope.teamDialogModal.hide();
   }
 
@@ -1565,11 +1552,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewTeamDialog = function(){
+    $scope.modelNewTeamDialog = {};
     $scope.newTeamDialogModal.show();  
   }
     
   $scope.closeModalNewTeamDialog = function(){
-	$scope.clearFormNewTeam();
     $scope.newTeamDialogModal.hide();
   }
 
@@ -1596,12 +1583,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewMission = function(){
+    if(modalMissions == 0){
+      $scope.modelNewMission = {};  
+    }
     $scope.newMissionModal.show();  
   }
     
   $scope.closeModalNewMission = function(){
-	$scope.clearFormNewMission();
     $scope.newMissionModal.hide();
+    modalMissions == 0;
   }
 
                                         /* EDIT MISSION MODAL */
@@ -1612,12 +1602,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalEditMission = function(){
+    if(modalMissions == 0){
+      $scope.modelEditMission = {};  
+    }
     $scope.editMissionModal.show();  
   }
     
   $scope.closeModalEditMission = function(){
-	$scope.clearFormEditMission();
     $scope.editMissionModal.hide();
+    modalMissions = 0;
   }
 
                                         /* NEW ITEM MODAL */
@@ -1628,11 +1621,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewItem = function(){
+    $scope.modelNewItem = {};
     $scope.newItemModal.show();  
   }
     
   $scope.closeModalNewItem = function(){
-	$scope.clearFormNewItem();
     $scope.newItemModal.hide();
   }
 
@@ -1644,11 +1637,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewAchievement = function(){
+    $scope.modelNewAchievement = {};
     $scope.newAchievementModal.show();  
   }
     
   $scope.closeModalNewAchievement = function(){
-	$scope.clearFormNewAchievement();
     $scope.newAchievementModal.hide();
   }
 
@@ -1659,11 +1652,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   $scope.showModalNewReward = function(){
+    $scope.modelNewReward = {};
     $scope.newRewardModal.show();  
   }
     
   $scope.closeModalNewReward = function(){
-	$scope.clearFormNewReward();
     $scope.newRewardModal.hide();
   }
 
@@ -1675,11 +1668,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
  
   $scope.showModalEditReward = function(){
+    $scope.modelEditReward = {};
     $scope.editRewardModal.show();  
   }
     
   $scope.closeModalEditReward = function(){
-	$scope.clearFormEditReward();
     $scope.editRewardModal.hide();
   }
 
@@ -1687,90 +1680,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
 
-  $scope.clearFormNewClass = function(){
-    var form = document.getElementById("dataClassForm");
-    form.reset();
-    document.getElementById("selectClass").selectedIndex = 0;
-  }
 
   $scope.clearFormSecundaryModal = function(){
     var selectTeam = document.getElementById("selectTeam").selectedIndex = 0;
     var selectCopy = document.getElementById("selectCopy").selectedIndex = 0;
-  }
-
-  $scope.clearFormNewStudent = function(){
-    var form = document.getElementById("newStudentForm");
-    form.reset();
-  }
-  
-  $scope.clearFormQuantityRandomTeams = function(){
-	  var input = document.getElementById("quantityInput");
-	  input.value = "";
-  }
-
-  $scope.clearFormDialogTeam = function(){
-    var form = document.getElementById("teamDialogForm");
-    form.reset();
-  }
-  
-  $scope.clearFormNewTeam = function(){
-	  var form = document.getElementById("newTeamForm");
-	  form.reset();
-  }
-
-  $scope.clearFormTeacherProfileData  = function(){
-    var form = document.getElementById('teacherProfileFormData');
-    form.reset();
-  }
-
-  $scope.clearFormTeacherProfilePassword  = function(){
-    var form = document.getElementById('teacherProfileFormPassword');
-    form.reset();
-  }
-
-  $scope.clearFormTeacherProfileEmail  = function(){
-    var form = document.getElementById('teacherProfileFormEmail');
-    form.reset();
-  }
-
-  $scope.clearFormNewMission = function(){
-    var form = document.getElementById("newMissionForm");
-    form.reset();
-  }
-  
-  $scope.clearFormEditMission = function(){
-	  var form = document.getElementById("editMissionForm");
-	  form.reset();
-  }
-
-  $scope.clearFormNewItem = function(){
-    var form = document.getElementById("newItemForm");
-    form.reset();
-  }
-  
-  $scope.clearFormEditItem = function(){
-	  var form = document.getElementById("editItemForm");
-	  form.reset();
-  }
-
-  $scope.clearFormNewAchievement = function(){
-    var form = document.getElementById("newAchievementForm");
-    form.reset();
-  }
-  
-  $scope.clearFormEditAchievement = function(){
-	  var form = document.getElementById("editAchievementForm");
-	  form.reset();
-  }
-
-  $scope.clearFormNewReward = function(){
-    var form = document.getElementById("newRewardForm");
-    form.reset();
-  }
-  
-  $scope.clearFormEditReward = function(){
-	  var form = document.getElementById("editRewardForm");
-	  form.reset();
   }
 
   /*
@@ -1782,7 +1695,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
+    if (user && sharedData.getData() === 'teacher') {
       sessionUser = firebase.auth().currentUser;
       var teachersArray = $firebaseArray(teachersRef);
       teachersArray.$loaded(function() {
@@ -1795,7 +1708,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   });
 
   var modalFirst;
-  var modalMissions;
+  var modalMissions = 0;
 
   var sessionUser;
   var secondaryConnection = null;
@@ -1806,11 +1719,16 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var studentsRef = firebase.database().ref('students');
   var classroomsRef = firebase.database().ref('classrooms');
   var itemsRef = firebase.database().ref('items');
+  var achievementsRef = firebase.database().ref('achievements/');
   var rewardsRef = firebase.database().ref('rewards');
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
+
+
+
+
                                         /* HASHCODE POPUP */
 
   $scope.showHashcodePopup = function() {
@@ -1824,6 +1742,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   };
 
+
+
+
                                         /* FUNCTIONS IN SETTINGS */
 
   $scope.logOut = function() {
@@ -1833,6 +1754,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       $scope.teacherHomeForm();
     }
   }
+
+
+
 
                                         /* FUNCTIONS IN TEACHER HOME */
 
@@ -1858,6 +1782,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
               $scope.classrooms.push(snapshot.val());            
             } else {
               $scope.classrooms[index] = snapshot.val();
+            }
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
             }
             $scope.getClassroomsForSelection();
           }
@@ -1918,20 +1845,23 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
     var classToDeleteRef = firebase.database().ref('classrooms/' + classroom.id);
     classToDeleteRef.remove();
-
-    /*for (var item in $scope.classroom.items) {
+    
+    for (var item in classroom.items) {
       var classItemToDeleteRef = firebase.database().ref('items/' + item);
       classItemToDeleteRef.remove();
-    }*/
-    /*for (var team in $scope.classroom.teams) {
+    }
+
+    for (var reward in classroom.rewards) {
+      var classRewardToDeleteRef = firebase.database().ref('rewards/' + reward);
+      classRewardToDeleteRef.remove();
+    }
+
+    //THINGS TO DO
+    /*for (var team in classroom.teams) {
       var classTeamToDeleteRef = firebase.database().ref('teams/' + team);
       classTeamToDeleteRef.remove();
     }*/
-    /*for (var reward in $scope.classroom.rewards) {
-      var classRewardToDeleteRef = firebase.database().ref('rewards/' + reward);
-      classRewardToDeleteRef.remove();
-    }*/
-    /*for (var mission in $scope.classroom.missions) {
+    /*for (var mission in classroom.missions) {
       var classMissionToDeleteRef = firebase.database().ref('missions/' + mission);
       classMissionToDeleteRef.remove();
     }*/
@@ -1965,6 +1895,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.duplicateClassroom = function(classroom) {
     //DUPLICATE ACTION GOES HERE
+    //THINGS TO DO
   }
 
   $scope.selectClassrooms = function() {
@@ -1991,7 +1922,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     } else if ($scope.actionSheetTeacherHomeType === 'duplicate') {
       for (var element in $scope.classroomsForSelection) {
         if ($scope.classroomsForSelection[element].selected === true) {
-          $scope.duplicateClassroom($scope.classroomsForSelection[element]);
+          $scope.duplicateClassroom($scope.classroomsForSelection[element]); //THINGS TO DO
         }
       }
     }
@@ -2064,6 +1995,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   }
 
+
+
+
                                         /* FUNCTIONS IN CLASS */
 
   $scope.getStudents = function() {
@@ -2111,7 +2045,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.createNewStudent = function(name, surname, genre, email, password) {
+  $scope.createNewStudent = function(name, surname, email, password) {
 
     if (secondaryConnection == null) {
       var config = {
@@ -2141,7 +2075,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             'email' : sessionStudent.email,
             'school' : $scope.teacher.school,
             'avatar' : sessionStudent.photoURL,
-            'genre' : genre
           }).then(function() {
             var newClassStudentRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students/' + sessionStudent.uid);
             newClassStudentRef.set(true);
@@ -2186,6 +2119,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     var classStudentRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students/' + student.id);
     classStudentRef.remove();
     
+    //THINGS TO DO
     //ELIMINAR LOS ITEMS DE LA CALSE DEL ESTUDIANTE students/studentID/items/'EACHitemINCLASS'
 
     //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
@@ -2282,6 +2216,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.createItem = function (name, description, requirements, score, maxScore, useForLevel) {
+    if (useForLevel == undefined) {
+      useForLevel = false;
+    }
     var itemsNode = $firebaseArray(itemsRef);
     itemsNode.$loaded(function() {
       itemsNode.$add({
@@ -2315,6 +2252,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     var classItemRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items/' + item.id);
     classItemRef.remove();
     
+    //THINGS TO DO
+    //ELIMINAR LOS LOGROS DEL ITEM DE LA BASE DE DATOS
+
     //ELIMINAR LOS ITEMS DE ESTUDIANTES 
 
     //ELIMINAR LOS LOGROS DEL ITEM EN ESTUDIANTES
@@ -2324,6 +2264,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.setItem = function(item) {
     $scope.item = item;
+    $scope.getAchievements();
     $scope.itemsForm();
   }
 
@@ -2379,7 +2320,176 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.rulesForm();
   }
 
+  $scope.selectItems = function() {
+    $scope.closeSelectItemsModal();
+    if ($scope.actionSheetItemsType === 'delete') {
+      for (var element in $scope.itemsForSelection) {
+        if ($scope.itemsForSelection[element].selected === true) {
+          $scope.deleteItem($scope.itemsForSelection[element]);
+        }
+      }
+    $scope.itemsForSelection = $scope.items;
+    } else if ($scope.actionSheetItemsType === 'duplicate') {
+      for (var element in $scope.itemsForSelection) {
+        if ($scope.itemsForSelection[element].selected === true) {
+          $scope.duplicateItem($scope.itemsForSelection[element]); //THINGS TO DO
+        }
+      }
+    }
+  }
+
+  $scope.changeSelectedItem = function(position){
+    var pos = $scope.itemsForSelection.indexOf(position);
+    if ($scope.itemsForSelection[pos].selected === false) {
+      $scope.itemsForSelection[pos].selected = true;
+    } else {
+      $scope.itemsForSelection[pos].selected = false;
+    }
+  }
+
   
+  
+
+                                        /* FUNCTIONS IN ACHIEVEMENTS */
+
+  $scope.getAchievements = function() {
+    var itemAchievemntsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements');
+    var achievementKeys = $firebaseArray(itemAchievemntsRef);
+    achievementKeys.$loaded(function() {
+      $scope.achievements = [];
+      for (i = 0 ; i < achievementKeys.length ; i++) {
+        var achievementKey = achievementKeys.$keyAt(i);
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
+          if(snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var achievement = snapshot.val();
+            for(j = 0 ; j < $scope.achievements.length ; j++) {
+              if(achievement.id == $scope.achievements[j].id) {
+                change = true;
+                index = j;
+              }
+            }
+            if(!change) {
+              $scope.achievements.push(achievement);
+            } else {
+              $scope.achievements[index] = achievement;
+            }
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
+            }
+            $scope.getAchievementsForSelection();
+          }
+        });
+
+      }
+    });
+  }
+
+  $scope.getAchievementsForSelection = function() {
+    $scope.achievementsForSelection = $scope.rewards;
+    for (var element in $scope.achievementsForSelection) {
+      element.selected = false;
+    }
+  }
+
+  $scope.createAchievement = function(name, description, requirements, pointsToLevel, maxLevel, badge) {
+    if(badge == undefined){
+      badge = 'https://easyeda.com/assets/static/images/avatar-default.png'
+    }
+
+    var achievementsNode = $firebaseArray(achievementsRef);
+    achievementsNode.$loaded(function() {
+      achievementsNode.$add({
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'pointsToLevel' : pointsToLevel,
+        'maxLevel' : maxLevel,
+        'badge' : badge,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var idForAchievementRef = firebase.database().ref('achievements/' + id + '/id');
+        idForAchievementRef.set(id);
+
+        var itemsAchievementsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements/' + id + '/id');
+        itemsAchievementsRef.set(id);
+
+        $scope.closeModalNewAchievement();
+        $scope.getAchievements();
+      });  
+    });
+  }
+
+  $scope.deleteAchievement = function(achievement) {
+    var itemAchievementRef = firebase.database().ref('items/' + $scope.item.id + '/achievements/' + achievement.id);
+    itemAchievementRef.remove();
+
+    var achievementToDeleteRef = firebase.database().ref('achievements/' + achievement.id);
+    achievementToDeleteRef.remove();
+
+    //THINGS TO DO
+    //ELIMINAR LOS LOGROS DEL ESTUDIANTE
+
+    $scope.getAchievements();
+  }
+
+  $scope.setAchievement = function(achievement) {
+    $scope.achievement = achievement;
+    $scope.achievementsForm();
+  }
+
+  $scope.editAchievement = function(name, description, requirements, pointsToLevel, maxLevel, badge) {
+    if(name != undefined && description != undefined && requirements != undefined && pointsToLevel != undefined && maxLevel != undefined && badge != undefined){
+      var achievementRef = firebase.database().ref('achievements/' + $scope.achievement.id);
+      var achievementEdit = {
+        'id' : $scope.achievement.id,
+        'name' : name,
+        'description' : description,
+        'requirements' : requirements,
+        'pointsToLevel' : pointsToLevel,
+        'maxLevel' : maxLevel,
+        'badge' : badge,
+      };
+      achievementRef.set(achievementEdit);
+    } else {
+      if(name != undefined) {
+        var achievementNameRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/name');
+        achievementNameRef.set(name);
+      }
+
+      if(description != undefined) {
+        var achievementDescriptionRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/description');
+        achievementDescriptionRef.set(description);
+      }
+
+      if(requirements != undefined) {
+        var achievementRequirementsRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/requirements');
+        achievementRequirementsRef.set(requirements);
+      }
+
+      if(pointsToLevel != undefined) {
+        var achievementPointsToLevelRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/pointsToLevel');
+        achievementPointsToLevelRef.set(pointsToLevel);
+      }
+
+      if(maxLevel != undefined) {
+        var achievementMaxLevelRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/maxLevel');
+        achievementMaxLevelRef.set(maxLevel);
+      }
+
+      if(badge != undefined) {
+        var achievementBadgeRef = firebase.database().ref('achievements/' + $scope.achievement.id + '/badge');
+        achievementBadgeRef.set(badge);
+      }
+    }
+    $scope.itemsForm();
+  }
+
+  
+
 
                                         /* FUNCTIONS IN REWARDS */
 
@@ -2452,7 +2562,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     var rewardToDeleteRef = firebase.database().ref('rewards/' + reward.id);
     rewardToDeleteRef.remove();
 
-    /* CUANDO EL ALUMNO TENGA RECOMPENSAS DESBLOQUEADAS
+    //THINGS TO DO
+    /* CUANDO EL ALUMNO TENGA RECOMPENSAS DESBLOQUEADAS 
     for (var student in $scope.classroom.students) {
       var studentRewardToDeleteRef = firebase.database().ref('students/' + student + '/rewards/' + reward.id);
       studentRewardToDeleteRef.remove();
@@ -2468,7 +2579,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.editRewardData = function(name, description, permission, price) {
     if (name != undefined && description != undefined && permission != undefined && price != undefined) {
-      console.log('cambio el objeto entero');
       var reward = {
         'id' : $scope.reward.id,
         'name' : name,
@@ -2480,28 +2590,24 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       rewardRef.set(reward);
     } else {
       if (name != undefined) {
-        console.log('cambio nombre');
         $scope.reward.name = name;
         var rewardNameRef = firebase.database().ref('rewards/' + $scope.reward.id + '/name');
         rewardNameRef.set(name);
       }
 
       if (description != undefined) {
-        console.log('cambio descripcion');
         $scope.reward.description = description;
         var rewardDescriptionRef = firebase.database().ref('rewards/' + $scope.reward.id + '/description');
         rewardDescriptionRef.set(description);
       }
 
       if (permission != undefined) {
-        console.log('cambio permiso');
         $scope.reward.permission = permission;
         var rewardPermissionRef = firebase.database().ref('rewards/' + $scope.reward.id + '/permission');
         rewardPermissionRef.set(permission);
       }
 
       if (price != undefined) {
-        console.log('cambio precio');
         $scope.reward.price = price;
         var rewardPriceRef = firebase.database().ref('rewards/' + $scope.reward.id + '/price');
         rewardPriceRef.set(price);
@@ -2523,7 +2629,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     } else if ($scope.actionSheetRewardsType === 'duplicate') {
       for (var element in $scope.rewardsForSelection) {
         if ($scope.rewardsForSelection[element].selected === true) {
-          $scope.duplicateReward($scope.rewardsForSelection[element]);
+          $scope.duplicateReward($scope.rewardsForSelection[element]); //THINGS TO DO
         }
       }
     }
@@ -2555,10 +2661,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
 
 
-.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicPopover', '$firebaseArray',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('studentHomeCtrl', ['$scope', '$stateParams', '$http', '$state', '$ionicModal', '$ionicActionSheet', '$ionicPopover', '$firebaseArray', 'sharedData',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $firebaseArray) {
+function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $ionicPopover, $firebaseArray, sharedData) {
 
   /*
     *************************************DECLARE FUNCTIONS FOR NG-SHOW********************************
@@ -2587,9 +2693,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       $scope.student.name = CryptoJS.AES.decrypt($scope.student.name, sessionUser.uid).toString(CryptoJS.enc.Utf8);
       $scope.student.surname = CryptoJS.AES.decrypt($scope.student.surname, sessionUser.uid).toString(CryptoJS.enc.Utf8);
     }
-    $scope.clearFormStudentProfileData();
-    $scope.clearFormStudentProfilePassword();
-    $scope.clearFormStudentProfileEmail();
+    $scope.modelProfile = {};
     $scope.profileView = true;
   }
 
@@ -2626,12 +2730,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
                                           /* REWARDS (STUDENT PART) ACTIONSHEET */
 
-  $scope.showActionsheetRewardsStudent = function() {
+  $scope.showActionsheetRewards = function() {
     
     $ionicActionSheet.show({
       titleText: 'ACCIONES RECOMPENSAS',
       buttons: [
-        { text: 'COMPRAR SELECCIONADO(S)' },
+        { text: 'COMPRAR RECOMPENSA(S)' },
       ],
       cancelText: 'CANCELAR',
       cancel: function() {
@@ -2639,7 +2743,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       },
       buttonClicked: function(index) {
         if (index === 0) {
-          //BUY SELECTED REWARDS ACTION
+          //BUY REWARDS ACTION
+          $scope.showSelectRewardsModal();
         }
 
         return true;
@@ -2788,64 +2893,88 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     *************************************SAVE EVERY MODAL INTO $SCOPE*******************************
   */
 
+  $scope.selectRewardsModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">SELECCIONA RECOMPENSAS</h3>'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkReward" ng-repeat="rewardForSelection in rewardsForSelection" ng-click="changeSelectedReward(rewardForSelection)" ng-checked="rewardForSelection.selected">{{rewardForSelection.name}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeSelectRewardsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectRewards()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR RECOMPENSAS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
   $scope.addClassModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3 id="attendance-heading3" class="attendance-hdg3">INTRODUCE UN CODIGO DE CLASE</h3>'+
       '<form id="addClassHashCodeForm" class="list">'+
         '<label class="item item-input">'+
-          '<input type="text" ng-model="hashCode" placeholder="CODIGO DE CLASE">'+
+          '<input type="text" ng-model="modelAddClass.hashCode" placeholder="CODIGO DE CLASE">'+
         '</label>'+
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalAddClass()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!hashCode" ng-click="addClass(hashCode)">AÑADIR CLASE</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelAddClass.hashCode" ng-click="addClass(modelAddClass.hashCode)">AÑADIR CLASE</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.achievementDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{achievementName}</h3>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
-          '<p>{achievementDescription}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
-          '<p>{achievementRequirements}</p>'+
-        '</span>'+
-      '</label>'+
-      '<label class="item item-input list-elements" id="signUp-input3">'+
-        '<span class="inputLabelProfile">'+
-          '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;MAXIMO NIVEL'+
-          '<p>{achievementMaxLevel}</p>'+
-        '</span>'+
-      '</label>'+
+      '<h3>{{achievement.name}}</h3>'+
+      '<ion-list>'+
+        '<ion-item class ="teacherAvatar">'+
+          '<img src={{achievement.badge}} class="avatar">'+
+        '</ion-item>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
+            '<p>{{achievement.description}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'REQUIREMENTS\' | translate }}'+
+            '<p>{{achievement.requirements}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PUNTOS NECESARIOS PARA PASAR DE NIVEL'+
+            '<p>{{achievement.pointsToLevel}}</p>'+
+          '</span>'+
+        '</label>'+
+        '<label class="item item-input list-elements" id="signUp-input3">'+
+          '<span class="inputLabelProfile">'+
+            '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;MAXIMO NIVEL'+
+            '<p>{{achievement.maxLevel}}</p>'+
+          '</span>'+
+        '</label>'+
+      '</ion-list>'+
       '<button ng-click="closeModalAchievementDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
   '</ion-modal-view>';
 
   $scope.missionDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{missionName}</h3>'+
+      '<h3>{mission.name}</h3>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;RECOMPENSA'+
-          '<p>{missionReward}</p>'+
+          '<p>{mission.reward}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PUNTOS ADICIONALES'+
-          '<p>{missionAdditionalPoints}</p>'+
+          '<p>{mission.additionalPoints}</p>'+
         '</span>'+
       '</label>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
       '<ion-list id="items-list9" class="list-student">'+
-        '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{itemName}</ion-item>'+
+        '<ion-item id="items-list-item15" ng-click="showModalItemDialog()">{item.name}</ion-item>'+
       '</ion-list>'+
       '<button ng-click="closeModalMissionDialog()" class="button button-positive  button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
@@ -2853,23 +2982,23 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
   $scope.rewardDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{rewardName}</h3>'+
+      '<h3>{{reward.name}}</h3>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;{{ \'DESCRIPTION\' | translate }}'+
-          '<p>{rewardDescription}</p>'+
+          '<p>{{reward.description}}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PERMISO'+
-          '<p>{rewardPermission}</p>'+
+          '<p>{{reward.permission}}</p>'+
         '</span>'+
       '</label>'+
       '<label class="item item-input list-elements">'+
         '<span class="inputLabelProfile">'+
           '<i class="icon ion-minus-round"></i>&nbsp;&nbsp;PRECIO'+
-          '<p>{rewardPrice}</p>'+
+          '<p>{{reward.price}}</p>'+
         '</span>'+
       '</label>'+
       '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
@@ -2880,6 +3009,21 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     *************************************EVERY MODAL FUNCTION GOES HERE*******************************
   */
 
+                                        /* SELECT REWARDS MODAL */
+
+  $scope.selectRewardsModal = $ionicModal.fromTemplate($scope.selectRewardsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+
+  $scope.showSelectRewardsModal = function(){
+    $scope.selectRewardsModal.show();
+  }
+    
+  $scope.closeSelectRewardsModal = function(){
+    $scope.selectRewardsModal.hide();
+  }
+
                                         /* ADD CLASS MODAL */
 
   $scope.addClassModal = $ionicModal.fromTemplate($scope.addClassModal, {
@@ -2888,12 +3032,12 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   });
  
   $scope.showModalAddClass = function(){
+    $scope.modelAddClass = {};
     $scope.addClassModal.show();  
   }
     
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
-	$scope.clearHashcodeForm();
   }
 
                                         /* ITEM DIALOG MODAL */
@@ -2963,36 +3107,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   $scope.closeModalRewardDialog = function(){
     $scope.rewardDialogModal.hide();
   }
-
-  /*
-    *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
-  */
-
-  $scope.clearForm  = function(){
-    var form = document.getElementById('studentHome-form1');
-    form.reset();
-    $state.go('studentHome', {"studentFullName": $scope.studentName + $scope.studentSurname});
-  }
-  
-  $scope.clearHashcodeForm = function(){
-	  var form = document.getElementById("addClassHashCodeForm");
-	  form.reset();
-  }
-  
-  $scope.clearFormStudentProfileData  = function(){
-    var form = document.getElementById('studentProfileFormData');
-    form.reset();
-  }
-
-  $scope.clearFormStudentProfilePassword  = function(){
-    var form = document.getElementById('studentProfileFormPassword');
-    form.reset();
-  }
-
-  $scope.clearFormStudentProfileEmail  = function(){
-    var form = document.getElementById('studentProfileFormEmail');
-    form.reset();
-  }
   
   /*
     *************************************DECLARE VARIABLES & GIVE TO $SCOPE ALL THE VALUES WE NEED****
@@ -3003,7 +3117,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   }
   
   firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
+    if (user && sharedData.getData() === 'student') {
       sessionUser = firebase.auth().currentUser;
       var studentsArray = $firebaseArray(studentsRef);
       studentsArray.$loaded(function() {
@@ -3029,6 +3143,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
   */
+
+
+
 
                                           /* FUNCTIONS IN PROFILE */
 
@@ -3085,6 +3202,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
     });
   }
 
+
+
+
                                         /* FUNCTIONS IN SETTINGS */
 
   $scope.logOut = function() {
@@ -3094,6 +3214,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
       $scope.studentHomeForm();
     }
   }
+
+
+
 
                                           /* FUNCTIONS IN HOME */
 
@@ -3164,6 +3287,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
         $scope.classroomData = snapshot.val();
     });
     $scope.getItems();
+    $scope.getRewards();
     $scope.rulesItemsForm();
   }
 
@@ -3174,7 +3298,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
                     
   
   
-                                        /* FUNCTIONS IN CLASS */
+
+                                        /* FUNCTIONS IN ITEMS */
 
   $scope.getItems = function() {
     var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
@@ -3234,7 +3359,120 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicPopover, $fire
 
   $scope.setItem = function(item) {
     $scope.item = item;
+    $scope.getAchievements();
     $scope.itemsForm();
+  }
+                    
+  
+  
+
+                                        /* FUNCTIONS IN ACHIEVEMENTS */
+
+  $scope.getAchievements = function() {
+    var itemAchievemntsRef = firebase.database().ref('items/' + $scope.item.id + '/achievements');
+    var achievementKeys = $firebaseArray(itemAchievemntsRef);
+    achievementKeys.$loaded(function() {
+      $scope.achievements = [];
+      for (i = 0 ; i < achievementKeys.length ; i++) {
+        var achievementKey = achievementKeys.$keyAt(i);
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
+          if(snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var achievement = snapshot.val();
+            for(j = 0 ; j < $scope.achievements.length ; j++) {
+              if(achievement.id == $scope.achievements[j].id) {
+                change = true;
+                index = j;
+              }
+            }
+            if(!change) {
+              $scope.achievements.push(achievement);
+            } else {
+              $scope.achievements[index] = achievement;
+            }
+          }
+        });
+
+      }
+    });
+  }
+
+   $scope.setAchievement = function(achievement) {
+    $scope.achievement = achievement;
+    $scope.showModalAchievementDialog();
+  }
+
+
+
+
+                                          /* FUNCTIONS IN REWARDS */
+
+  $scope.getRewards = function() {
+    var classroomRewardsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/rewards');
+    var rewardKeys = $firebaseArray(classroomRewardsRef);
+    rewardKeys.$loaded(function() {
+      $scope.rewards = [];
+      for (i = 0 ; i < rewardKeys.length ; i++) {
+        var rewardKey = rewardKeys.$keyAt(i);
+        var loopReward = firebase.database().ref('rewards/' + rewardKey);
+        loopReward.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var reward = snapshot.val();
+            for(j = 0 ; j < $scope.rewards.length ; j++){
+              if(reward.id == $scope.rewards[j].id){
+                change = true;
+                index = j;
+              }
+            }
+            if(!change){
+              $scope.rewards.push(reward);  
+            } else {
+              $scope.rewards[index] = reward;
+            }
+            $scope.getRewardsForSelection();
+          }
+        });
+      }
+    });
+  }
+
+  $scope.getRewardsForSelection = function() {
+    $scope.rewardsForSelection = $scope.rewards;
+    for (var element in $scope.rewardsForSelection) {
+      element.selected = false;
+    }
+  }
+
+  $scope.setReward = function(reward) {
+    $scope.reward = reward;
+    $scope.showModalRewardDialog();
+  }
+
+  $scope.buyReward = function(reward) {
+    //THINGS TO DO
+  }
+
+  $scope.selectRewards = function() {
+    $scope.closeSelectRewardsModal();
+      for (var element in $scope.rewardsForSelection) {
+        if ($scope.rewardsForSelection[element].selected === true) {
+          $scope.buyReward($scope.rewardsForSelection[element]);
+        }
+      }
+    $scope.rewardsForSelection = $scope.rewards;
+  }
+
+  $scope.changeSelectedReward = function(position) {
+    var pos = $scope.rewardsForSelection.indexOf(position);
+    if ($scope.rewardsForSelection[pos].selected === false) {
+      $scope.rewardsForSelection[pos].selected = true;
+    } else {
+      $scope.rewardsForSelection[pos].selected = false;
+    }
   }
 
 }])

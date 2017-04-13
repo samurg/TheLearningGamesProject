@@ -168,11 +168,8 @@
         <button id="class-button29" ng-click="teamsForm()"  class="button button-light  button-outline">{{ 'TEAMS' | translate }}</button>
       </div>
       <ion-list id="teams-list10" class="list-elements">
-        <ion-item class="item-thumbnail-left  list-student" id="teams-list-item21" ng-click="showModalTeamDialog()">
-          <h2>{team.name}</h2>
-        </ion-item>
-        <ion-item class="item-thumbnail-left  list-student" id="teams-list-item14" ng-click="showModalTeamDialog()">
-          <h2>{team.name}</h2>
+        <ion-item class="list-student" id="teams-list-item14" ng-repeat="team in teams" ng-click="setTeam(team)">
+          <h2>{{team.name}}</h2>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">

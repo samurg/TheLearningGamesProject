@@ -78,9 +78,6 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
 			}
 		}
     });
-
-    
-
   }
 
   $scope.logInStudent = function(email, password) {
@@ -123,7 +120,6 @@ function ($scope, $stateParams, $http, $state, sharedData, $firebaseArray) {
 			}
 		}
     });
-
   }
 
 }])
@@ -245,7 +241,6 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 			}
 		}
     });
-
   }
 
 }])
@@ -367,7 +362,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                         /* TEACHERHOME ACTIONSHEET */
 
   $scope.showActionsheetTeacherHome = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES TEACHERHOME',
       buttons: [
@@ -400,7 +394,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         } else if (index === 3) {
           //BACKUP ACTION
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -416,7 +409,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* CLASS STUDENTS ACTIONSHEET */
 
   $scope.showActionsheetClassStudents = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES CLASS STUDENTS',
       buttons: [
@@ -440,7 +432,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         } else if (index === 2) {
           //SEND MESSAGE ACTION
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -455,7 +446,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* CLASS TEAMS ACTIONSHEET */
 
   $scope.showActionsheetClassTeams = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES CLASS TEAMS',
       buttons: [
@@ -472,18 +462,24 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       buttonClicked: function(index) {
         if (index === 0) {
           //TAKE ATTENDANCE ACTION
+          $scope.showAttendanceModal();
         } else if (index === 1) {
           //EVALUATE TEAMS ACTION
+          $scope.actionsheetClassTeamsType = 'evaluate';
+          $scope.showSelectTeamsModal();
         } else if (index === 2) {
           //DUPLICATE TEAMS ACTION
+          $scope.actionsheetClassTeamsType = 'duplicate';
+          $scope.showSelectTeamsModal();
         } else if (index === 3) {
           //SEND MESSAGE ACTION
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
         //DELETE TEAMS ACTION
+        $scope.actionsheetClassTeamsType = 'delete';
+        $scope.showSelectTeamsModal();
         return true;
       }
     });
@@ -492,7 +488,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* ITEMS ACTIONSHEET */
 
   $scope.showActionsheetItems = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES ITEMS',
       buttons: [
@@ -509,7 +504,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           $scope.actionSheetItemsType = 'duplicate';
           $scope.showSelectItemsModal();
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -541,7 +535,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           $scope.actionSheetAchievementsType = 'duplicate';
           $scope.showSelectAchievementsModal();
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -571,7 +564,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         if (index === 0) {
           //DUPLICATE MISSION ACTION
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -601,7 +593,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           $scope.actionSheetRewardsType = 'duplicate';
           $scope.showSelectRewardsModal();
         }
-
         return true;
       },
       destructiveButtonClicked: function() {
@@ -696,7 +687,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverLanguages = $ionicPopover.fromTemplate($scope.templateLanguagesPopover, {
     scope: $scope
   });
-
   $scope.openPopoverLanguages = function($event) {
     $scope.popoverLanguages.show($event);
   };
@@ -718,7 +708,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverTeacherHome = $ionicPopover.fromTemplate($scope.templateTeacherHomePopover, {
     scope: $scope
   });
-
   $scope.openPopoverTeacherHome = function($event) {
     $scope.popoverTeacherHome.show($event);
   };
@@ -740,7 +729,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverClassStudents = $ionicPopover.fromTemplate($scope.templateClassStudentsPopover, {
     scope: $scope
   });
-
   $scope.openPopoverClassStudents = function($event) {
     $scope.popoverClassStudents.show($event);
   };
@@ -762,7 +750,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverClassTeams = $ionicPopover.fromTemplate($scope.templateClassTeamsPopover, {
     scope: $scope
   });
-
   $scope.openPopoverClassTeams = function($event) {
     $scope.popoverClassTeams.show($event);
   };
@@ -784,7 +771,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverteacherDefault = $ionicPopover.fromTemplate($scope.templateTeacherDefaultPopover, {
     scope: $scope
   });
-
   $scope.openPopoverTeacherDefault = function($event) {
     $scope.popoverteacherDefault.show($event);
   };
@@ -806,7 +792,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateTeacherDefaultPopover, {
     scope: $scope
   });
-
   $scope.openPopoverDefault = function($event) {
     $scope.popoverDefault.show($event);
   };
@@ -890,6 +875,19 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeSelectAchievementsModal()">{{ \'CANCEL\' | translate }}</button>'+
         '<button id="attendance-button123" ng-click="selectAchievements()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR LOGROS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.selectTeamsModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">SELECCIONA EQUIPOS</h3>'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkTeam" ng-repeat="teamForSelection in teamsForSelection" ng-click="changeSelectedTeam(teamForSelection)" ng-checked="teamForSelection.selected">{{teamForSelection.name}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeSelectTeamsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectTeams()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR EQUIPOS</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1080,30 +1078,34 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{team.name}</h3>'+
       '<div class="list-student">'+
-        '<div class="avatar_content">'+
-          '<i class="icon ion-image" ></i>'+
+        '<div class="teacherAvatar">'+
+          '<img src={{team.picture}} class="avatar">'+
         '</div>'+
-		'<form id="teamDialogForm">'+
-			'<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
-			'<label class="item item-input list-elements">'+
-				'<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-				'<input type="text" placeholder="{team.name}" ng-model="modelTeamDialog.name">'+
-			'</label>'+
-			'<label class="item item-input list-elements">'+
-				'<span class="input-label">OBJETIVO</span>'+
-				'<input type="text" placeholder="{team.objective}" ng-model="modelTeamDialog.objective">'+
-			'</label>'+
-			'<div class="button-bar action_buttons">'+
-				'<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
-				'<button class="button button-calm  button-block" ng-disabled="!modelTeamDialog.name && !modelTeamDialog.objective" ng-click="closeModalTeamDialog()">{{ \'EDIT_TEAM\' | translate }}</button>'+
-			'</div>'+
-		'</form>'+
+        '<form id="teamDialogForm">'+
+          '<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
+            '<input type="text" placeholder="{{team.name}}" ng-model="modelTeamDialog.name">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">OBJETIVO</span>'+
+            '<input type="text" placeholder="{{team.objective}}" ng-model="modelTeamDialog.objective">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">IMAGEN</span>'+
+            '<input type="text" placeholder="{{team.picture}}" ng-model="modelTeamDialog.picture">'+
+          '</label>'+
+          '<div class="button-bar action_buttons">'+
+            '<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!modelTeamDialog.name && !modelTeamDialog.objective && !modelTeamDialog.picture" ng-click="editTeam(modelTeamDialog.name, modelTeamDialog.objective, modelTeamDialog.picture)">{{ \'EDIT_TEAM\' | translate }}</button>'+
+          '</div>'+
+        '</form>'+
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-item class="list-student-team">{student.name}</ion-item>'+
+          '<ion-item class="list-student-team" ng-repeat="teamMember in teamMembers">{{teamMember.name}} {{teamMember.surname}}</ion-item>'+
         '</ion-list>'+
-        '<button ng-click="showModalAddStudent()" class="button button-calm  button-block">{{ \'ADD_STUDENTS\' | translate }}</button>'+
+        '<button ng-click="showModalAddStudent()" class="button button-calm  button-block">EDITAR MIEMBROS</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1112,28 +1114,29 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>New Team</h3>'+
       '<div class="list-student">'+
-        '<div class="avatar_content">'+
-          '<i class="icon ion-image" ></i>'+
-        '</div>'+
         '<button  class="button button-light  button-block button-outline">{{ \'UPLOAD_AVATAR\' | translate }}</button>'+
         '<form id="newTeamForm" class="list">'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{ \'NAME\' | translate }}" ng-model="modelNewTeamDialog.name">'+
+            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewTeamDialog.name">'+
           '</label>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">OBJETIVO</span>'+
             '<input type="text" placeholder="OBJETIVO" ng-model="modelNewTeamDialog.objective">'+
           '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">IMAGEN</span>'+
+            '<input type="text" placeholder="IMAGEN" ng-model="modelNewTeamDialog.picture">'+
+          '</label>'+
           '<div class="button-bar action_buttons">'+
             '<button class="button button-calm  button-block" ng-click="closeModalNewTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
-            '<button class="button button-calm  button-block" ng-disabled="!modelNewTeamDialog.name || !modelNewTeamDialog.objective" ng-click="closeModalNewTeamDialog()">{{ \'ACCEPT\' | translate }}</button>'+
+            '<button class="button button-calm  button-block" ng-disabled="!modelNewTeamDialog.name || !modelNewTeamDialog.objective" ng-click="createTeam(modelNewTeamDialog.name, modelNewTeamDialog.objective, modelNewTeamDialog.picture)">{{ \'ACCEPT\' | translate }}</button>'+
           '</div>'+
         '</form>'+
       '</div>'+
       '<div class="list-team">'+
         '<ion-list>'+
-          '<ion-checkbox class="list-student-team" ng-repeat="student in students">{{student.name}}</ion-checkbox>'+
+          '<ion-checkbox class="list-student-team" ng-repeat="studentForTeamSelection in studentsForTeamSelection" ng-checked="studentForTeamSelection.selected" ng-click="changeSelectedStudentForTeam(studentForTeamSelection)">{{studentForTeamSelection.name}} {{studentForTeamSelection.surname}}</ion-checkbox>'+
         '</ion-list>'+
       '</div>'+
     '</ion-content>'+
@@ -1342,7 +1345,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalEditReward()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!modelEditReward.name && !modelEditReward.description && !modelEditReward.permission && !modelEditReward.price" ng-click="editRewardData(modelEditReward.name, modelEditReward.description, modelEditReward.permission, modelEditReward.price)">EDITAR RECOMPENSA</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelEditReward.name && !modelEditReward.description && !modelEditReward.permission && !modelEditReward.price" ng-click="editReward(modelEditReward.name, modelEditReward.description, modelEditReward.permission, modelEditReward.price)">EDITAR RECOMPENSA</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1357,7 +1360,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showAttendanceModal = function(){
     //$scope.classroomName = $cookies.get('classroomName');
     //$scope.getStudents();
@@ -1366,7 +1368,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     //}
     $scope.date = Date.now(); 
   }
-    
   $scope.closeAttendanceModal = function(){
     $scope.attendanceModal.hide();
   }
@@ -1377,12 +1378,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectClassroomsModal = function(){
     $scope.getClassroomsForSelection();
     $scope.selectClassroomsModal.show();
   }
-    
   $scope.closeSelectClassroomsModal = function(){
     $scope.selectClassroomsModal.hide();
   }
@@ -1393,12 +1392,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectStudentsModal = function(){
     $scope.getStudentsForSelection();
     $scope.selectStudentsModal.show();
   }
-    
   $scope.closeSelectStudentsModal = function(){
     $scope.selectStudentsModal.hide();
   }
@@ -1409,7 +1406,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectItemsModal = function(){
 	  if($scope.newMissionModal.isShown()){
 		  $scope.newMissionModal.hide();
@@ -1422,7 +1418,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.getItemsForSelection();
     $scope.selectItemsModal.show();
   }
-    
   $scope.closeSelectItemsModal = function(){
     $scope.selectItemsModal.hide();
   	if(modalMissions == 1) {
@@ -1439,14 +1434,26 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectAchievementsModal = function(){
     $scope.getAchievementsForSelection();
     $scope.selectAchievementsModal.show();
   }
-    
   $scope.closeSelectAchievementsModal = function(){
     $scope.selectAchievementsModal.hide();
+  }
+  
+                                        /* SELECT TEAMS MODAL */
+
+  $scope.selectTeamsModal = $ionicModal.fromTemplate($scope.selectTeamsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  $scope.showSelectTeamsModal = function(){
+    $scope.getTeamsForSelection();
+    $scope.selectTeamsModal.show();
+  } 
+  $scope.closeSelectTeamsModal = function(){
+    $scope.selectTeamsModal.hide();
   }
 
                                         /* SELECT REWARDS MODAL */
@@ -1455,12 +1462,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectRewardsModal = function(){
     $scope.getRewardsForSelection();
     $scope.selectRewardsModal.show();
   }
-    
   $scope.closeSelectRewardsModal = function(){
     $scope.selectRewardsModal.hide();
   }
@@ -1471,12 +1476,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showModalNewClass = function(){
     $scope.modelNewClass = {};
     $scope.newClassModal.show();  
   }
-    
   $scope.closeModalNewClass = function(){
     $scope.newClassModal.hide();
   }
@@ -1487,7 +1490,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalSecondary = function(){
     if ($scope.studentDialogModal.isShown()){
       $scope.studentDialogModal.hide();
@@ -1499,7 +1501,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
     $scope.secondaryMenuModal.show();  
   }
-    
   $scope.closeModalSecondary = function(){
 	$scope.clearFormSecundaryModal();
     $scope.secondaryMenuModal.hide();
@@ -1515,12 +1516,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-    
   $scope.showModalNewStudentDialog = function(){
     $scope.modelNewStudent = {};
     $scope.newStudentModal.show();  
   }
-    
   $scope.closeModalNewStudentDialog = function(){
     $scope.newStudentModal.hide();
   }
@@ -1531,11 +1530,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalStudentDialog = function(){
     $scope.studentDialogModal.show();  
   }
-    
   $scope.closeModalStudentDialog = function(){
     $scope.studentDialogModal.hide();
   }
@@ -1546,11 +1543,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalStudentProfile = function(){
     $scope.studentProfileModal.show();  
   }
-    
   $scope.closeModalStudentProfile = function(){
     $scope.studentProfileModal.hide();
   }
@@ -1561,12 +1556,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-    
   $scope.showModalQuantityRandomTeams = function(){
     $scope.modelQuantity = {};
     $scope.quantityRandomTeamsModal.show();  
   }
-    
   $scope.closeModalQuantityRandomTeams = function(){
     $scope.quantityRandomTeamsModal.hide();
   }
@@ -1577,12 +1570,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalTeamDialog = function(){
     $scope.modelTeamDialog = {};
     $scope.teamDialogModal.show();  
   }
-    
   $scope.closeModalTeamDialog = function(){
     $scope.teamDialogModal.hide();
   }
@@ -1593,12 +1584,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalNewTeamDialog = function(){
     $scope.modelNewTeamDialog = {};
+    $scope.getStudentsForTeamSelection()
     $scope.newTeamDialogModal.show();  
   }
-    
   $scope.closeModalNewTeamDialog = function(){
     $scope.newTeamDialogModal.hide();
   }
@@ -1609,11 +1599,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-    
   $scope.showModalAddStudent = function(){
     $scope.addStudentModal.show();  
   }
-    
   $scope.closeModalAddStudent = function(){
     $scope.addStudentModal.hide();
   }
@@ -1624,14 +1612,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalNewMission = function(){
     if(modalMissions == 0){
       $scope.modelNewMission = {};  
     }
     $scope.newMissionModal.show();  
   }
-    
   $scope.closeModalNewMission = function(){
     $scope.newMissionModal.hide();
     modalMissions == 0;
@@ -1643,14 +1629,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalEditMission = function(){
     if(modalMissions == 0){
       $scope.modelEditMission = {};  
     }
     $scope.editMissionModal.show();  
   }
-    
   $scope.closeModalEditMission = function(){
     $scope.editMissionModal.hide();
     modalMissions = 0;
@@ -1662,12 +1646,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalNewItem = function(){
     $scope.modelNewItem = {};
     $scope.newItemModal.show();  
   }
-    
   $scope.closeModalNewItem = function(){
     $scope.newItemModal.hide();
   }
@@ -1678,12 +1660,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalNewAchievement = function(){
     $scope.modelNewAchievement = {};
     $scope.newAchievementModal.show();  
   }
-    
   $scope.closeModalNewAchievement = function(){
     $scope.newAchievementModal.hide();
   }
@@ -1693,12 +1673,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
-
   $scope.showModalNewReward = function(){
     $scope.modelNewReward = {};
     $scope.newRewardModal.show();  
-  }
-    
+  } 
   $scope.closeModalNewReward = function(){
     $scope.newRewardModal.hide();
   }
@@ -1709,12 +1687,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalEditReward = function(){
     $scope.modelEditReward = {};
     $scope.editRewardModal.show();  
   }
-    
   $scope.closeModalEditReward = function(){
     $scope.editRewardModal.hide();
   }
@@ -1722,7 +1698,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   /*
     *************************************CLEAN FORM FUNCTIONS GOES HERE*******************************
   */
-
 
   $scope.clearFormSecundaryModal = function(){
     var selectTeam = document.getElementById("selectTeam").selectedIndex = 0;
@@ -1762,7 +1737,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var studentsRef = firebase.database().ref('students');
   var classroomsRef = firebase.database().ref('classrooms');
   var itemsRef = firebase.database().ref('items');
-  var achievementsRef = firebase.database().ref('achievements/');
+  var achievementsRef = firebase.database().ref('achievements');
+  var teamsRef = firebase.database().ref('teams');
   var rewardsRef = firebase.database().ref('rewards');
 
   /*
@@ -1916,6 +1892,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.classroom = classroom;
     $scope.getStudents();
     $scope.getItems();
+    $scope.getTeams();
     $scope.getRewards();
   }
 
@@ -2165,12 +2142,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       var studentItemToDeleteRef = firebase.database().ref('students/' + student.id + '/items/' + $scope.items[item].id);
       studentItemToDeleteRef.remove();
     }
+
+    for (var team in $scope.teams) {
+      var teamStudentsToDeleteRef = firebase.database().ref('teams/' + $scope.teams[team].id + '/students/' + student.id);
+      teamStudentsToDeleteRef.remove();
+
+      var studentTeamsToDelete = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
+      studentTeamsToDelete.remove();
+    }
     
     //THINGS TO DO
     //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
-
-    //ELIMINAR AL ESTUDIANTE DE LOS EQUIPOS DE LA CLASE teams/'EACHteamINCLASS'/students/studentID
-    //ELIMINAR LOS EQUIPOS DE LA CLASE DEL ESTUDIANTE students/studentID/teams/'EACHteam'
 
     $scope.getStudents();
   }
@@ -2573,7 +2555,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             $scope.getAchievementsForSelection();
           }
         });
-
       }
     });
   }
@@ -2706,6 +2687,201 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
+
+
+
+                                       /* FUNCTIONS IN TEAMS */
+
+  $scope.getTeams = function() {
+    var classroomTeamsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/teams');
+    var teamKeys = $firebaseArray(classroomTeamsRef);
+    teamKeys.$loaded(function() {
+      $scope.teams = [];
+      for (i = 0 ; i < teamKeys.length ; i++) {
+        var teamKey = teamKeys.$keyAt(i);
+        var loopTeam = firebase.database().ref('teams/' + teamKey);
+        loopTeam.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var team = snapshot.val();
+            for(j = 0 ; j < $scope.teams.length ; j++) {
+              if($scope.teams[j].id == team.id) {
+                change = true;
+                index = j;
+              }
+            }
+            if(!change) {
+              $scope.teams.push(team);
+            } else {
+              $scope.teams[index] = team;
+            }
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
+            }
+            $scope.getTeamsForSelection();
+          }
+        });
+      }
+    });
+  }
+
+  $scope.getStudentsForTeamSelection = function() {
+    $scope.studentsForTeamSelection = $scope.students;
+    for (var element in $scope.studentsForTeamSelection) {
+      $scope.studentsForTeamSelection[element].selected = false;
+    }
+  }
+
+  $scope.getTeamsForSelection = function() {
+    $scope.teamsForSelection = $scope.teams;
+    for (var element in $scope.teamsForSelection) {
+      $scope.teamsForSelection[element].selected = false;
+    }
+  }
+
+  $scope.createTeam = function(name, objective, picture) {
+    if(picture == undefined){
+      picture = 'https://d30y9cdsu7xlg0.cloudfront.net/png/14261-200.png'
+    }
+
+    var teamsNode = $firebaseArray(teamsRef);
+    teamsNode.$loaded(function() {
+      teamsNode.$add({
+        'name' : name,
+        'objective' : objective,
+        'picture' : picture,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var idForTeamRef = firebase.database().ref('teams/' + id + '/id');
+        idForTeamRef.set(id);
+
+        var classroomRef = firebase.database().ref('classrooms/' + $scope.classroom.id  + '/teams/' + id);
+        classroomRef.set(true);
+
+        for (var element in $scope.studentsForTeamSelection) {
+          if ($scope.studentsForTeamSelection[element].selected === true) {
+
+            var studentId = $scope.studentsForTeamSelection[element].id;
+
+            var studentTeamsRef = firebase.database().ref('students/' + studentId + '/teams/' + id);
+            studentTeamsRef.set(true);
+
+            var teamStudentsRef = firebase.database().ref('teams/' + id + '/students/' + studentId);
+            teamStudentsRef.set(true);
+          }
+        }
+        $scope.closeModalNewTeamDialog();
+        $scope.getStudentsForTeamSelection();
+        $scope.getTeams();
+      });  
+    });
+  }
+
+  $scope.deleteTeam = function(team) {
+    var teamToDeleteRef = firebase.database().ref('teams/' + team.id);
+    teamToDeleteRef.remove();
+
+    for (var student in $scope.students) {
+      var studentTeamToDeleteRef = firebase.database().ref('students/' + $scope.students[student].id + '/teams/' + team.id);
+      studentTeamToDeleteRef.remove();
+    }
+
+    var classroomTeamToDelete = firebase.database().ref('classrooms/' + $scope.classroom.id + '/teams/' + team.id);
+    classroomTeamToDelete.remove();
+
+    $scope.getTeams();
+  }
+
+  $scope.setTeam = function(team) {
+    $scope.team = team;
+    $scope.teamMembers = [];
+    for (var student in $scope.students) {
+      for (var teamMember in team.students) {
+        if ($scope.students[student].id == teamMember) {
+          $scope.teamMembers.push({
+            'id' : $scope.students[student].id,
+            'name' : $scope.students[student].name,
+            'surname' : $scope.students[student].surname,
+            'avatar' : $scope.students[student].avatar,
+          });
+        }
+      }
+    }
+    $scope.showModalTeamDialog();
+  }
+
+  $scope.editTeam = function(name, objective, picture) {
+    if (name != undefined && objective != undefined && picture != undefined) {
+      var team = {
+        'id' : $scope.team.id,
+        'name' : name,
+        'objective' : objective,
+        'picture' : picture,
+        'students' : $scope.team.students,
+      }
+      var teamRef = firebase.database().ref('teams/' + $scope.team.id);
+      teamRef.set(team);
+    } else {
+      if (name != undefined) {
+        $scope.team.name = name;
+        var teamNameRef = firebase.database().ref('teams/' + $scope.team.id + '/name');
+        teamNameRef.set(name);
+      }
+
+      if (objective != undefined) {
+        $scope.team.objective = objective;
+        var teamObjectiveRef = firebase.database().ref('teams/' + $scope.team.id + '/objective');
+        teamObjectiveRef.set(objective);
+      }
+
+      if (picture != undefined) {
+        $scope.team.picture = picture;
+        var teamPictureRef = firebase.database().ref('teams/' + $scope.team.id + '/picture');
+        teamPictureRef.set(picture);
+      }
+    }
+    $scope.closeModalTeamDialog();
+    alert('DATOS CAMBIADOS');
+  }
+
+  $scope.selectTeams = function() {
+    $scope.closeSelectTeamsModal();
+    if ($scope.actionsheetClassTeamsType === 'delete') {
+      for (var element in $scope.teamsForSelection) {
+        if ($scope.teamsForSelection[element].selected === true) {
+          $scope.deleteTeam($scope.teamsForSelection[element]);
+        }
+      }
+    $scope.teamsForSelection = $scope.teams;
+    } else if ($scope.actionsheetClassTeamsType === 'duplicate') {
+      for (var element in $scope.teamsForSelection) {
+        if ($scope.teamsForSelection[element].selected === true) {
+          $scope.duplicateTeam($scope.teamsForSelection[element]); //THINGS TO DO
+        }
+      }
+    }
+  }
+
+  $scope.changeSelectedStudentForTeam = function(position) {
+    var pos = $scope.studentsForTeamSelection.indexOf(position);
+    if ($scope.studentsForTeamSelection[pos].selected === false) {
+      $scope.studentsForTeamSelection[pos].selected = true;
+    } else {
+      $scope.studentsForTeamSelection[pos].selected = false;
+    }
+  }
+
+  $scope.changeSelectedTeam = function(position) {
+    var pos = $scope.teamsForSelection.indexOf(position);
+    if ($scope.teamsForSelection[pos].selected === false) {
+      $scope.teamsForSelection[pos].selected = true;
+    } else {
+      $scope.teamsForSelection[pos].selected = false;
+    }
+  }
+
   
 
 
@@ -2794,7 +2970,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.showModalEditReward();
   }
 
-  $scope.editRewardData = function(name, description, permission, price) {
+  $scope.editReward = function(name, description, permission, price) {
     if (name != undefined && description != undefined && permission != undefined && price != undefined) {
       var reward = {
         'id' : $scope.reward.id,
@@ -2948,7 +3124,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
                                           /* REWARDS (STUDENT PART) ACTIONSHEET */
 
   $scope.showActionsheetRewards = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES RECOMPENSAS',
       buttons: [
@@ -2963,7 +3138,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           //BUY REWARDS ACTION
           $scope.showSelectRewardsModal();
         }
-
         return true;
       }
     });
@@ -3023,7 +3197,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.popoverLanguages = $ionicPopover.fromTemplate($scope.templateLanguagesPopover, {
     scope: $scope
   });
-
   $scope.openPopoverLanguages = function($event) {
     $scope.popoverLanguages.show($event);
   };
@@ -3045,7 +3218,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.popoverStudentHome = $ionicPopover.fromTemplate($scope.templateStudentHomePopover, {
     scope: $scope
   });
-
   $scope.openPopoverStudentHome = function($event) {
     $scope.popoverStudentHome.show($event);
   };
@@ -3067,7 +3239,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.popoverMissions = $ionicPopover.fromTemplate($scope.templateMissionsPopover, {
     scope: $scope
   });
-
   $scope.openPopoverMissions = function($event) {
     $scope.popoverMissions.show($event);
   };
@@ -3089,7 +3260,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.popoverDefault = $ionicPopover.fromTemplate($scope.templateStudentDefaultPopover, {
     scope: $scope
   });
-
   $scope.openPopoverStudentDefault = function($event) {
     $scope.popoverDefault.show($event);
   };
@@ -3232,11 +3402,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   })
-
   $scope.showSelectRewardsModal = function(){
     $scope.selectRewardsModal.show();
   }
-    
   $scope.closeSelectRewardsModal = function(){
     $scope.selectRewardsModal.hide();
   }
@@ -3247,12 +3415,10 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalAddClass = function(){
     $scope.modelAddClass = {};
     $scope.addClassModal.show();  
   }
-    
   $scope.closeModalAddClass = function(){
     $scope.addClassModal.hide();
   }
@@ -3263,7 +3429,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalItemDialog = function(){
 	  if($scope.missionDialogModal.isShown()){
 		  $scope.missionDialogModal.hide();
@@ -3271,7 +3436,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 	  }
     $scope.itemDialogModal.show();  
   }
-    
   $scope.closeModalItemDialog = function(){
 	  if(itemModal == 1){
 		  $scope.missionDialogModal.show();
@@ -3286,11 +3450,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalAchievementDialog = function(){
     $scope.achievementDialogModal.show();  
   }
-    
   $scope.closeModalAchievementDialog = function(){
     $scope.achievementDialogModal.hide();
   }
@@ -3301,11 +3463,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalMissionDialog = function(){
     $scope.missionDialogModal.show();  
   }
-    
   $scope.closeModalMissionDialog = function(){
     $scope.missionDialogModal.hide();
   }
@@ -3316,11 +3476,9 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     scope: $scope,
     animation: 'slide-in-up'
   });
- 
   $scope.showModalRewardDialog = function(){
     $scope.rewardDialogModal.show();  
   }
-    
   $scope.closeModalRewardDialog = function(){
     $scope.rewardDialogModal.hide();
   }
@@ -3355,7 +3513,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   var studentsRef = firebase.database().ref('students');
   var hashcodesRef = firebase.database().ref('hashcodes');
   var classroomsRef = firebase.database().ref('classrooms');
-  
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
@@ -3504,6 +3661,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
         $scope.classroomData = snapshot.val();
     });
     $scope.getItems();
+    $scope.getTeams();
     $scope.getRewards();
     $scope.rulesItemsForm();
   }

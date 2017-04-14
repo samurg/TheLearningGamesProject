@@ -424,6 +424,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       buttonClicked: function(index) {
         if (index === 0) {
           //TAKE ATTENDANCE ACTION
+          $scope.actionsheetClassStudentsType = 'attendance';
           $scope.showAttendanceModal();
         } else if (index === 1) {
           //EVALUATE STUDENTS ACTION
@@ -436,8 +437,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       },
       destructiveButtonClicked: function() {
         //DELETE STUDENTS ACTION
-        $scope.showSelectStudentsModal();
         $scope.actionsheetClassStudentsType = 'delete';
+        $scope.showSelectStudentsModal();
         return true;
       }
     });
@@ -816,7 +817,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '<ion-checkbox id="attendance-checkbox2" name="checkStudent" class="list-student" ng-repeat="student in students" ng-checked="student.inClass" ng-click="inClass(student)">{{student.name}}</ion-checkbox>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
-        '<button id="attendance-button123" ng-click="editStudentsAttendance(); closeAttendanceModal()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectStudents()" id="attendance-btn123" class="button button-calm  button-block">{{ \'SET_ATTENDANCE_FOR_TODAY\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1364,11 +1365,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     animation: 'slide-in-up'
   })
   $scope.showAttendanceModal = function(){
-    //$scope.classroomName = $cookies.get('classroomName');
-    //$scope.getStudents();
-    //if ($scope.students.length > 0) {
-      $scope.attendanceModal.show();
-    //}
+    $scope.attendanceModal.show();
     $scope.date = Date.now(); 
   }
   $scope.closeAttendanceModal = function(){
@@ -1972,12 +1969,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.changeSelectedClassroom = function(position){
-    var pos = $scope.classroomsForSelection.indexOf(position);
-    if ($scope.classroomsForSelection[pos].selected === false) {
-      $scope.classroomsForSelection[pos].selected = true;
+  $scope.changeSelectedClassroom = function(classroom){
+    if (classroom.selected === false) {
+      classroom.selected = true;
     } else {
-      $scope.classroomsForSelection[pos].selected = false;
+      classroom.selected = false;
     }
   }
 
@@ -2059,6 +2055,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             var student = snapshot.val();
             student.name = CryptoJS.AES.decrypt(student.name, student.id).toString(CryptoJS.enc.Utf8);
             student.surname =CryptoJS.AES.decrypt(student.surname, student.id).toString(CryptoJS.enc.Utf8);
+            student.inClass = student.classrooms[$scope.classroom.id].inClass;
             for(j = 0 ; j < $scope.students.length ; j++) {
               if($scope.students[j].id == student.id) {
                 change = true;
@@ -2083,9 +2080,21 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.getStudentsForSelection = function() {
-    $scope.studentsForSelection = angular.copy($scope.students);
-    for (var element in $scope.studentsForSelection) {
-      $scope.studentsForSelection[element].selected = false;
+    $scope.studentsForSelection = [];
+    if($scope.actionsheetClassStudentsType == 'evaluate') {
+      for (var element in $scope.students) {
+        if($scope.students[element].classrooms[$scope.classroom.id].inClass){
+          $scope.studentsForSelection.push($scope.students[element]);
+        }
+      }
+      for (var element in $scope.studentsForSelection) {
+        $scope.studentsForSelection[element].selected = false;
+      }
+    } else {
+      $scope.studentsForSelection = angular.copy($scope.students);
+      for (var element in $scope.studentsForSelection) {
+        $scope.studentsForSelection[element].selected = false;
+      }
     }
   }
 
@@ -2193,6 +2202,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             'name' : $scope.items[i].name,
             'score' : $scope.items[i].score,
             'maxScore' : $scope.items[i].maxScore,
+            'useForLevel' : $scope.items[i].useForLevel,
           });
         }
       }
@@ -2255,6 +2265,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.selectStudents = function() {
     $scope.closeSelectStudentsModal();
+    $scope.closeAttendanceModal();
     if ($scope.actionsheetClassStudentsType === 'delete') {
       for (var element in $scope.studentsForSelection) {
         if ($scope.studentsForSelection[element].selected === true) {
@@ -2270,21 +2281,36 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       }
       $scope.actionSheetItemsType = 'evaluateStudents';
       $scope.showSelectItemsModal();
+    } else if ($scope.actionsheetClassStudentsType === 'attendance') {
+      for (var element in $scope.students) {
+        $scope.editStudentsAttendance($scope.students[element]);
+      }
     }
-    
   }
   
-  $scope.changeSelectedStudent = function(position){
-    var pos = $scope.studentsForSelection.indexOf(position);
-    if ($scope.studentsForSelection[pos].selected === false) {
-      $scope.studentsForSelection[pos].selected = true;
+  $scope.changeSelectedStudent = function(student){
+    if (student.selected === false) {
+      student.selected = true;
     } else {
-      $scope.studentsForSelection[pos].selected = false;
+      student.selected = false;
     }
   }
 
+  $scope.inClass = function(student) {
+    if (student.classrooms[$scope.classroom.id].inClass === true) {
+      student.classrooms[$scope.classroom.id].inClass = false;
+    } else {
+      student.classrooms[$scope.classroom.id].inClass = true;
+    }
+  }
+
+  $scope.editStudentsAttendance = function(student) {
+    var studentAttendanceRef = firebase.database().ref('students/' + student.id + '/classrooms/' + $scope.classroom.id + '/inClass');
+    studentAttendanceRef.set(student.classrooms[$scope.classroom.id].inClass);
+  }  
   
   
+
 
                                         /* FUNCTIONS IN ITEMS */
 
@@ -2449,8 +2475,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     for(var pos in $scope.studentsToEvaluate) {
       if($scope.studentsToEvaluate[pos].items != undefined) {
         var studentItems = $scope.studentsToEvaluate[pos].items;
+        var studentItemRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/items/' + item.id);
         if (!(item.id in studentItems)) {
-          var studentItemRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/items/' + item.id);
           studentItemRef.set({
             'id' : item.id,
             'points' : item.score,
@@ -2459,18 +2485,19 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         } else {
           var studentPoints = $scope.studentsToEvaluate[pos].items[item.id].points;
           if((Number(studentPoints) + Number(item.score)) > Number(item.maxScore)) {
-            var studentItemRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/items/' + item.id);
             studentItemRef.set({
               'id' : item.id,
               'points' : item.maxScore,
             });
             alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA RECIBIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM ' + item.name + ' , SE HA ESTABLECIDO LA PUNTUACION MAXIMA');
           } else {
-            var studentItemRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/items/' + item.id);
             studentItemRef.set({
               'id' : item.id,
               'points' : Number(studentPoints) + Number(item.score),
             });
+            if ((Number(studentPoints) + Number(item.score)) < 0) {
+              alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA PERDIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM ' + item.name + ' , SE HA ESTABLECIDO LA PUNTUACION A 0');
+            }
           }
         }   
       } else {
@@ -2487,7 +2514,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       //PREGUNTAR A OSCAR: esto añade puntos a la clase a pesar de que el item ya tenga la puntuacion al maximo, asi como el nivel de la clase
       var pointsAdded = Number($scope.studentsToEvaluate[pos].classrooms[$scope.classroom.id].totalPoints) + Number(item.score);
       var studentClassroomTotalPointsRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
-      studentClassroomTotalPointsRef.set(pointsAdded);
+      if(pointsAdded < 0){
+        studentClassroomTotalPointsRef.set(0);
+      } else {
+        studentClassroomTotalPointsRef.set(pointsAdded);  
+      }
     }   
   }
 
@@ -2515,13 +2546,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.changeSelectedItem = function(position){
-    var pos = $scope.itemsForSelection.indexOf(position);
-      if ($scope.itemsForSelection[pos].selected === false) {
-        $scope.itemsForSelection[pos].selected = true;
+  $scope.changeSelectedItem = function(item){
+      if (item.selected === false) {
+        item.selected = true;
 
         if($scope.actionSheetItemsType === 'evaluateStudents'){ 
-        $scope.points = position.score;
+        $scope.points = item.score;
         $scope.popupChooseScore = $ionicPopup.show({
           template: '<input id="inputScore" type="number" ng-model="points">',
           scope: $scope,
@@ -2529,7 +2559,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             {
               text: 'CANCELAR',
               onTap: function() {
-                $scope.itemsForSelection[pos].selected = false;
+                item.selected = false;
               }
             },
             { text: 'USAR PUNTOS POR DEFECTO',
@@ -2540,10 +2570,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
               type: 'button-positive',
               onTap: function(e) {
                 var actualScore = document.getElementById("inputScore").value;
-                if(actualScore > position.maxScore){
+                if(actualScore > item.maxScore){
+                  e.preventDefault();
+                } else if (-(actualScore) > item.maxScore) {
                   e.preventDefault();
                 } else {
-                  $scope.itemsForSelection[pos].score = actualScore;
+                  item.score = actualScore;
                 }
               }
             }
@@ -2551,24 +2583,38 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         });
       }
     } else {
-      $scope.itemsForSelection[pos].selected = false;
+      item.selected = false;
     }
   }
 
   $scope.removePoints = function(item) {
     var studentItemPointsToRemoveRef = firebase.database().ref('students/' + $scope.student.id + '/items/' + item.id + '/points');
+    var studentClassPointsToRemoveRef = firebase.database().ref('students/' + $scope.student.id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
     if ((Number($scope.student.items[item.id].points) - Number(item.score)) < 0) {
-      alert ('EL ALUMNO NO DISPONE DE SUFICIENTES PUNTOS PARA RESTAR');
+      alert ('EL ALUMNO NO DISPONE DE SUFICIENTES PUNTOS PARA RESTAR, LA PUNTUACION SERA ESTABLECIDA A 0');
       studentItemPointsToRemoveRef.set(0);
       $scope.student.items[item.id].points = 0;
     } else {
       studentItemPointsToRemoveRef.set((Number($scope.student.items[item.id].points) - Number(item.score)));
       $scope.student.items[item.id].points = (Number($scope.student.items[item.id].points) - Number(item.score));
     }
+
+    item.points = $scope.student.items[item.id].points;
+
+    if(item.useForLevel) {
+      if(($scope.student.classrooms[$scope.classroom.id].totalPoints - item.score) < 0) {
+        studentClassPointsToRemoveRef.set(0);
+        $scope.student.classrooms[$scope.classroom.id].totalPoints = 0;
+      } else {
+        studentClassPointsToRemoveRef.set($scope.student.classrooms[$scope.classroom.id].totalPoints - item.score); 
+        $scope.student.classrooms[$scope.classroom.id].totalPoints = Number($scope.student.classrooms[$scope.classroom.id].totalPoints) - Number(item.score);
+      }
+    }
   }
 
   $scope.addPoints = function(item) {
     var studentItemPointsToAddRef = firebase.database().ref('students/' + $scope.student.id + '/items/' + item.id + '/points');
+    var studentClassPointsToAddRef = firebase.database().ref('students/' + $scope.student.id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
     if ((Number($scope.student.items[item.id].points) + Number(item.score)) > item.maxScore) {
       alert('EL ALUMNO HA RECIBIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM, LA PUNTUACION SERA ESTABLECIDA AL MAXIMO');
       studentItemPointsToAddRef.set(item.maxScore);
@@ -2576,6 +2622,13 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     } else {
       studentItemPointsToAddRef.set((Number($scope.student.items[item.id].points) + Number(item.score)));
       $scope.student.items[item.id].points = (Number($scope.student.items[item.id].points) + Number(item.score));
+    }
+
+    item.points = $scope.student.items[item.id].points;
+
+    if(item.useForLevel) {
+      studentClassPointsToAddRef.set($scope.student.classrooms[$scope.classroom.id].totalPoints + item.score);
+      $scope.student.classrooms[$scope.classroom.id].totalPoints = $scope.student.classrooms[$scope.classroom.id].totalPoints + item.score;
     }
   }
 
@@ -2737,12 +2790,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
   
-  $scope.changeSelectedAchievement = function(position){
-    var pos = $scope.achievementsForSelection.indexOf(position);
-    if ($scope.achievementsForSelection[pos].selected === false) {
-      $scope.achievementsForSelection[pos].selected = true;
+  $scope.changeSelectedAchievement = function(achievement){
+    if (achievement.selected === false) {
+      achievement.selected = true;
     } else {
-      $scope.achievementsForSelection[pos].selected = false;
+      achievement.selected = false;
     }
   }
 
@@ -2953,14 +3005,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.changeSelectedStudentForTeam = function(position) {
-    var pos = $scope.studentsForTeamSelection.indexOf(position);
-    if ($scope.studentsForTeamSelection[pos].selected === false) {
-      $scope.studentsForTeamSelection[pos].selected = true;
+  $scope.changeSelectedStudentForTeam = function(student) {
+    if (student.selected === false) {
+      student.selected = true;
     } else {
-      $scope.studentsForTeamSelection[pos].selected = false;
+      student.selected = false;
     }
   }
+
 
   $scope.inTeam = function(student) {
     if (student.inTeam === true) {
@@ -2970,12 +3022,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.changeSelectedTeam = function(position) {
-    var pos = $scope.teamsForSelection.indexOf(position);
-    if ($scope.teamsForSelection[pos].selected === false) {
-      $scope.teamsForSelection[pos].selected = true;
+  $scope.changeSelectedTeam = function(team) {
+    if (team.selected === false) {
+      team.selected = true;
     } else {
-      $scope.teamsForSelection[pos].selected = false;
+      team.selected = false;
     }
   }
 
@@ -3125,12 +3176,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.changeSelectedReward = function(position){
-    var pos = $scope.rewardsForSelection.indexOf(position);
-    if ($scope.rewardsForSelection[pos].selected === false) {
-      $scope.rewardsForSelection[pos].selected = true;
+  $scope.changeSelectedReward = function(reward){
+    if (reward.selected === false) {
+      reward.selected = true;
     } else {
-      $scope.rewardsForSelection[pos].selected = false;
+      reward.selected = false;
     }
   }
 
@@ -3934,12 +3984,11 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     $scope.rewardsForSelection = $scope.rewards;
   }
 
-  $scope.changeSelectedReward = function(position) {
-    var pos = $scope.rewardsForSelection.indexOf(position);
-    if ($scope.rewardsForSelection[pos].selected === false) {
-      $scope.rewardsForSelection[pos].selected = true;
+  $scope.changeSelectedReward = function(reward) {
+    if (reward.selected === false) {
+      reward.selected = true;
     } else {
-      $scope.rewardsForSelection[pos].selected = false;
+      reward.selected = false;
     }
   }
 

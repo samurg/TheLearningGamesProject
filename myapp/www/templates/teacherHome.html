@@ -142,7 +142,7 @@
         <button id="class-button29" ng-click="teamsForm()"  class="button button-light  button-outline">{{ 'TEAMS' | translate }}</button>
       </div>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-repeat="student in students" ng-click="setStudent(student)">
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="student in students" ng-show="student.classrooms[classroom.id].inClass" ng-click="setStudent(student)">
           <h2>{{student.name}} {{student.surname}}</h2>
         </ion-item>
       </ion-list>

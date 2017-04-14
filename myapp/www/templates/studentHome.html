@@ -157,7 +157,7 @@
         </ion-item>
       </ion-list>
       <h3 id="teacherHome-heading1" class="margin-top-null">ITEMS BLOQUEADOS</h3>
-      <ion-list id="teacherHome-list16" class="list-elements align-text-center">
+      <ion-list id="teacherHome-list16" class="list-elements">
         <ion-item id="teacherHome-list-item47" class="list-student" ng-repeat="item in itemsLocked" ng-click="setItem(item)">
           <h2>{{item.name}}</h2>
           <p>{{item.studentPoints}}</p>
@@ -176,7 +176,7 @@
       </h3>
       <div class="list-student list-elements">
         <div class="avatar_content">
-          <img src={{item.picture}} class="avatar">
+          <img src={{team.picture}} class="avatar">
         </div>
       </div>
       <div class="list-team list-elements">

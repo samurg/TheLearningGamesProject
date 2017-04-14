@@ -134,7 +134,6 @@
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
         <p>{{ 'RULES' | translate }}</p>
       </h3>
-      <button id="class-button26" ng-click="rulesItemsForm()" class="button button-light  button-outline">{{ 'ITEMS' | translate }}</button>
       <div>
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="inputLabelProfile">
@@ -170,7 +169,7 @@
     <div ng-show="itemsView">
       <h3 id="achievements-heading13" class="achievements-hdg13">
         <a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="studentHomeForm()"></a>
-        <span ng-click="classForm()">{{classroom.name}}</span>
+        <span ng-click="rulesItemsForm()">{{classroom.name}}</span>
         <a id="teacherHome-dropdown" class="button button-light icon ion-drag" ng-click="openPopoverStudentDefault($event)"></a>
         <p>{{item.name}}</p>
       </h3>
@@ -208,9 +207,6 @@
       </div>
       <h3 id="teams-heading5" class="teams-hdg5">{{ 'ACHIEVEMENTS' | translate }}</h3>
       <ion-list id="items-list9" class="list-elements align-text-center">
-        <ion-item ng-click="showModalAchievementDialog()">
-          <h2>{achievement.name}</h2>
-        </ion-item>
         <ion-item id="items-list-item15" class="list-item" ng-click="setAchievement(achievement)" ng-repeat="achievement in achievements">
           <h2>{{achievement.name}}</h2>
         </ion-item>

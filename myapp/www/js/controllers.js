@@ -165,6 +165,8 @@ function ($scope, $stateParams, $http, $state, sharedData) {
 
   $scope.modelSignUp = {};
 
+  $scope.defaultAvatar = 'https://cdn3.iconfinder.com/data/icons/black-easy/512/538474-user_512x512.png';
+
   var rootRef = firebase.database().ref();
 
   var teachersRef = firebase.database().ref('teachers');
@@ -3319,7 +3321,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.templateMissionsPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
       '<ion-item ng-click="closePopoverMissions()">VER FINALIZADAS</ion-item>'+
-      '<ion-item ng-click="rulesItemsForm(); closePopoverMissions()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverMissions()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverMissions()">VER MISIONES</ion-item>'+
       '<ion-item ng-click="settingsForm(); closePopoverMissions()">{{ \'SETTINGS\' | translate }}</ion-item>'+
@@ -3328,7 +3329,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.templateStudentDefaultPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="rulesItemsForm(); closePopoverStudentDefault()">VER REGLAS</ion-item>'+
       '<ion-item ng-click="rewardShopForm(); closePopoverStudentDefault()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item ng-click="missionsForm(); closePopoverStudentDefault()">VER MISIONES</ion-item>'+
       '<ion-item ng-click="settingsForm(); closePopoverStudentDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+

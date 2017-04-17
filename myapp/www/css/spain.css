@@ -9,7 +9,7 @@
 */
 
 /* Background */
-ion-view, ion-modal-view{ background-color: #387ef5 !important; }
+ion-view, ion-modal-view{ background:url('../img/bg.jpg') no-repeat; background-size: cover; }
 
 /* Logout button */
 .logout{ color: rgba(255, 255, 255, 0.8) !important; }
@@ -20,7 +20,6 @@ ion-view, ion-modal-view{ background-color: #387ef5 !important; }
 	.avatar_content i{ color: #c4c4c4; }
 
 /* Buttons */
-.addButton{ position: fixed; bottom: 0; right: 0;}
 
 /* Login Screen */
 .login_screen .button{ background: none !important;}
@@ -46,9 +45,6 @@ ion-view, ion-modal-view{ background-color: #387ef5 !important; }
 .list-elements:hover, .list-elements:focus { background: rgba(255, 255, 255, 1) none repeat scroll 0 0;}
 .button#login-button6, .button#login-button7{ background-color: rgba(224,133,15,1) !important; }
 
-ion-modal-view h2, h3{ background: rgba(255,255,255,.2); color: white;}
+ion-modal-view h2, h3{ color: white;}
 
 ion-modal-view h2{ background-color: #387ef5;}
-
-/* Fixs */
-.scroll, .teacherHomeView{ height: 100%; }

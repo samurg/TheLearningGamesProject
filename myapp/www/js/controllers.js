@@ -610,32 +610,33 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.templateLanguagesPopover = '<ion-popover-view>'+
     '<div ng-controller="changeLanguageCtrl">'+
       '<ion-list class="list-elements">'+
-        '<ion-item ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
       '</ion-list>'+
     '</div>'+
   '</ion-popover-view>';
 
   $scope.templateTeacherHomePopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item>IMPORTAR</ion-item>'+
-      '<ion-item>EXPORTAR</ion-item>'+
-      '<ion-item ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
-      '<ion-item ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover">IMPORTAR</ion-item>'+
+      '<ion-item class="itemPopover">EXPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverTeacherHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
   $scope.templateClassStudentsPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverClassStudents()()">IMPORTAR</ion-item>'+
-      '<ion-item ng-click="closePopoverClassStudents()()">EXPORTAR</ion-item>'+
-      '<ion-item class="item item-input item-select">'+
+      '<ion-item class="itemPopover" ng-click="closePopoverClassStudents()">IMPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverClassStudents()">EXPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="showConfigureLevelsModal()">CONFIGURAR NIVELES</ion-item>'+
+      '<ion-item class="itemPopover item item-input item-select">'+
         '<div class="input-label">VISTA DE ALUMNOS'+
         '</div>'+
         '<select>'+
@@ -643,37 +644,37 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '<option>IMAGEN</option>'+
         '</select>'+
       '</ion-item>'+
-      '<ion-toggle ng-model="checkboxNotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
-      '<ion-toggle ng-model="checkboxOpening" ng-checked="classroom.open" ng-click="setOpening(checkboxOpening)" toggle-class="toggle-calm">APERTURA</ion-toggle>'+
-      '<ion-item ng-click="showHashcodePopup()">VER HASHCODE DE LA CLASE</ion-item>'+
-      '<ion-item ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverClassStudents()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-toggle class="itemPopover" ng-model="checkboxNotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
+      '<ion-toggle class="itemPopover" ng-model="checkboxOpening" ng-checked="classroom.open" ng-click="setOpening(checkboxOpening)" toggle-class="toggle-calm">APERTURA</ion-toggle>'+
+      '<ion-item class="itemPopover" ng-click="showHashcodePopup()">VER HASHCODE DE LA CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rulesForm(); closePopoverClassStudents()">VER REGLAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverClassStudents()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverClassStudents()">VER MISIONES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverClassStudents()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
   $scope.templateClassTeamsPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverClassTeams()">IMPORTAR</ion-item>'+
-      '<ion-item ng-click="closePopoverClassTeams()">EXPORTAR</ion-item>'+
-      '<ion-toggle ng-model="modelcheckboxotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
-      '<ion-item ng-click="closePopoverClassTeams()">VER HASHCODES</ion-item>'+
-      '<ion-item ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverClassTeams()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverClassTeams()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">IMPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">EXPORTAR</ion-item>'+
+      '<ion-toggle class="itemPopover" ng-model="modelcheckboxotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">VER HASHCODES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverClassTeams()">VER MISIONES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverClassTeams()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
   $scope.templateTeacherDefaultPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverTeacherDefault()">IMPORTAR</ion-item>'+
-      '<ion-item ng-click="closePopoverTeacherDefault()">EXPORTAR</ion-item>'+
-      '<ion-item ng-click="rulesForm(); closePopoverTeacherDefault()">VER REGLAS</ion-item>'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverTeacherDefault()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverTeacherDefault()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverTeacherDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverTeacherDefault()">IMPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverTeacherDefault()">EXPORTAR</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rulesForm(); closePopoverTeacherDefault()">VER REGLAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverTeacherDefault()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverTeacherDefault()">VER MISIONES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverTeacherDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
@@ -927,6 +928,74 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             '<button class="button button-calm  button-block" ng-click="createClassroom(modelNewClass.name) ; closeModalNewClass()">{{ \'CREATE\' | translate }}</button>'+
           '</div>'+
         '</form>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.configureLevelsModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">{{classroomName}}</h3>'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">CONFIGURACION DE NIVELES</h3>'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-item id="attendance-checkbox2" name="checkItem" ng-repeat="level in levels" ng-click="setLevel(level)">{{level.level}}. {{level.title}}'+
+          '<ion-option-button class="button-assertive" ng-click="deleteLevel(level)">{{ \'DELETE\' | translate }}</ion-option-button>'+
+        '</ion-item>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm button-block" ng-click="closeConfigureLevelsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" id="attendance-btn123" class="button button-calm button-block" ng-click="showNewLevelModal()">AÑADIR NIVELES</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.newLevelModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+     '<h3>NUEVO NIVEL</h3>'+
+      '<form id="newItemForm" class="list list-student fullScreen">'+
+        '<ion-list>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">TITULO</span>'+
+            '<input type="text" placeholder="TITULO" ng-model="modelNewLevel.title">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">NIVEL</span>'+
+            '<input type="number" placeholder="NIVEL" ng-model="modelNewLevel.level">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PUNTOS REQUERIDOS</span>'+
+            '<input type="number" placeholder="PUNTOS REQUERIDOS" ng-model="modelNewLevel.requiredPoints">'+
+          '</label>'+
+        '</ion-list>'+
+      '</form>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeNewLevelModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createLevel(modelNewLevel.title, modelNewLevel.level, modelNewLevel.requiredPoints)" ng-disabled="!modelNewLevel.title || !modelNewLevel.level || !modelNewLevel.requiredPoints">AÑADIR NIVEL</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.editLevelModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+     '<h3>EDITAR NIVEL</h3>'+
+      '<form id="newItemForm" class="list list-student fullScreen">'+
+        '<ion-list>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">TITULO</span>'+
+            '<input type="text" placeholder="{{level.title}}" ng-model="modelEditLevel.title">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">NIVEL</span>'+
+            '<input type="number" placeholder="{{level.level}}" ng-model="modelEditLevel.level">'+
+          '</label>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">PUNTOS REQUERIDOS</span>'+
+            '<input type="number" placeholder="{{level.requiredPoints}}" ng-model="modelEditLevel.requiredPoints">'+
+          '</label>'+
+        '</ion-list>'+
+      '</form>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeEditLevelModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="editLevel(modelEditLevel.title, modelEditLevel.level, modelEditLevel.requiredPoints)" ng-disabled="!modelEditLevel.title && !modelEditLevel.level && !modelEditLevel.requiredPoints">EDITAR NIVEL</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1253,7 +1322,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '</form>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalNewItem()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-click="createItem(modelNewItem.name, modelNewItem.description, modelNewItem.requirements, modelNewItem.score, modelNewItem.maxScore, modelNewItem.useForLevel)" ng-disabled="!modelNewItem.name || !modelNewItem.description || !modelNewItem.requirements || !modelNewItem.score || !modelNewItem.maxScore">{{ \'ADD_ITEM\' | translate }}</button>'+
+        '<button class="button button-calm  button-block" ng-click="createItem(modelNewItem.name, modelNewItem.description, modelNewItem.requirements, modelNewItem.score, modelNewItem.maxScore, modelNewItem.useForLevel)" ng-disabled="!modelNewItem.name || !modelNewItem.description || !modelNewItem.requirements || !modelNewItem.score">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1273,7 +1342,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">{{ \'REQUIREMENTS\' | translate }}</span>'+
-          '<input type="text" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewAchievement.requirements">'+
+          '<input type="number" placeholder="{{ \'REQUIREMENTS\' | translate }}" ng-model="modelNewAchievement.requirements">'+
         '</label>'+
         '<label class="item item-input list-elements">'+
           '<span class="input-label">PUNTOS NECESARIOS PARA PASAR DE NIVEL</span>'+
@@ -1359,6 +1428,54 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   /*
     *************************************EVERY MODAL FUNCTION GOES HERE*******************************
   */
+
+                                        /* CONFIGURE LEVELS MODAL */
+
+  $scope.configureLevelsModal = $ionicModal.fromTemplate($scope.configureLevelsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  $scope.showConfigureLevelsModal = function() {
+    $scope.closePopoverClassStudents();
+    $scope.getLevels();
+    $scope.configureLevelsModal.show();
+  }
+  $scope.closeConfigureLevelsModal = function() {
+    $scope.closePopoverClassStudents();
+    $scope.configureLevelsModal.hide();
+  }
+
+                                        /* NEW LEVEL MODAL */
+
+  $scope.newLevelModal = $ionicModal.fromTemplate($scope.newLevelModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  $scope.showNewLevelModal = function() {
+    $scope.modelNewLevel = {};
+    $scope.closeConfigureLevelsModal();
+    $scope.newLevelModal.show();
+  }
+  $scope.closeNewLevelModal = function() {
+    $scope.newLevelModal.hide();
+    $scope.showConfigureLevelsModal();  
+  }
+
+                                        /* EDIT LEVEL MODAL */
+
+  $scope.editLevelModal = $ionicModal.fromTemplate($scope.editLevelModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  $scope.showEditLevelModal = function() {
+    $scope.modelEditLevel = {};
+    $scope.closeConfigureLevelsModal();
+    $scope.editLevelModal.show();
+  }
+  $scope.closeEditLevelModal = function() {
+    $scope.editLevelModal.hide();
+    $scope.showConfigureLevelsModal(); 
+  }
 
                                         /* ATTENDANCE MODAL */
 
@@ -1809,6 +1926,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             } else {
               $scope.classrooms[index] = snapshot.val();
             }
+            if ($scope.classroom != undefined) {
+              $scope.getLevels();
+            }
             if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
               $scope.$apply();
             }
@@ -1827,6 +1947,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.createClassroom = function(name) {
+	//THINGS TO DO
+	//Añadir niveles a las clases, el profesor es el que va a poder crearlos (numero nivel, nombre)
     var classroomsNode = $firebaseArray(classroomsRef);
     classroomsNode.$loaded(function() {
       classroomsNode.$add({
@@ -1914,6 +2036,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.setClassroom = function(classroom) {
     $scope.classroom = classroom;
     $scope.getStudents();
+    $scope.getLevels();
     $scope.getItems();
     $scope.getTeams();
     $scope.getRewards();
@@ -2042,6 +2165,127 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
                                         /* FUNCTIONS IN CLASS */
 
+  $scope.getLevels = function() {
+    $scope.levels = [];
+    var classroomLevelsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels');
+    var classroomLevelsArray = $firebaseArray(classroomLevelsRef);
+    classroomLevelsArray.$loaded(function() {
+      if($scope.classroom.levels != undefined) {
+        for(var element in classroomLevelsArray) {
+          var classroomLevelRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + classroomLevelsArray[element].id);
+          classroomLevelRef.on('value', function(snapshot) {
+            if (snapshot.val() != null) {
+              var change = false;
+              var index = -1;
+              var level = snapshot.val();
+
+              for(i = 0 ; i < $scope.levels.length ; i++) {
+                if($scope.levels[i].id == level.id) {
+                  change = true;
+                  index = i;
+                }
+              }
+
+              if(!change) {
+                $scope.levels.push(level);
+              } else {
+                $scope.levels[index] = level
+              }
+              if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                $scope.$apply();
+              }
+            }
+          });
+        }
+      }
+    });
+    
+    
+  }
+
+  $scope.createLevel = function(title, level, requiredPoints) {
+    var newLevel = {
+      'title' : title,
+      'level' : level,
+      'requiredPoints' : requiredPoints,
+    }
+    var classroomLevelsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels');
+    var classroomLevelsArray = $firebaseArray(classroomLevelsRef);
+    classroomLevelsArray.$loaded(function() {
+      classroomLevelsArray.$add(newLevel).then(function(ref) {
+        var id = ref.key;
+
+        var idForLevelRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + id + '/id');
+        idForLevelRef.set(id);
+        newLevel.id = id;
+        
+        $scope.getLevels();
+        if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+          $scope.$apply();
+        }
+
+        $scope.closeNewLevelModal();
+      });
+    });
+  }
+
+  $scope.deleteLevel = function(level) {
+    var levelToDeleteRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + level.id);
+    levelToDeleteRef.remove();
+
+    $scope.getLevels();
+
+    if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+      $scope.$apply();
+    }
+  }
+
+  $scope.setLevel = function(level) {
+    $scope.level = level;
+    $scope.showEditLevelModal();
+  }
+
+  $scope.editLevel = function(title, level, requiredPoints) {
+    if(title != undefined && level != undefined && requiredPoints != undefined) {
+      var editLevel = {
+        'id' : $scope.level.id,
+        'title' : title,
+        'level' : level,
+        'requiredPoints' : requiredPoints,
+      }
+      var levelRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + $scope.level.id);
+      levelRef.set(editLevel);
+      $scope.levels[$scope.level.id] = editLevel;
+    }
+
+    if(title != undefined) {
+      $scope.level.title = title;
+      $scope.levels[$scope.level.id].title = title;
+      var levelTitleRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + $scope.level.id + '/title');
+      levelTitleRef.set(title);
+    }
+
+    if(level != undefined) {
+      $scope.level.level = level;
+      $scope.classroom.levels[$scope.level.id].level = level;
+      var levelLevelRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + $scope.level.id + '/level');
+      levelLevelRef.set(level);
+    }
+
+    if(requiredPoints != undefined) {
+      $scope.level.requiredPoints = requiredPoints;
+      $scope.levels[$scope.level.id].requiredPoints = requiredPoints;
+      var levelRequiredPointsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/' + $scope.level.id + '/requiredPoints');
+      levelRequiredPointsRef.set(requiredPoints);
+    }
+
+    $scope.getLevels();
+    if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+      $scope.$apply();
+    }
+    $scope.closeNewLevelModal();
+  }
+
   $scope.getStudents = function() {
     var classroomStudentsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/students');
     var studentKeys = $firebaseArray(classroomStudentsRef);
@@ -2137,7 +2381,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             newStudentClassRef.set({
               'id' : $scope.classroom.id,
               'totalPoints' : 0,
-              'studentLevel' : 1,
               'inClass' : true,
             });
 
@@ -2358,6 +2601,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     if (useForLevel == undefined) {
       useForLevel = false;
     }
+    if(maxScore == undefined || maxScore === 0) {
+      maxScore = '∞';
+    }
     var itemsNode = $firebaseArray(itemsRef);
     itemsNode.$loaded(function() {
       itemsNode.$add({
@@ -2513,7 +2759,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     if (item.useForLevel) {
       //Comprobar el nivel THINGS TO DO
       //Profundizar en achievements (como comprobar los requisitos y los niveles?)
-      //PREGUNTAR A OSCAR: esto añade puntos a la clase a pesar de que el item ya tenga la puntuacion al maximo, asi como el nivel de la clase
       var pointsAdded = Number($scope.studentsToEvaluate[pos].classrooms[$scope.classroom.id].totalPoints) + Number(item.score);
       var studentClassroomTotalPointsRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
       if(pointsAdded < 0){
@@ -3299,39 +3544,39 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.templateLanguagesPopover = '<ion-popover-view>'+
     '<div ng-controller="changeLanguageCtrl">'+
       '<ion-list class="list-elements">'+
-        '<ion-item ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
-        '<ion-item ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'es\'); closePopoverLanguages()">{{ \'BUTTON_LANG_ES\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'en\'); closePopoverLanguages()">{{ \'BUTTON_LANG_EN\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'it\'); closePopoverLanguages()">{{ \'BUTTON_LANG_IT\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'tr\'); closePopoverLanguages()">{{ \'BUTTON_LANG_TR\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'de\'); closePopoverLanguages()">{{ \'BUTTON_LANG_DE\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'hu\'); closePopoverLanguages()">{{ \'BUTTON_LANG_HU\' | translate }}</ion-item>'+
+        '<ion-item class="itemPopover" ng-click="changeLanguage(\'ru\'); closePopoverLanguages()">{{ \'BUTTON_LANG_RU\' | translate }}</ion-item>'+
       '</ion-list>'+
     '</div>'+
   '</ion-popover-view>';
 
   $scope.templateStudentHomePopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
-      '<ion-item ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverStudentHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover" ng-hide="archivedClassroomsToShow" ng-click="showArchivedClassrooms(true)">VER ARCHIVADAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-show="archivedClassroomsToShow" ng-click="showArchivedClassrooms(false)">OCULTAR ARCHIVADAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverStudentHome()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
   $scope.templateMissionsPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="closePopoverMissions()">VER FINALIZADAS</ion-item>'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverMissions()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverMissions()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverMissions()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="closePopoverMissions()">VER FINALIZADAS</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverMissions()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverMissions()">VER MISIONES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverMissions()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
   $scope.templateStudentDefaultPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
-      '<ion-item ng-click="rewardShopForm(); closePopoverStudentDefault()">VER TIENDA DE CLASE</ion-item>'+
-      '<ion-item ng-click="missionsForm(); closePopoverStudentDefault()">VER MISIONES</ion-item>'+
-      '<ion-item ng-click="settingsForm(); closePopoverStudentDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverStudentDefault()">VER TIENDA DE CLASE</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverStudentDefault()">VER MISIONES</ion-item>'+
+      '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverStudentDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
     '</ion-list>'+
   '</ion-popover-view>';
 
@@ -3784,7 +4029,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           studentToEditRef.set({
             'id' : classToAdd.id,
             'totalPoints' : 0,
-            'studentLevel' : 1,
             'inClass' : true,
           });
           
@@ -3870,6 +4114,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
             $scope.$apply();
           }
+          $scope.getStudentLevel();
         });
       }
     });
@@ -3879,6 +4124,19 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     $scope.item = item;
     $scope.getAchievements();
     $scope.itemsForm();
+  }
+
+  $scope.getStudentLevel = function() {
+    $scope.studentLevel = {};
+    var classroomLevelsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/levels/');
+    var classroomLevelsArray = $firebaseArray(classroomLevelsRef);
+    classroomLevelsArray.$loaded(function() {
+      for (var element in classroomLevelsArray) {
+        if($scope.student.classrooms[$scope.classroom.id].totalPoints > classroomLevelsArray[element].requiredPoints) {
+          $scope.studentLevel = classroomLevelsArray[element];
+        }
+      }
+    });
   }
                     
   
@@ -3972,6 +4230,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.buyReward = function(reward) {
     //THINGS TO DO
+	//Crear campo en alumno de usedPôints que añada los puntos gastados en recompensas (asi para mostrar los puntos disponibles solo hay que restar)
   }
 
   $scope.selectRewards = function() {

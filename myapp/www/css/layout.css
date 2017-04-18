@@ -1,6 +1,7 @@
 /*
  * GENERAL STYLES
  */
+.addButton{ position: fixed; bottom: 0; right: 0;}
 .button{ border-radius: 10px !important; margin: 1%; border: none !important; background: none !important;}
 .action_buttons .button{ border: none !important; font-size: 1.1em !important;}
 
@@ -37,6 +38,15 @@
 /*
  * TOP MENU 
  */
+header#cabecera{ 
+	width: 100%; float: left;
+	background: rgba(0,0,0,.55);
+}
+	header#cabecera a#menu{
+		position: absolute; right: 0; top: 0; color: #d9d9d9;
+	}
+	header#cabecera a.homeButton{ position: absolute; top:0; left: 0; color: #d9d9d9;}
+
 .button.button-light{ 
 	border-radius: 0 !important; margin: 0 !important;
 }
@@ -148,3 +158,6 @@ padding-left:40px;
 list-style-type: decimal;
 padding-left:40px;
 }
+
+/* FIXES */
+.scroll, .teacherHomeView{ height: 100%; }

@@ -338,12 +338,12 @@
         <p>MISIONES</p>
       </h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalEditMission()">
-          <h2>{mission.name}</h2>
+        <ion-item class="list-student" id="class-list-item7" ng-click="setMission(mission)" ng-repeat="mission in missions">
+          <h2>{{mission.name}}</h2>
         </ion-item>
       </ion-list>
       <div class="button-bar action_buttons">
-        <button id="class-button31" ng-click="showModalNewMission()" class="button button-calm  button-block">AÑADIR MISIÓN</button>
+        <button id="class-button31" ng-click="setNewMissionNamePopup()" class="button button-calm  button-block">AÑADIR MISIÓN</button>
       </div>
       <button class="button button-positive button-float addButton" ng-click="showActionsheetMissions()">
         <i class="icon ion-plus"></i>

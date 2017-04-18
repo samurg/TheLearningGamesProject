@@ -1234,28 +1234,38 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           '<ion-list>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">{{ \'NAME\' | translate }} </span>'+
-              '<input type="text" placeholder="{mission.name}" ng-model="modelEditMission.name">'+
-            '</label>'+
-            '<label class="item item-input list-elements">'+
-              '<span class="input-label">RECOMPENSA</span>'+
-              '<input type="text" placeholder="{mission.reward}" ng-model="modelEditMission.reward">'+
+              '<input type="text" placeholder="{{mission.name}}" ng-model="modelEditMission.name">'+
             '</label>'+
             '<label class="item item-input list-elements">'+
               '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-              '<input type="text" placeholder="{mission.additionalPoints}" ng-model="modelEditMission.additionalPoints">'+
+              '<input type="text" placeholder="{{mission.additionalPoints}}" ng-model="modelEditMission.additionalPoints">'+
             '</label>'+
           '</ion-list>'+
         '</form>'+
       '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
-      '<ion-list id="items-list9" class="list-student">'+
-        '<ion-item id="items-list-item15" ng-click="itemsForm(); closeModalEditMission()">{itemName}</ion-item>'+
+      '<ion-list id="items-list9">'+
+        '<ion-item id="items-list-item15" class="list-student" ng-repeat="item in missionItems">{{item.name}}</ion-item>'+
       '</ion-list>'+
       '<div class="button-bar action_buttons">'+
         '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
       '</div>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">RECOMPENSAS</h3>'+
+      '<ion-list id="items-list9">'+
+        '<ion-item id="items-list-item15" class="list-student" ng-repeat="reward in missionRewards">{{reward.name}}</ion-item>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">AÑADIR RECOMPENSA</button>'+
+      '</div>'+
+      '<h3 id="teams-heading5" class="teams-hdg5">ESTUDIANTES</h3>'+
+      '<ion-list id="items-list9">'+
+        '<ion-item id="items-list-item15" class="list-student" ng-repeat="student in missionStudents">{{student.name}}  {{student.surname}}</ion-item>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button id="achievements-button91" class="button button-calm button-block" ng-click="showSelectItemsModal()">AÑADIR ESTUDIANTE</button>'+
+      '</div>'+
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeModalEditMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!modelEditMission.name && !modelEditMission.reward && !modelEditMission.additionalPoints" ng-click="closeModalEditMission()">EDITAR MISIÓN</button>'+
+        '<button class="button button-calm  button-block" ng-disabled="!modelEditMission.name && !modelEditMission.additionalPoints" ng-click="editMission(modelEditMission.name, modelEditMission.additionalPoints)">EDITAR MISIÓN</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -2617,6 +2627,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         studentAchievementsToDeleteRef.remove();
       }*/
     }
+
+    for(var mission in $scope.missions) {
+      var missionItemToDeleteRef = firebase.database().ref('missions/' + $scope.missions[mission].id + '/items/' + item.id);
+      missionItemToDeleteRef.remove();
+    }
     
     for (var achievement in item.achievements) {
       var itemAchievementsToDeleteRef = firebase.database().ref('achievements/' + achievement);
@@ -3514,7 +3529,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             var index = -1;
             var mission = snapshot.val();
             for(j = 0 ; j < $scope.missions.length ; j++){
-              if(reward.id == $scope.missions[j].id){
+              if(mission.id == $scope.missions[j].id){
                 change = true;
                 index = j;
               }
@@ -3582,11 +3597,52 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.setMission = function(mission) {
     $scope.mission = mission;
+    $scope.missionItems = [];
+    $scope.missionRewards = [];
+    $scope.missionStudents = [];
+    for(var item in $scope.items) {
+      for(var itemMission in mission.items){
+        if($scope.items[item].id === itemMission) {
+          $scope.missionItems.push($scope.items[item]);
+        }
+      }
+    }
+
+    for(var reward in $scope.rewards) {
+      for(var rewardMission in mission.rewards) {
+        if($scope.rewards[reward].id === rewardMission) {
+          $scope.missionRewards.push($scope.rewards[reward]);
+        }
+      }
+    }
+
+    for(var student in $scope.students){
+      for(var studentMission in mission.students) {
+        if($scope.students[student].id === studentMission) {
+          $scope.missionStudents.push($scope.students[student]);
+        }
+      }
+    }
+
     $scope.showModalEditMission();
   }
 
-  $scope.editMission = function() {
-
+  $scope.editMission = function(name, additionalPoints) {
+    var missionNameRef = firebase.database().ref('missions/' + $scope.mission.id + '/name');
+    var missionAdditionalPointsRef = firebase.database().ref('missions/' + $scope.mission.id + '/additionalPoints');
+    if(name != undefined && additionalPoints != undefined) {
+      missionNameRef.set(name);
+      missionAdditionalPointsRef.set(additionalPoints);
+    } else {
+      if(name != undefined) {
+        missionNameRef.set(name);
+      }
+      if(additionalPoints != undefined) {
+        missionAdditionalPointsRef.set(additionalPoints);
+      }
+    }
+    $scope.closeModalEditMission();
+    alert('DATOS CAMBIADOS');
   }
 
   $scope.selectMissions = function() {

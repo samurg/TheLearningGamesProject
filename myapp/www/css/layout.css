@@ -94,7 +94,7 @@ ion-modal-view h2, h3{ margin: 0 !important; padding: 10px 0; font-size: 1.5em; 
 .list-student+.list-student{}
 .list-student:hover{ }
 
-ion-modal-view .list-student, ion-modal-view .list-student:hover{ background: none; }
+ion-modal-view .list-student, ion-modal-view .list-student:hover{}
 
 #attendance-list7 .list-student, #attendance-list7 .list-student:hover,
 .list_tests, .list_tests:hover{ background: white; }

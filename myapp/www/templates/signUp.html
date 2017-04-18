@@ -8,43 +8,43 @@
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="input-label">
             <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'NAME' | translate }}</span>
-          <input type="text" placeholder="" ng-model="name">
+          <input type="text" placeholder="" ng-model="modelSignUp.name">
         </label>
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="input-label">
             <i class="icon ion-person"></i>&nbsp;&nbsp;{{ 'SURNAME' | translate }}</span>
-          <input type="text" placeholder="" ng-model="surname">
+          <input type="text" placeholder="" ng-model="modelSignUp.surname">
         </label>
         <label class="item item-input list-elements" id="signUp-input5">
           <span class="input-label">
             <i class="icon ion-at"></i>&nbsp;&nbsp;{{ 'EMAIL' | translate }}</span>
-          <input type="email" placeholder="" ng-model="email">
+          <input type="email" placeholder="" ng-model="modelSignUp.email">
         </label>
         <label class="item item-input list-elements" id="signUp-input6">
           <span class="input-label">
             <i class="icon ion-locked"></i>&nbsp;&nbsp;{{ 'PASSWORD' | translate }}</span>
-          <input type="password" placeholder="" ng-model="password" ng-minlenght="6">
+          <input type="password" placeholder="" ng-model="modelSignUp.password">
         </label>
         <label class="item item-input list-elements" id="signUp-input7">
           <span class="input-label">
             <i class="icon ion-locked"></i>&nbsp;&nbsp;{{ 'CONFIRM_PASSWORD' | translate }}</span>
-            <input type="password" placeholder="" ng-model="passwordRepeat" ng-minlenght="6">
+            <input type="password" placeholder="" ng-model="modelSignUp.passwordRepeat">
         </label>
         <label class="item item-input list-elements" id="signUp-input3">
             <span class="input-label">
               <i class="icon ion-clipboard"></i>&nbsp;&nbsp;ESCUELA</span>
-              <input id="inputSchool" type="text" placeholder="" ng-model="school">
+              <input id="inputSchool" type="text" placeholder="" ng-model="modelSignUp.school">
           </label>
         <label class="item item-input list-elements" id="signUp-input3">
           <span class="input-label">
             <i class="icon ion-image"></i>&nbsp;&nbsp;{{ 'AVATAR' | translate }}</span>
-          <input type="text" placeholder="" ng-model="avatar">
+          <input type="text" placeholder="" ng-model="modelSignUp.avatar">
         </label>
       </ion-list>
       <div class="button-bar">
-      <button id="signUp-button9" ng-disabled="!name || !surname || !email || !password || password!=passwordRepeat || !passwordRepeat" id="signUp-btn9" class="button button-calm button-large button-block" ng-click="registerUser(name, surname, email, password, school, avatar)">{{ 'SIGN_UP' | translate }}</button>
-      <a ui-sref="login" id="signUp-button11" class="button button-calm button-large button-block" ng-click="clearForm()">{{ 'ALREADY_HAVE_AN_ACCOUNT' | translate }}</a>
-      </div>
+        <button id="signUp-button9" ng-disabled="!modelSignUp.name || !modelSignUp.surname || !modelSignUp.email || !modelSignUp.password || modelSignUp.password!=modelSignUp.passwordRepeat || !modelSignUp.passwordRepeat" id="signUp-btn9" class="button button-calm button-large button-block" ng-click="registerUser(modelSignUp.name, modelSignUp.surname, modelSignUp.email, modelSignUp.password, modelSignUp.school, modelSignUp.avatar)">{{ 'SIGN_UP' | translate }}</button>
+        <a id="signUp-button11" class="button button-light  button-block button-clear icon ion-ios-arrow-forward" ng-click="clearForm()">{{ 'ALREADY_HAVE_AN_ACCOUNT' | translate }}</a>
+       </div>
     </form>
   </ion-content>
 </ion-view>

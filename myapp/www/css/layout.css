@@ -58,6 +58,7 @@ header#cabecera{
 .list-elements { border-radius: 10px; border-width: 0; margin-bottom: 8px;}
 
 .item { border-radius: 10px !important; margin: 1%;}
+.itemPopover { padding: 10px;}
 
 .list-team, .list-team:hover { background: none !important; margin-top: 15px; float: right;}
 

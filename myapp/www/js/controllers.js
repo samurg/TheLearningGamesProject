@@ -4325,25 +4325,29 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
       $scope.teams = [];
       for (i = 0 ; i < teamKeys.length ; i++) {
         var teamKey = teamKeys.$keyAt(i);
-        var loopTeam = firebase.database().ref('teams/' + teamKey);
-        loopTeam.on('value', function(snapshot) {
-          if (snapshot.val() != null) {
-            var change = false;
-            var index = -1;
-            var team = snapshot.val();
-            for(j = 0 ; j < $scope.teams.length ; j++){
-              if(team.id == $scope.teams[j].id){
-                change = true;
-                index = j;
+        for (var team in $scope.classroom.teams) {
+          if (teamKey === team) {
+            var loopTeam = firebase.database().ref('teams/' + teamKey);
+            loopTeam.on('value', function(snapshot) {
+              if (snapshot.val() != null) {
+                var change = false;
+                var index = -1;
+                var team = snapshot.val();
+                for(j = 0 ; j < $scope.teams.length ; j++){
+                  if(team.id == $scope.teams[j].id){
+                    change = true;
+                    index = j;
+                  }
+                }
+                if(!change){
+                  $scope.teams.push(team);  
+                } else {
+                  $scope.teams[index] = team;
+                }
               }
-            }
-            if(!change){
-              $scope.teams.push(team);  
-            } else {
-              $scope.teams[index] = team;
-            }
+            });
           }
-        });
+        }
       }
     });
   }

@@ -464,11 +464,11 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       buttonClicked: function(index) {
         if (index === 0) {
           //EVALUATE TEAMS ACTION
-          $scope.actionsheetClassTeamsType = 'evaluate';
+          $scope.actionSheetClassTeamsType = 'evaluate';
           $scope.showSelectTeamsModal();
         } else if (index === 1) {
           //DUPLICATE TEAMS ACTION
-          $scope.actionsheetClassTeamsType = 'duplicate';
+          $scope.actionSheetClassTeamsType = 'duplicate';
           $scope.showSelectTeamsModal();
         } else if (index === 2) {
           //SEND MESSAGE ACTION
@@ -2714,10 +2714,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.evaluateStudents = function(item) {
     /*
-    **Hay que comprobar si la puntuacion que se le va a asignar al alumno es la puntuacion maxima de cada item.
     **Hay que comprobar si con la puntuacion que se le va a asignar al alumno, los logros del item suben de nivel o se desbloquean.
     **Hay que comprobar si con la puntuacion que se le va a asignar al alumno y los logros que quiza desbloquee, completará una mision.
-    **Hay que comprobar si con la puntuacion que se le va a asignar al alumno en la puntuacion de la clase sube de nivel. 
     **(Para la claridad del codigo, todas estas comprobaciones quiza se deberian hacer en diferentes metodos. Con su consiguiente codigo de introduccion en la base de datos en caso de cumplirse las condiciones),
     **/
     for(var pos in $scope.studentsToEvaluate) {
@@ -2737,14 +2735,18 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
               'id' : item.id,
               'points' : item.maxScore,
             });
-            alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA RECIBIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM ' + item.name + ' , SE HA ESTABLECIDO LA PUNTUACION MAXIMA');
+            alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA RECIBIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM: ' + item.name + ', SE HA ESTABLECIDO LA PUNTUACION MAXIMA');
           } else {
             studentItemRef.set({
               'id' : item.id,
               'points' : Number(studentPoints) + Number(item.score),
             });
             if ((Number(studentPoints) + Number(item.score)) < 0) {
-              alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA PERDIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM ' + item.name + ' , SE HA ESTABLECIDO LA PUNTUACION A 0');
+              studentItemRef.set({
+                'id' : item.id,
+                'points' : 0,
+              });
+              alert('EL ALUMNO: ' + $scope.studentsToEvaluate[pos].name + ' ' + $scope.studentsToEvaluate[pos].surname + ' HA PERDIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM: ' + item.name + ', SE HA ESTABLECIDO LA PUNTUACION A 0');
             }
           }
         }   
@@ -2754,19 +2756,84 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           'id' : item.id,
           'points' : item.score,
         });
+      }
+      if (item.useForLevel) {
+        //THINGS TO DO
+        //Profundizar en achievements (como comprobar los requisitos y los niveles?)
+        var pointsAdded = Number($scope.studentsToEvaluate[pos].classrooms[$scope.classroom.id].totalPoints) + Number(item.score);
+        var studentClassroomTotalPointsRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
+        if(pointsAdded < 0){
+          studentClassroomTotalPointsRef.set(0);
+        } else {
+          studentClassroomTotalPointsRef.set(pointsAdded);  
+        }
       }    
     }
-    if (item.useForLevel) {
-      //Comprobar el nivel THINGS TO DO
-      //Profundizar en achievements (como comprobar los requisitos y los niveles?)
-      var pointsAdded = Number($scope.studentsToEvaluate[pos].classrooms[$scope.classroom.id].totalPoints) + Number(item.score);
-      var studentClassroomTotalPointsRef = firebase.database().ref('students/' + $scope.studentsToEvaluate[pos].id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
-      if(pointsAdded < 0){
-        studentClassroomTotalPointsRef.set(0);
-      } else {
-        studentClassroomTotalPointsRef.set(pointsAdded);  
+       
+  }
+
+  $scope.evaluateTeams = function(item) {
+    /* THINGS TO DO
+    **Hay que comprobar si con la puntuacion que se le va a asignar al alumno, los logros del item suben de nivel o se desbloquean.
+    **Hay que comprobar si con la puntuacion que se le va a asignar al alumno y los logros que quiza desbloquee, completará una mision.
+    **(Para la claridad del codigo, todas estas comprobaciones quiza se deberian hacer en diferentes metodos. Con su consiguiente codigo de introduccion en la base de datos en caso de cumplirse las condiciones),
+    **/
+    for(var pos in $scope.teamsToEvaluate) {
+      for(var element in $scope.teamsToEvaluate[pos].students) {
+        for(var studentPos in $scope.students) {
+          if($scope.students[studentPos].id == element) {
+            if($scope.students[studentPos].items != undefined) {
+              var studentItems = $scope.students[studentPos].items;
+              var studentItemRef = firebase.database().ref('students/' + $scope.students[studentPos].id + '/items/' + item.id);
+              if(!(item.id in studentItems)) {
+                studentItemRef.set({
+                  'id' : item.id,
+                  'points' : item.score,
+                });
+              } else {
+                var studentPoints = $scope.students[studentPos].items[item.id].points;
+                if((Number(studentPoints) - Number(item.score)) > Number(item.maxScore)) {
+                  studentItemRef.set({
+                    'id' : item.id,
+                    'points' : item.maxScore,
+                  });
+                  alert('EL ALUMNO: ' + $scope.students[studentPos].name + ' ' + $scope.students[studentPos].surname + ' HA RECIBIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM: ' + item.name + ', SE HA ESTABLECIDO LA PUNTUACION MAXIMA');
+                } else {
+                  studentItemRef.set({
+                    'id' : item.id,
+                    'points' : Number(studentPoints) + Number(item.score),
+                  });
+                  if((Number(studentPoints) + Number(item.score)) < 0) {
+                    studentItemRef.set({
+                      'id' : item.id,
+                      'points' : 0,
+                    });
+                    alert('EL ALUMNO: ' + $scope.students[studentPos].name + ' ' + $scope.students[studentPos].surname + ', HA PERDIDO MAS PUNTUACION DE LA MAXIMA ESTABLECIDA EN EL ITEM: ' + item.name + ', SE HA ESTABLECIDO LA PUNTUACION A 0');
+                  }
+                }
+              }
+            } else {
+              var studentItemRef = firebase.database().ref('students/' + $scope.students[studentPos].id + '/items/' + item.id);
+              studentItemRef.set({
+                'id' : item.id,
+                'points' : item.score,
+              });
+            }
+            if(item.useForLevel) {
+              //THINGS TO DO
+              //Profundizar en achievements (como comprobar los requisitos y los niveles?)
+              var pointsAdded = Number($scope.students[studentPos].classrooms[$scope.classroom.id].totalPoints) + Number(item.score);
+              var studentClassroomTotalPointsRef = firebase.database().ref('students/' + $scope.students[studentPos].id + '/classrooms/' + $scope.classroom.id + '/totalPoints');
+              if(pointsAdded < 0) {
+                studentClassroomTotalPointsRef.set(0);
+              } else {
+                studentClassroomTotalPointsRef.set(pointsAdded);
+              }
+            }
+          }
+        }
       }
-    }   
+    }
   }
 
   $scope.selectItems = function() {
@@ -2790,6 +2857,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         }
       }
       $scope.getStudents();
+    } else if ($scope.actionSheetItemsType === 'evaluateTeams') {
+      for(var element in $scope.itemsForSelection) {
+        if($scope.itemsForSelection[element].selected === true) {
+          $scope.evaluateTeams($scope.itemsForSelection[element]);
+        }
+      }
+      $scope.getStudents();
+      $scope.getTeams();
     }
   }
 
@@ -2797,7 +2872,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       if (item.selected === false) {
         item.selected = true;
 
-        if($scope.actionSheetItemsType === 'evaluateStudents'){ 
+        if($scope.actionSheetItemsType === 'evaluateStudents' || $scope.actionSheetItemsType === 'evaluateTeams'){ 
         $scope.points = item.score;
         $scope.popupChooseScore = $ionicPopup.show({
           template: '<input id="inputScore" type="number" ng-model="points">',
@@ -3236,18 +3311,27 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.selectTeams = function() {
     $scope.closeSelectTeamsModal();
-    if ($scope.actionsheetClassTeamsType === 'delete') {
+    if ($scope.actionSheetClassTeamsType === 'delete') {
       for (var element in $scope.teamsForSelection) {
         if ($scope.teamsForSelection[element].selected === true) {
           $scope.deleteTeam($scope.teamsForSelection[element]);
         }
       }
     $scope.teamsForSelection = $scope.teams;
-    } else if ($scope.actionsheetClassTeamsType === 'duplicate') {
+    } else if ($scope.actionSheetClassTeamsType === 'duplicate') {
       for (var element in $scope.teamsForSelection) {
         if ($scope.teamsForSelection[element].selected === true) {
           $scope.duplicateTeam($scope.teamsForSelection[element]); //THINGS TO DO
         }
+      }
+    } else if ($scope.actionSheetClassTeamsType === 'evaluate') {
+      $scope.teamsToEvaluate = [];
+      for(var element in $scope.teamsForSelection) {
+        if($scope.teamsForSelection[element].selected === true) {
+          $scope.teamsToEvaluate.push($scope.teamsForSelection[element]);
+        }
+        $scope.actionSheetItemsType = 'evaluateTeams';
+        $scope.showSelectItemsModal();
       }
     }
   }

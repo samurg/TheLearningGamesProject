@@ -545,33 +545,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   };
 
-                                          /* MISSIONS ACTIONSHEET */
-
-  $scope.showActionsheetMissions = function() {
-    
-    $ionicActionSheet.show({
-      titleText: 'ACCIONES MISIONES',
-      buttons: [
-        { text: 'DUPLICAR MISION(S)' },
-      ],
-      destructiveText: 'BORRAR MISION(S)',
-      cancelText: 'CANCELAR',
-      cancel: function() {
-        //CANCEL ACTION
-      },
-      buttonClicked: function(index) {
-        if (index === 0) {
-          //DUPLICATE MISSION ACTION
-        }
-        return true;
-      },
-      destructiveButtonClicked: function() {
-        //DELETE MISSION ACTION
-        return true;
-      }
-    });
-  };
-
                                           /* REWARDS ACTIONSHEET */
 
   $scope.showActionsheetRewards = function() {
@@ -598,6 +571,37 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         //DELETE REWARD ACTION
         $scope.actionSheetRewardsType = 'delete';
         $scope.showSelectRewardsModal();
+        return true;
+      }
+    });
+  };
+
+                                          /* MISSIONS ACTIONSHEET */
+
+  $scope.showActionsheetMissions = function() {
+    
+    $ionicActionSheet.show({
+      titleText: 'ACCIONES MISIONES',
+      buttons: [
+        { text: 'DUPLICAR MISION(S)' },
+      ],
+      destructiveText: 'BORRAR MISION(S)',
+      cancelText: 'CANCELAR',
+      cancel: function() {
+        //CANCEL ACTION
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          //DUPLICATE MISSION ACTION
+          $scope.actionSheetMissionsType = 'duplicate';
+          $scope.showSelectMissionsModal();
+        }
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        //DELETE MISSION ACTION
+        $scope.actionSheetMissionsType = 'delete';
+        $scope.showSelectMissionsModal();
         return true;
       }
     });
@@ -901,6 +905,19 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<div class="button-bar action_buttons">'+
         '<button class="button button-calm  button-block" ng-click="closeSelectRewardsModal()">{{ \'CANCEL\' | translate }}</button>'+
         '<button id="attendance-button123" ng-click="selectRewards()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR RECOMPENSAS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.selectMissionsModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3 id="attendance-heading3" class="attendance-hdg3">SELECCIONA MISIONES</h3>'+
+      '<ion-list id="attendance-list7" class="list-elements">'+
+        '<ion-checkbox id="attendance-checkbox2" name="checkMission" ng-repeat="missionForSelection in missionsForSelection" ng-click="changeSelectedMission(missionForSelection)" ng-checked="missionForSelection.selected">{{missionForSelection.name}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="button-bar action_buttons">'+
+        '<button class="button button-calm  button-block" ng-click="closeSelectMissionsModal()">{{ \'CANCEL\' | translate }}</button>'+
+        '<button id="attendance-button123" ng-click="selectMissions()" id="attendance-btn123" class="button button-calm  button-block">SELECCIONAR MISIONES</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1562,6 +1579,20 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
   $scope.closeSelectRewardsModal = function(){
     $scope.selectRewardsModal.hide();
+  }
+
+                                        /* SELECT MISSIONS MODAL */
+
+  $scope.selectMissionsModal = $ionicModal.fromTemplate($scope.selectMissionsModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  })
+  $scope.showSelectMissionsModal = function(){
+    $scope.getMissionsForSelection();
+    $scope.selectMissionsModal.show();
+  }
+  $scope.closeSelectMissionsModal = function(){
+    $scope.selectMissionsModal.hide();
   }
 
                                         /* NEW CLASS MODAL */
@@ -3494,7 +3525,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-
   
 
 
@@ -3514,7 +3544,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             var index = -1;
             var mission = snapshot.val();
             for(j = 0 ; j < $scope.missions.length ; j++){
-              if(reward.id == $scope.missions[j].id){
+              if(mission.id == $scope.missions[j].id){
                 change = true;
                 index = j;
               }
@@ -3576,8 +3606,19 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     });
   }
 
-  $scope.deleteMission = function() {
+  $scope.deleteMission = function(mission) {
+    var classroomMissionRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/missions/' + mission.id);
+    classroomMissionRef.remove();
 
+    var missionToDeleteRef = firebase.database().ref('missions/' + mission.id);
+    missionToDeleteRef.remove();
+
+    for (var student in mission.students) {
+      var studentMissionToDeleteRef = firebase.database().ref('students/' + student + '/missions/' + mission.id);
+      studentMissionToDeleteRef.remove();
+    }
+
+    $scope.getMissions();
   }
 
   $scope.setMission = function(mission) {
@@ -3590,11 +3631,29 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.selectMissions = function() {
-
+    $scope.closeSelectMissionsModal();
+    if ($scope.actionSheetMissionsType === 'delete') {
+      for (var element in $scope.missionsForSelection) {
+        if ($scope.missionsForSelection[element].selected === true) {
+          $scope.deleteMission($scope.missionsForSelection[element]);
+        }
+      }
+    $scope.missionsForSelection = $scope.rewards;
+    } else if ($scope.actionSheetMissionsType === 'duplicate') {
+      for (var element in $scope.missionsForSelection) {
+        if ($scope.missionsForSelection[element].selected === true) {
+          $scope.duplicateMission($scope.missionsForSelection[element]); //THINGS TO DO
+        }
+      }
+    }
   }
 
-  $scope.changeSelectedMission = function() {
-
+  $scope.changeSelectedMission = function(mission) {
+    if (mission.selected === false) {
+      mission.selected = true;
+    } else {
+      mission.selected = false;
+    }
   }
 
   $scope.setNewMissionNamePopup = function() {

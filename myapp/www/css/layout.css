@@ -38,14 +38,14 @@
 /*
  * TOP MENU 
  */
-header#cabecera{ 
+header#pageHeader{ 
 	width: 100%; float: left;
 	background: rgba(0,0,0,.55);
 }
-	header#cabecera a#menu{
+	header#pageHeader a#menu{
 		position: absolute; right: 0; top: 0; color: #d9d9d9;
 	}
-	header#cabecera a.homeButton{ position: absolute; top:0; left: 0; color: #d9d9d9;}
+	header#pageHeader a.homeButton{ position: absolute; top:0; left: 0; color: #d9d9d9;}
 
 .button.button-light{ 
 	border-radius: 0 !important; margin: 0 !important;

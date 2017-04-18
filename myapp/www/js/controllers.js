@@ -477,7 +477,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       },
       destructiveButtonClicked: function() {
         //DELETE TEAMS ACTION
-        $scope.actionsheetClassTeamsType = 'delete';
+        $scope.actionSheetClassTeamsType = 'delete';
         $scope.showSelectTeamsModal();
         return true;
       }
@@ -1107,7 +1107,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     '<ion-content>'+
       '<h3 id="teams-heading5" class="teams-hdg5">'+
         '<a id="teacherHome-dropdown" class="button button-light icon ion-home" ng-click="teacherHomeForm() ; closeModalStudentProfile() ; closeModalStudentDialog()"></a>'+
-        '<h2>{{student.name}} {{student.surname}}</h2>'+
+        '<h3>{{student.name}} {{student.surname}}</h3>'+
       '</h3>'+
       '<form id="studentProfileFormData" class="list">'+
         '<ion-list id="signUp-list2">'+
@@ -1223,38 +1223,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<div class="list-student">'+
         '<button ng-click="closeModalEditMembers()" class="button button-calm  button-block">{{ \'CANCEL\' | translate }}</button>'+
         '<button ng-click="editTeamMembers()" class="button button-calm  button-block">EDITAR MIEMBROS</button>'+
-      '</div>'+
-    '</ion-content>'+
-  '</ion-modal-view>';
-
-  $scope.newMissionModal = '<ion-modal-view>'+
-    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{{ \'NEW_MISSION\' | translate }}</h3>'+
-        '<form id="newMissionForm" class="list">'+
-          '<ion-list>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">{{ \'NAME\' | translate }}</span>'+
-            '<input type="text" placeholder="{{ \'NAME\' | translate }}" ng-model="modelNewMission.name">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">RECOMPENSA</span>'+
-            '<input type="text" placeholder="RECOMPENSA" ng-model="modelNewMission.reward">'+
-          '</label>'+
-          '<label class="item item-input list-elements">'+
-            '<span class="input-label">PUNTOS ADICIONALES (OPCIONAL)</span>'+
-            '<input type="text" placeholder="PUNTOS ADICIONALES (OPCIONAL)" ng-model="modelNewMission.additionalPoints">'+
-          '</label>'+
-        '</form>'+
-      '<h3 id="teams-heading5" class="teams-hdg5">{{ \'ITEMS\' | translate }}</h3>'+
-      '<ion-list id="items-list9" class="list-student">'+
-        '<ion-item id="items-list-item15">{itemName}</ion-item>'+
-      '</ion-list>'+
-      '<div class="button-bar action_buttons">'+
-        '<button id="achievements-button91" class="button button-calm  button-block" ng-click="showSelectItemsModal()">{{ \'ADD_ITEM\' | translate }}</button>'+
-      '</div>'+
-      '<div class="button-bar action_buttons">'+
-        '<button class="button button-calm  button-block" ng-click="closeModalNewMission()">{{ \'CANCEL\' | translate }}</button>'+
-        '<button class="button button-calm  button-block" ng-disabled="!modelNewMission.name || !modelNewMission.reward || !modelNewMission.additionalPoints" ng-click="closeModalNewMission()">{{ \'ADD_MISSION\' | translate }}</button>'+
       '</div>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -1525,25 +1493,32 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     scope: $scope,
     animation: 'slide-in-up'
   })
-  $scope.showSelectItemsModal = function(){
-	  if($scope.newMissionModal.isShown()){
-		  $scope.newMissionModal.hide();
-		  modalMissions = 1;
-	  }
-	  if($scope.editMissionModal.isShown()){
-		  $scope.editMissionModal.hide();
-		  modalMissions = 2;
-	  }
+  $scope.showSelectItemsModal = function() {
+    if($scope.newMissionModal != undefined) {
+      if($scope.newMissionModal.isShown()){
+        $scope.newMissionModal.hide();
+        modalMissions = 1;
+      }
+    }
+
+    if($scope.editMissionModal != undefined) {
+      if($scope.editMissionModal.isShown()){
+        $scope.editMissionModal.hide();
+        modalMissions = 2;
+      }
+    }
     $scope.getItemsForSelection();
     $scope.selectItemsModal.show();
   }
   $scope.closeSelectItemsModal = function(){
     $scope.selectItemsModal.hide();
-  	if(modalMissions == 1) {
-  		$scope.newMissionModal.show();
-    }
-  	if(modalMissions == 2) {
-  		$scope.editMissionModal.show();
+    if(modalMissions != undefined) {
+      if(modalMissions == 1) {
+        $scope.newMissionModal.show();
+      }
+      if(modalMissions == 2) {
+        $scope.editMissionModal.show();
+      }
     }
   }
 
@@ -1610,23 +1585,29 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     animation: 'slide-in-up'
   });
   $scope.showModalSecondary = function(){
-    if ($scope.studentDialogModal.isShown()){
-      $scope.studentDialogModal.hide();
-      modalFirst = 1;
+    if($scope.studentDialogModal != undefined) {
+      if ($scope.studentDialogModal.isShown()){
+        $scope.studentDialogModal.hide();
+        modalFirst = 1;
+      }
     }
-    if ($scope.newStudentModal.isShown()){
-      $scope.newStudentModal.hide();
-      modalFirst = 2;
+    if($scope.newStudentModal != undefined) {
+      if ($scope.newStudentModal.isShown()){
+        $scope.newStudentModal.hide();
+        modalFirst = 2;
+      }
     }
     $scope.secondaryMenuModal.show();  
   }
   $scope.closeModalSecondary = function(){
 	$scope.clearFormSecundaryModal();
     $scope.secondaryMenuModal.hide();
-    if(modalFirst == 1)
-      $scope.studentDialogModal.show(); 
-    if(modalFirst == 2)
-      $scope.newStudentModal.show();
+    if(modalFirst != undefined) {
+      if(modalFirst == 1)
+        $scope.studentDialogModal.show(); 
+      if(modalFirst == 2)
+        $scope.newStudentModal.show();
+    }
   }
 
                                         /* NEW STUDENT DIALOG MODAL */
@@ -1727,23 +1708,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.editMembersModal.hide();
   }
 
-                                        /* NEW MISSION MODAL */
-
-  $scope.newMissionModal = $ionicModal.fromTemplate($scope.newMissionModal,  {
-    scope: $scope,
-    animation: 'slide-in-up'
-  });
-  $scope.showModalNewMission = function(){
-    if(modalMissions == 0){
-      $scope.modelNewMission = {};  
-    }
-    $scope.newMissionModal.show();  
-  }
-  $scope.closeModalNewMission = function(){
-    $scope.newMissionModal.hide();
-    modalMissions == 0;
-  }
-
                                         /* EDIT MISSION MODAL */
 
   $scope.editMissionModal = $ionicModal.fromTemplate($scope.editMissionModal,  {
@@ -1751,8 +1715,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     animation: 'slide-in-up'
   });
   $scope.showModalEditMission = function(){
-    if(modalMissions == 0){
-      $scope.modelEditMission = {};  
+    if(modalMissions != undefined) {
+      if(modalMissions == 0){
+        $scope.modelEditMission = {};  
+      }
     }
     $scope.editMissionModal.show();  
   }
@@ -1864,6 +1830,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   var achievementsRef = firebase.database().ref('achievements');
   var teamsRef = firebase.database().ref('teams');
   var rewardsRef = firebase.database().ref('rewards');
+  var missionsRef = firebase.database().ref('missions');
 
   /*
     *************************************EVERY FUNCTIONALITY FUNCTION GOES HERE***********************
@@ -2040,6 +2007,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.getItems();
     $scope.getTeams();
     $scope.getRewards();
+    $scope.getMissions();
   }
 
   $scope.archiveClassroom = function(classroom) {
@@ -2530,6 +2498,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       for (var element in $scope.students) {
         $scope.editStudentsAttendance($scope.students[element]);
       }
+    } else if ($scope.actionsheetClassStudentsType === 'newMissionCreation') {
+      $scope.actionSheetRewardsType = 'newMissionCreation';
+      $scope.newMission.students = $scope.studentsForSelection;
+      $scope.showSelectRewardsModal();
     }
   }
   
@@ -2865,6 +2837,10 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       }
       $scope.getStudents();
       $scope.getTeams();
+    } else if ($scope.actionSheetItemsType === 'newMissionCreation') {
+      $scope.actionsheetClassStudentsType = 'newMissionCreation';
+      $scope.newMission.items = $scope.itemsForSelection;
+      $scope.showSelectStudentsModal();
     }
   }
 
@@ -3504,6 +3480,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           $scope.duplicateReward($scope.rewardsForSelection[element]); //THINGS TO DO
         }
       }
+    } else if ($scope.actionSheetRewardsType === 'newMissionCreation') {
+      $scope.newMission.rewards = $scope.rewardsForSelection;
+      $scope.createMission($scope.newMission);
     }
   }
 
@@ -3514,6 +3493,139 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       reward.selected = false;
     }
   }
+
+
+  
+
+
+                                        /* FUNCTIONS IN MISSIONS */
+
+  $scope.getMissions = function() {
+    var classroomMissionsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/missions');
+    var missionKeys = $firebaseArray(classroomMissionsRef);
+    missionKeys.$loaded(function() {
+      $scope.missions = [];
+      for(i = 0 ; i < missionKeys.length ; i++) {
+        var missionKey = missionKeys.$keyAt(i);
+        var loopMission = firebase.database().ref('missions/' + missionKey);
+        loopMission.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var mission = snapshot.val();
+            for(j = 0 ; j < $scope.missions.length ; j++){
+              if(reward.id == $scope.missions[j].id){
+                change = true;
+                index = j;
+              }
+            }
+            if(!change){
+              $scope.missions.push(mission);  
+            } else {
+              $scope.missions[index] = mission;
+            }
+            $scope.getMissionsForSelection();
+          }
+        });
+      }
+    });
+  }
+
+  $scope.getMissionsForSelection = function() {
+    $scope.missionsForSelection = angular.copy($scope.missions);
+    for (var element in $scope.missionsForSelection) {
+      $scope.missionsForSelection[element].selected = false;
+    }
+  }
+
+  $scope.createMission = function(mission) {
+    var missionsNode = $firebaseArray(missionsRef);
+    missionsNode.$loaded(function() {
+      missionsNode.$add({
+        'name' : mission.name,
+        'additionalPoints' : mission.additionalPoints,
+      }).then(function(ref) {
+        var id = ref.key;
+
+        var missionIdRef = firebase.database().ref('missions/' + id + '/id');
+        missionIdRef.set(id);
+
+        for(var pos in mission.items) {
+          var missionItemRef = firebase.database().ref('missions/' + id + '/items/' + mission.items[pos].id);
+          missionItemRef.set(true);
+        }
+
+        for(var pos in mission.students) {
+          var missionStudentRef = firebase.database().ref('missions/' + id + '/students/' + mission.students[pos].id);
+          missionStudentRef.set(true);
+
+          var studentMissionRef = firebase.database().ref('students/' + mission.students[pos].id + '/missions/' + id);
+          studentMissionRef.set(true);
+        }
+
+        for(var pos in mission.rewards) {
+          var missionRewardRef = firebase.database().ref('missions/' + id + '/rewards/' + mission.rewards[pos].id);
+          missionRewardRef.set(true);
+        }
+
+        var classroomMissionsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/missions/' + id);
+        classroomMissionsRef.set(true);
+
+        $scope.getMissions();
+      });
+    });
+  }
+
+  $scope.deleteMission = function() {
+
+  }
+
+  $scope.setMission = function(mission) {
+    $scope.mission = mission;
+    $scope.showModalEditMission();
+  }
+
+  $scope.editMission = function() {
+
+  }
+
+  $scope.selectMissions = function() {
+
+  }
+
+  $scope.changeSelectedMission = function() {
+
+  }
+
+  $scope.setNewMissionNamePopup = function() {
+    $scope.newMission = {};
+    var missionNamePopup = $ionicPopup.show({
+      title: 'INTRODUZCA UN NOMBRE DE MISION',
+      template: '<input type="text" ng-model="newMission.name">',
+      scope : $scope,
+
+      buttons: [
+        {text: 'CANCELAR'},
+        {text: 'SIGUIENTE',
+         onTap: function(e) {
+           var missionAdditionalPointsPopup = $ionicPopup.show({
+              title: 'INTRODUZCA PUNTOS ADICIONALES POR COMPLETAR MISION (OPCIONAL)',
+              template: '<input type="number" ng-model="newMission.additionalPoints">',
+              scope : $scope,
+
+              buttons: [
+                {text: 'CANCELAR'},
+                {text: 'SIGUIENTE',
+                  onTap : function(e) {
+                    $scope.actionSheetItemsType = 'newMissionCreation';
+                    $scope.showSelectItemsModal();
+                  }},
+              ]
+            });
+         }},
+      ]
+    });
+  };
 
 }])
 
@@ -3941,17 +4053,21 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     animation: 'slide-in-up'
   });
   $scope.showModalItemDialog = function(){
-	  if($scope.missionDialogModal.isShown()){
-		  $scope.missionDialogModal.hide();
-		  itemModal = 1;
-	  }
+    if($scope.missionDialogModal != undefined) {
+      if($scope.missionDialogModal.isShown()){
+        $scope.missionDialogModal.hide();
+        itemModal = 1;
+      }
+    }
     $scope.itemDialogModal.show();  
   }
   $scope.closeModalItemDialog = function(){
-	  if(itemModal == 1){
-		  $scope.missionDialogModal.show();
-		  itemModal = 0;
-	  }
+    if(itemModal != undefined) {
+      if(itemModal == 1){
+        $scope.missionDialogModal.show();
+        itemModal = 0;
+      }
+    }
     $scope.itemDialogModal.hide();
   }
 

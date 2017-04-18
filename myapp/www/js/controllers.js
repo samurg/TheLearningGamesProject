@@ -1145,7 +1145,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.teamDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h3>{team.name}</h3>'+
+      '<h3>{{team.name}}</h3>'+
       '<div class="list-student">'+
         '<div class="teacherAvatar">'+
           '<img src={{team.picture}} class="avatar">'+
@@ -3548,6 +3548,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     $scope.classView = false;
     $scope.rulesItemsView = false;
     $scope.itemsView = false;
+    $scope.teamsView = false;
     $scope.rewardShopView = false;
     $scope.missionsView = false;
     $scope.archivedClassroomsToShow = false;
@@ -3581,6 +3582,11 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   $scope.itemsForm = function() {
     $scope.allFalse();
     $scope.itemsView = true;
+  }
+
+  $scope.teamsForm = function() {
+    $scope.allFalse();
+    $scope.teamsView = true;
   }
 
   $scope.rewardShopForm = function() {
@@ -3658,6 +3664,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.templateStudentDefaultPopover = '<ion-popover-view>'+
     '<ion-list class="list-elements">'+
+      '<ion-item class="itemPopover" ng-click="teamsForm(); closePopoverStudentDefault()">VER EQUIPOS</ion-item>'+
       '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverStudentDefault()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverStudentDefault()">VER MISIONES</ion-item>'+
       '<ion-item class="itemPopover" ng-click="settingsForm(); closePopoverStudentDefault()">{{ \'SETTINGS\' | translate }}</ion-item>'+
@@ -3820,6 +3827,34 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     '</ion-content>'+
   '</ion-modal-view>';
 
+  $scope.teamDialogModal = '<ion-modal-view>'+
+    '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
+      '<h3>{{team.name}}</h3>'+
+      '<div class="list-student">'+
+        '<div class="teacherAvatar">'+
+          '<img src={{team.picture}} class="avatar">'+
+        '</div>'+
+        '<form id="teamDialogForm">'+
+          '<button class="button button-light  button-block button-outline">{{ \'CHANGE_AVATAR\' | translate }}</button>'+
+          '<label class="item item-input list-elements">'+
+            '<span class="input-label">'+
+              'OBJETIVO'+
+              '<p>{{team.objective}}</p>'+
+            '</span>'+
+          '</label>'+
+          '<div class="button-bar action_buttons">'+
+            '<button class="button button-calm  button-block" ng-click="closeModalTeamDialog()">{{ \'CANCEL\' | translate }}</button>'+
+          '</div>'+
+        '</form>'+
+      '</div>'+
+      '<div class="list-team">'+
+        '<ion-list>'+
+          '<ion-item class="list-student-team" ng-repeat="teamMember in teamMembers">{{teamMember.name}} {{teamMember.surname}}</ion-item>'+
+        '</ion-list>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
   $scope.missionDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{mission.name}</h3>'+
@@ -3931,6 +3966,19 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   }
   $scope.closeModalAchievementDialog = function(){
     $scope.achievementDialogModal.hide();
+  }
+
+                                        /* TEAM DIALOG MODAL */  
+
+  $scope.teamDialogModal = $ionicModal.fromTemplate($scope.teamDialogModal, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+  $scope.showModalTeamDialog = function(){
+    $scope.teamDialogModal.show();  
+  }
+  $scope.closeModalTeamDialog = function(){
+    $scope.teamDialogModal.hide();
   }
 
                                         /* MISSION DIALOG MODAL */
@@ -4136,6 +4184,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
         $scope.classroomData = snapshot.val();
     });
     $scope.getItems();
+    $scope.getTeams()
     $scope.getRewards();
     $scope.rulesItemsForm();
   }
@@ -4262,6 +4311,75 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
    $scope.setAchievement = function(achievement) {
     $scope.achievement = achievement;
     $scope.showModalAchievementDialog();
+  }
+                    
+  
+  
+
+                                        /* FUNCTIONS IN TEAMS */
+
+  $scope.getTeams = function() {
+    var studentTeamsRef = firebase.database().ref('students/' + sessionUser.uid + '/teams');
+    var teamKeys = $firebaseArray(studentTeamsRef);
+    teamKeys.$loaded(function() {
+      $scope.teams = [];
+      for (i = 0 ; i < teamKeys.length ; i++) {
+        var teamKey = teamKeys.$keyAt(i);
+        var loopTeam = firebase.database().ref('teams/' + teamKey);
+        loopTeam.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var team = snapshot.val();
+            for(j = 0 ; j < $scope.teams.length ; j++){
+              if(team.id == $scope.teams[j].id){
+                change = true;
+                index = j;
+              }
+            }
+            if(!change){
+              $scope.teams.push(team);  
+            } else {
+              $scope.teams[index] = team;
+            }
+          }
+        });
+      }
+    });
+  }
+
+  $scope.setTeam = function(team) {
+    $scope.team = team;
+    var teamMembersRef = firebase.database().ref('teams/' + team.id + '/students');
+    var teamMembersKeys = $firebaseArray(teamMembersRef);
+    teamMembersKeys.$loaded(function() {
+      $scope.teamMembers = [];
+      for (i = 0 ; i < teamMembersKeys.length ; i++) {
+        var teamMemberKey = teamMembersKeys.$keyAt(i);
+        var loopTeamMember = firebase.database().ref('students/' + teamMemberKey);
+        loopTeamMember.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            var teamMember = snapshot.val();
+            teamMember.name = CryptoJS.AES.decrypt(teamMember.name, teamMember.id).toString(CryptoJS.enc.Utf8);
+            teamMember.surname =CryptoJS.AES.decrypt(teamMember.surname, teamMember.id).toString(CryptoJS.enc.Utf8);
+            for(j = 0 ; j < $scope.teamMembers.length ; j++){
+              if(teamMember.id == $scope.teamMembers[j].id){
+                change = true;
+                index = j;
+              }
+            }
+            if(!change){
+              $scope.teamMembers.push(teamMember);  
+            } else {
+              $scope.teamMembers[index] = teamMember;
+            }
+          }
+        });
+      }
+    });
+    $scope.showModalTeamDialog();
   }
 
 

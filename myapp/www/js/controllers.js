@@ -285,12 +285,12 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     $scope.archivedClassroomsToShow = false;
   }
 
-  $scope.teacherHomeForm = function(){
+  $scope.teacherHomeForm = function() {
     $scope.allFalse();
     $scope.teacherHomeView = true;
   }
 
-  $scope.profileForm = function(){
+  $scope.profileForm = function() {
     $scope.allFalse();
     $scope.modelProfile = {};
     $scope.profileView = true;
@@ -300,17 +300,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
     }
   }
 
-  $scope.settingsForm = function(){
+  $scope.settingsForm = function() {
     $scope.allFalse();
     $scope.settingsView = true;
   }
 
-  $scope.classForm = function(){
+  $scope.classForm = function() {
     $scope.allFalse();
     $scope.classStudentsView = true;
   }
 
-  $scope.teamsForm = function(){
+  $scope.teamsForm = function() {
     $scope.allFalse();
     $scope.classTeamsView = true;
   }
@@ -1078,7 +1078,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
   $scope.studentDialogModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
-      '<h2>{{student.name}} {{student.surname}}</h2>'+
+      '<h3>{{student.name}} {{student.surname}}</h3>'+
       '<div class="list-student">'+
         '<div class="teacherAvatar">'+
           '<img src={{student.avatar}} class="avatar">'+
@@ -1398,7 +1398,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.editRewardModal = '<ion-modal-view>'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<form id="editRewardForm" class="list">'+
-        '<h3>{rewardName}</h3>'+
+        '<h3>{{reward.name}}</h3>'+
         '<ion-list>'+
           '<label class="item item-input list-elements">'+
             '<span class="input-label">{{ \'NAME\' | translate }} </span>'+

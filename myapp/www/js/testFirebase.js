@@ -114,3 +114,29 @@ var rootRef = firebase.database().ref();
   setTimeout(function() {
     // Whatever you want to do after the wait
   }, millisecondsToWait);
+
+
+
+
+
+  $scope.secondaryMenuSelection = function() {
+    var teamIndex = document.getElementById("selectTeam").selectedIndex;
+    var classroomIndex = document.getElementById("selectCopy").selectedIndex;
+
+    var team = $scope.teams[teamIndex - 1];
+    var classroom = $scope.classrooms[classroomIndex - 1];
+
+    if(team != undefined && classroom != undefined) {
+      $scope.addStudentToTeam(team, $scope.student);
+      $scope.copyStudentToClass(classroom, $scope.student);
+    } else {
+      if (team != undefined) {
+        $scope.addStudentToTeam(team, $scope.student);
+      }
+
+      if (classroom != undefined) {
+        $scope.copyStudentToClass(classroom, $scope.student);
+      }
+    }
+    $scope.closeModalSecondary();
+  }

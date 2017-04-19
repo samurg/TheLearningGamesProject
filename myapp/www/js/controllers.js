@@ -517,7 +517,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* ACHIEVEMENT ACTIONSHEET */
 
   $scope.showActionsheetAchievements = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES LOGROS',
       buttons: [
@@ -548,7 +547,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* REWARDS ACTIONSHEET */
 
   $scope.showActionsheetRewards = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES RECOMPENSAS',
       buttons: [
@@ -579,7 +577,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
                                           /* MISSIONS ACTIONSHEET */
 
   $scope.showActionsheetMissions = function() {
-    
     $ionicActionSheet.show({
       titleText: 'ACCIONES MISIONES',
       buttons: [
@@ -663,7 +660,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">IMPORTAR</ion-item>'+
       '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">EXPORTAR</ion-item>'+
       '<ion-toggle class="itemPopover" ng-model="modelcheckboxotifications" ng-checked="classroom.notifications" ng-click="setNotifications(checkboxNotifications)" toggle-class="toggle-calm">NOTIFICACIONES</ion-toggle>'+
-      '<ion-item class="itemPopover" ng-click="closePopoverClassTeams()">VER HASHCODES</ion-item>'+
       '<ion-item class="itemPopover" ng-click="rulesForm(); closePopoverClassTeams()">VER REGLAS</ion-item>'+
       '<ion-item class="itemPopover" ng-click="rewardShopForm(); closePopoverClassTeams()">VER TIENDA DE CLASE</ion-item>'+
       '<ion-item class="itemPopover" ng-click="missionsForm(); closePopoverClassTeams()">VER MISIONES</ion-item>'+
@@ -1047,7 +1043,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.newStudentModal = '<ion-modal-view class="fondo">'+
     '<ion-content padding="false" class="manual-ios-statusbar-padding">'+
       '<h3>{{ \'NEW_STUDENT\' | translate }}</h3>'+
-      '<div class="list-student list-elements">'+
+      '<div class="list-student">'+
         '<div class="teacherAvatar">'+
           '<img src={{defaultAvatar}} class="avatar">'+
         '</div>'+
@@ -2066,7 +2062,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         var newteacherClassroomRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms/' + id);
         newteacherClassroomRef.set(true);
 
-        $scope.getClassrooms();
+        //COPY PREFERENCES FROM OTHER CLASSROOM
+        var classroomIndex = document.getElementById("selectClass").selectedIndex;
+        if (classroomIndex != 0) {
+        	var classroom = $scope.classrooms[classroomIndex - 1];
+          $scope.copyPreferencesFromClassroom(classroom, id);
+        } else {
+          $scope.getClassrooms();
+        }
       });  
     });
   }
@@ -2155,6 +2158,26 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   $scope.duplicateClassroom = function(classroom) {
     //DUPLICATE ACTION GOES HERE
     //THINGS TO DO
+  }
+
+  $scope.copyPreferencesFromClassroom = function(originalClassroom, newClassroomId) {
+  	//THINGS TO DO
+    $scope.classroom = {};
+    $scope.classroom.id = originalClassroom.id;
+
+    for (var student in originalClassroom.students) {
+      var newClassStudentRef = firebase.database().ref('classrooms/' + newClassroomId + '/students/' + student);
+      newClassStudentRef.set(true);
+
+      var newStudentClassRef = firebase.database().ref('students/' + student + '/classrooms/' + newClassroomId);
+      newStudentClassRef.set({
+        'id' : $scope.classroom.id,
+        'totalPoints' : 0,
+        'inClass' : true,
+      });
+    }
+
+    $scope.getClassrooms();
   }
 
   $scope.selectClassrooms = function() {
@@ -2291,9 +2314,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           });
         }
       }
-    });
-    
-    
+    }); 
   }
 
   $scope.createLevel = function(title, level, requiredPoints) {
@@ -2394,7 +2415,9 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             var student = snapshot.val();
             student.name = CryptoJS.AES.decrypt(student.name, student.id).toString(CryptoJS.enc.Utf8);
             student.surname =CryptoJS.AES.decrypt(student.surname, student.id).toString(CryptoJS.enc.Utf8);
-            student.inClass = student.classrooms[$scope.classroom.id].inClass;
+            if ($scope.classrooms[$scope.classroom.id] != undefined) {
+              student.inClass = student.classrooms[$scope.classroom.id].inClass;
+            }
             for(j = 0 ; j < $scope.students.length ; j++) {
               if($scope.students[j].id == student.id) {
                 change = true;

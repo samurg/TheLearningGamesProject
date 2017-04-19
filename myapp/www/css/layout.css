@@ -1,6 +1,7 @@
 /*
  * GENERAL STYLES
  */
+.addButton{ position: fixed; bottom: 0; right: 0;}
 .button{ border-radius: 10px !important; margin: 1%; border: none !important; background: none !important;}
 .action_buttons .button{ border: none !important; font-size: 1.1em !important;}
 
@@ -37,6 +38,15 @@
 /*
  * TOP MENU 
  */
+header#pageHeader{ 
+	width: 100%; float: left;
+	background: rgba(0,0,0,.55);
+}
+	header#pageHeader a#menu{
+		position: absolute; right: 0; top: 0; color: #d9d9d9;
+	}
+	header#pageHeader a.homeButton{ position: absolute; top:0; left: 0; color: #d9d9d9;}
+
 .button.button-light{ 
 	border-radius: 0 !important; margin: 0 !important;
 }
@@ -84,7 +94,7 @@ ion-modal-view h2, h3{ margin: 0 !important; padding: 10px 0; font-size: 1.5em; 
 .list-student+.list-student{}
 .list-student:hover{ }
 
-ion-modal-view .list-student, ion-modal-view .list-student:hover{ background: none; }
+ion-modal-view .list-student, ion-modal-view .list-student:hover{}
 
 #attendance-list7 .list-student, #attendance-list7 .list-student:hover,
 .list_tests, .list_tests:hover{ background: white; }
@@ -148,3 +158,6 @@ padding-left:40px;
 list-style-type: decimal;
 padding-left:40px;
 }
+
+/* FIXES */
+.scroll, .teacherHomeView{ height: 100%; }

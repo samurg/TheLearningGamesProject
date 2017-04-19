@@ -114,3 +114,80 @@ var rootRef = firebase.database().ref();
   setTimeout(function() {
     // Whatever you want to do after the wait
   }, millisecondsToWait);
+
+
+  $scope.getStudentsForTeamSelection = function() {
+    $scope.studentsForTeamSelection = angular.copy($scope.students);
+    if ($scope.editMembers) {
+      for (var element in $scope.studentsForTeamSelection) {
+        $scope.studentsForTeamSelection[element].inTeam = false;
+      }
+      if ($scope.team.students != undefined) {
+        for (var student in $scope.studentsForTeamSelection) {
+          if ($scope.team.students[$scope.studentsForTeamSelection[student].id] === true) {
+            $scope.studentsForTeamSelection[student].inTeam = true;
+          }
+        }
+      }
+      $scope.editMembers = false;
+    } else {
+      for (var element in $scope.studentsForTeamSelection) {
+        $scope.studentsForTeamSelection[element].selected = false;
+      }
+    }
+  }
+
+  $scope.editTeamMembers = function() {
+    $scope.closeModalEditMembers();
+    for (var element in $scope.studentsForTeamSelection) {
+      var studentTeamRef = firebase.database().ref('students/' + $scope.studentsForTeamSelection[element].id + '/teams/' + $scope.team.id);
+      var teamStudentRef = firebase.database().ref('teams/' + $scope.team.id + '/students/' + $scope.studentsForTeamSelection[element].id);
+      if ($scope.studentsForTeamSelection[element].inTeam === false) {
+        studentTeamRef.remove();
+        teamStudentRef.remove();
+      } else {
+        studentTeamRef.set(true);
+        teamStudentRef.set(true);
+      }
+    }
+    $scope.closeModalTeamDialog();
+
+
+  $scope.editItemsMissionModal = '<ion-modal-view>'+
+    '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
+      '<h3>EDITAR MIEMBROS</h3>'+
+      '<ion-list>'+
+        '<ion-checkbox class="list-student-team" ng-repeat="itemForMissionSelection in itemsForMissionSelection" ng-checked="itemForMissionSelection.inMission">{{itemForMissionSelection.name}} {{itemForMissionSelection.score}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalEditMissionItems()" class="button button-calm  button-block">{{ \'CANCEL\' | translate }}</button>'+
+        '<button ng-click="editMissionItems()" class="button button-calm  button-block">EDITAR MIEMBROS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.editRewardsMissionModal = '<ion-modal-view>'+
+    '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
+      '<h3>EDITAR MIEMBROS</h3>'+
+      '<ion-list>'+
+        '<ion-checkbox class="list-student-team" ng-repeat="rewardForMissionSelection in rewardsForMissionSelection" ng-checked="rewardForMissionSelection.inMission">{{rewardForMissionSelection.name}} {{rewardForMissionSelection.price}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalEditMissionRewards()" class="button button-calm  button-block">{{ \'CANCEL\' | translate }}</button>'+
+        '<button ng-click="editMissionRewards()" class="button button-calm  button-block">EDITAR MIEMBROS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';
+
+  $scope.editMembersMissionModal = '<ion-modal-view>'+
+    '<ion-content padding="true" class="manual-ios-statusbar-padding">'+
+      '<h3>EDITAR MIEMBROS</h3>'+
+      '<ion-list>'+
+        '<ion-checkbox class="list-student-team" ng-repeat="studentForMissionSelection in studentsForMissionSelection" ng-checked="studentForMissionSelection.inMission">{{studentForMissionSelection.name}} {{studentForMissionSelection.surname}}</ion-checkbox>'+
+      '</ion-list>'+
+      '<div class="list-student">'+
+        '<button ng-click="closeModalEditMissionMembers()" class="button button-calm  button-block">{{ \'CANCEL\' | translate }}</button>'+
+        '<button ng-click="editMissionMembers()" class="button button-calm  button-block">EDITAR MIEMBROS</button>'+
+      '</div>'+
+    '</ion-content>'+
+  '</ion-modal-view>';

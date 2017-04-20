@@ -2116,14 +2116,14 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       }
     }
 
-    /*for (var mission in classroom.missions) {
+    for (var mission in classroom.missions) {
       var classMissionToDeleteRef = firebase.database().ref('missions/' + mission);
       classMissionToDeleteRef.remove();
       for (var student in classroom.students) {
         var studentMissionToDeleteRef = firebase.database().ref('students/' + student + '/missions/' + mission);
         studentMissionToDeleteRef.remove();
       }
-    }*/
+    }
 
     $scope.getClassrooms();
   }
@@ -2161,9 +2161,25 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.copyPreferencesFromClassroom = function(originalClassroom, newClassroomId) {
-  	//THINGS TO DO
     $scope.classroom = {};
     $scope.classroom.id = originalClassroom.id;
+
+    var classroomLevelsRef = firebase.database().ref('classrooms/' + newClassroomId + '/levels');
+    var classroomLevelsArray = $firebaseArray(classroomLevelsRef);
+    classroomLevelsArray.$loaded(function() {
+      for (var levelId in originalClassroom.levels) {
+        classroomLevelsArray.$add({
+          'title' : originalClassroom.levels[levelId].title,
+          'level' : originalClassroom.levels[levelId].level,
+          'requiredPoints' : originalClassroom.levels[levelId].requiredPoints,
+        }).then(function(ref) {
+          var id = ref.key;
+
+          var idForLevelRef = firebase.database().ref('classrooms/' + newClassroomId + '/levels/' + id + '/id');
+          idForLevelRef.set(id);
+        });
+      }
+    });
 
     for (var student in originalClassroom.students) {
       var newClassStudentRef = firebase.database().ref('classrooms/' + newClassroomId + '/students/' + student);
@@ -2176,6 +2192,102 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         'inClass' : true,
       });
     }
+
+    var teamsArray = $firebaseArray(teamsRef);
+    teamsArray.$loaded(function() {
+      for (var teamId in originalClassroom.teams) {
+        var loopTeam = firebase.database().ref('teams/' + teamId);
+        loopTeam.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var team = snapshot.val();
+            teamsArray.$add({
+              'name' : team.name,
+              'objective' : team.objective,
+              'picture' : team.picture,
+            }).then(function(ref) {
+              var id = ref.key;
+
+              var idForTeamRef = firebase.database().ref('teams/' + id + '/id');
+              idForTeamRef.set(id);
+
+              var classroomRef = firebase.database().ref('classrooms/' + newClassroomId  + '/teams/' + id);
+              classroomRef.set(true);
+            });
+          }
+        })
+      }
+    });
+
+    //THINGS TO DO //AQUI
+    /*
+    var itemsArray = $firebaseArray(itemsRef);
+    var achievementsArray = $firebaseArray(achievementsRef);
+    itemsArray.$loaded(function() {
+      achievementsArray.$loaded(function() {
+        var itemId = 0;
+        for (var itemId in originalClassroom.items) {
+
+          //LOOP DEL ITEM
+
+          for (var achievementId in originalClassroom.items[itemsId].achievements) {
+
+            //LOOP DE CADA ACHIEVEMENT EN EL ITEM
+
+          }
+        }
+      });
+    });
+    */
+    
+    var rewardsArray = $firebaseArray(rewardsRef);
+    rewardsArray.$loaded(function() {
+      for (var rewardId in originalClassroom.rewards) {
+        var loopReward = firebase.database().ref('rewards/' + rewardId);
+        loopReward.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var reward = snapshot.val();
+            rewardsArray.$add({
+              'name' : reward.name,
+              'description' : reward.description,
+              'permission' : reward.permission,
+              'price' : reward.price,
+            }).then(function(ref) {
+              var id = ref.key;
+
+              var idForRewardRef = firebase.database().ref('rewards/' + id + '/id');
+              idForRewardRef.set(id);
+
+              var classroomRewardsRef = firebase.database().ref('classrooms/' + newClassroomId + '/rewards/' + id);
+              classroomRewardsRef.set(id);
+            });
+          }
+        });
+      }
+    });
+
+    var missionsArray = $firebaseArray(missionsRef);
+    missionsArray.$loaded(function() {
+      for (var missionId in originalClassroom.missions) {
+        var loopMission = firebase.database().ref('missions/' + missionId);
+        loopMission.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var mission = snapshot.val();
+            missionsArray.$add({
+              'name' : mission.name,
+              'additionalPoints' : mission.additionalPoints,
+            }).then(function(ref) {
+              var id = ref.key;
+
+              var missionIdRef = firebase.database().ref('missions/' + id + '/id');
+              missionIdRef.set(id);
+
+              var classroomMissionsRef = firebase.database().ref('classrooms/' + newClassroomId + '/missions/' + id);
+              classroomMissionsRef.set(true);
+            });
+          }
+        });
+      }
+    });
 
     $scope.getClassrooms();
   }
@@ -2314,7 +2426,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
           });
         }
       }
-    }); 
+    });
   }
 
   $scope.createLevel = function(title, level, requiredPoints) {
@@ -2620,8 +2732,15 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
   }
 
   $scope.copyStudentToClass = function(classroom, student) {
-    //COPY STUDENT TO CLASS
-    //THINGS TO DO
+    var classStudentRef = firebase.database().ref('classrooms/' + classroom.id + '/students/' + student.id);
+    classStudentRef.set(true);
+
+    var studentClassRef = firebase.database().ref('students/' + student.id + '/classrooms/' + classroom.id);
+    studentClassRef.set({
+      'id' : classroom.id,
+      'totalPoints' : 0,
+      'inClass' : true,
+    });
   }
 
   $scope.selectStudents = function() {

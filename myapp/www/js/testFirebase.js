@@ -140,3 +140,49 @@ var rootRef = firebase.database().ref();
     }
     $scope.closeModalSecondary();
   }
+
+
+
+
+
+
+
+
+
+
+
+  $scope.getClassrooms = function() {
+    var teacherClassroomsRef = firebase.database().ref('teachers/' + $scope.teacher.$id + '/classrooms');
+    var classroomKeys = $firebaseArray(teacherClassroomsRef);
+    classroomKeys.$loaded(function() {
+      $scope.classrooms = [];
+      for (i = 0 ; i < classroomKeys.length ; i++) {
+        var classKey = classroomKeys.$keyAt(i);
+        var loopClassroom = firebase.database().ref('classrooms/' + classKey);
+        loopClassroom.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var change = false;
+            var index = -1;
+            for(j = 0 ; j < $scope.classrooms.length ; j++) {
+                if($scope.classrooms[j].id == snapshot.val().id) {
+                  change = true;
+                  index = j;
+                }              
+            }
+            if(!change) {
+              $scope.classrooms.push(snapshot.val());            
+            } else {
+              $scope.classrooms[index] = snapshot.val();
+            }
+            if ($scope.classroom != undefined) {
+              $scope.getLevels();
+            }
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
+            }
+            $scope.getClassroomsForSelection();
+          }
+        });
+      }
+    });
+  }

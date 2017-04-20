@@ -299,8 +299,8 @@
         </h3>
       </header>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-click="showModalMissionDialog()">
-          <h2>{mission.name}</h2>
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="mission in missions" ng-click="setMission(mission)">
+          <h2>{{mission.name}}</h2>
         </ion-item>
       </ion-list>
     </div>

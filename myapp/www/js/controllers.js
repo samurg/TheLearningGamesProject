@@ -2656,9 +2656,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       var studentTeamsToDeleteRef = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
       studentTeamsToDeleteRef.remove();
     }
-    
-    //THINGS TO DO
-    //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
 
     for (var mission in $scope.missions) {
       var studentMissionsToDeleteRef = firebase.database().ref('students/' + student.id + '/missions/' + $scope.missions[mission].id);
@@ -4450,6 +4447,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           '<p>{{reward.price}}</p>'+
         '</span>'+
       '</label>'+
+      '<button class="button button-positive button-block" ng-show="possessedReward" ng-click="consumeReward(reward)">USAR RECOMPENSA</button>'+
       '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -4587,6 +4585,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     animation: 'slide-in-up'
   });
   $scope.showModalRewardDialog = function(){
+    $scope.getRewardsForSelection();
     $scope.rewardDialogModal.show();  
   }
   $scope.closeModalRewardDialog = function(){
@@ -5066,6 +5065,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     for (var element in $scope.rewardsForSelection) {
       $scope.rewardsForSelection[element].selected = false;
     }
+    console.log($scope.rewardsForSelection);
   }
 
   $scope.setReward = function(reward) {
@@ -5074,8 +5074,24 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   }
 
   $scope.buyReward = function(reward) {
-    //THINGS TO DO
-	//Crear campo en alumno de usedPôints que añada los puntos gastados en recompensas (asi para mostrar los puntos disponibles solo hay que restar)
+    if ($scope.availablePoints >= reward.price) {
+      var rewardForStudentRef = firebase.database().ref('students/' + $scope.student.id + '/rewards/' + reward.id + '/id');
+      rewardForStudentRef.set(true);
+
+      var usedPointsForStudentRef = firebase.database().ref('students/' + $scope.student.id + '/classrooms/' + $scope.classroom.id + '/usedPoints');
+      usedPointsForStudentRef.set($scope.student.classrooms[$scope.classroom.id].usedPoints + reward.price);
+
+      $scope.availablePoints -= reward.price;
+    } else {
+      alert('NO TIENES PUNTOS SUFICIENTES PARA COMPRAR ' + reward.name);
+    }
+  }
+
+  $scope.consumeReward = function(reward) {
+    $scope.closeModalRewardDialog();
+
+    var rewardForStudentRef = firebase.database().ref('students/' + $scope.student.id + '/rewards/' + reward.id);
+    rewardForStudentRef.remove();
   }
 
   $scope.selectRewards = function() {

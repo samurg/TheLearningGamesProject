@@ -2217,27 +2217,64 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         })
       }
     });
-
-    //THINGS TO DO //AQUI
-    /*
+    
     var itemsArray = $firebaseArray(itemsRef);
     var achievementsArray = $firebaseArray(achievementsRef);
     itemsArray.$loaded(function() {
       achievementsArray.$loaded(function() {
         var itemId = 0;
         for (var itemId in originalClassroom.items) {
+          var loopItem = firebase.database().ref('items/' + itemId);
+          loopItem.on('value', function(snapshotItem) {
+            if (snapshotItem.val() != null) {
+              var item = snapshotItem.val();
+              itemsArray.$add({
+                'name' : item.name,
+                'description' : item.description,
+                'score' : item.score,
+                'maxScore' : item.maxScore,
+                'useForLevel' : item.useForLevel,
+                'requirements' : item.requirements,
+              }).then(function(refItem) {
+                var newItemId = refItem.key;
 
-          //LOOP DEL ITEM
+                var idForItemRef = firebase.database().ref('items/' + newItemId + '/id');
+                idForItemRef.set(newItemId);
 
-          for (var achievementId in originalClassroom.items[itemsId].achievements) {
+                var classroomItemRef = firebase.database().ref('classrooms/' + newClassroomId + '/items/' + newItemId);
+                classroomItemRef.set(newItemId);
 
-            //LOOP DE CADA ACHIEVEMENT EN EL ITEM
+                if (item.achievements != undefined) {
+                  for (var achievementId in item.achievements) {
+                    var loopAchievement = firebase.database().ref('achievements/' + achievementId);
+                    loopAchievement.on('value', function(snapshotAchievement) {
+                      if (snapshotAchievement.val() != null) {
+                        var achievement = snapshotAchievement.val();
+                        achievementsArray.$add({
+                          'name' : achievement.name,
+                          'description' : achievement.description,
+                          'badge' : achievement.badge,
+                          'maxLevel' : achievement.maxLevel,
+                          'requirements' : achievement.requirements,
+                        }).then(function(refAchievement) {
+                          var newAchievementId = refAchievement.key;
 
-          }
+                          var idForAchievementRef = firebase.database().ref('achievements/' + newAchievementId + '/id');
+                          idForAchievementRef.set(newAchievementId);
+
+                          var classroomAchievementRef = firebase.database().ref('items/' + newItemId + '/achievements/' + newAchievementId);
+                          classroomAchievementRef.set(newAchievementId);
+                        });
+                      }
+                    })
+                  }
+                }
+              });
+            }
+          });
         }
       });
     });
-    */
     
     var rewardsArray = $firebaseArray(rewardsRef);
     rewardsArray.$loaded(function() {
@@ -2259,30 +2296,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
               var classroomRewardsRef = firebase.database().ref('classrooms/' + newClassroomId + '/rewards/' + id);
               classroomRewardsRef.set(id);
-            });
-          }
-        });
-      }
-    });
-
-    var missionsArray = $firebaseArray(missionsRef);
-    missionsArray.$loaded(function() {
-      for (var missionId in originalClassroom.missions) {
-        var loopMission = firebase.database().ref('missions/' + missionId);
-        loopMission.on('value', function(snapshot) {
-          if (snapshot.val() != null) {
-            var mission = snapshot.val();
-            missionsArray.$add({
-              'name' : mission.name,
-              'additionalPoints' : mission.additionalPoints,
-            }).then(function(ref) {
-              var id = ref.key;
-
-              var missionIdRef = firebase.database().ref('missions/' + id + '/id');
-              missionIdRef.set(id);
-
-              var classroomMissionsRef = firebase.database().ref('classrooms/' + newClassroomId + '/missions/' + id);
-              classroomMissionsRef.set(true);
             });
           }
         });
@@ -2609,6 +2622,7 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             newStudentClassRef.set({
               'id' : $scope.classroom.id,
               'totalPoints' : 0,
+              'usedPoints' : 0,
               'inClass' : true,
             });
 
@@ -3214,8 +3228,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       $scope.achievements = [];
       for (i = 0 ; i < achievementKeys.length ; i++) {
         var achievementKey = achievementKeys.$keyAt(i);
-        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
-        loopAchievemnt.on('value', function(snapshot) {
+        var loopAchievement = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievement.on('value', function(snapshot) {
           if(snapshot.val() != null) {
             var change = false;
             var index = -1;
@@ -4445,6 +4459,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           '<p>{{reward.price}}</p>'+
         '</span>'+
       '</label>'+
+      '<button class="button button-positive button-block" ng-show="possessedReward">USAR RECOMPENSA</button>'+
       '<button ng-click="closeModalRewardDialog()" class="button button-positive button-block icon ion-arrow-return-left"></button>'+
     '</ion-content>'+
   '</ion-modal-view>';
@@ -4742,6 +4757,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           studentToEditRef.set({
             'id' : classToAdd.id,
             'totalPoints' : 0,
+            'usedPoints' : 0,
             'inClass' : true,
           });
           
@@ -4769,6 +4785,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     $scope.getRewards();
     $scope.getMissions();
     $scope.rulesItemsForm();
+    $scope.availablePoints = $scope.student.classrooms[$scope.classroom.id].totalPoints - $scope.student.classrooms[$scope.classroom.id].usedPoints;
   }
 
   $scope.showArchivedClassrooms = function(value) {
@@ -4871,8 +4888,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
       $scope.achievements = [];
       for (i = 0 ; i < achievementKeys.length ; i++) {
         var achievementKey = achievementKeys.$keyAt(i);
-        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
-        loopAchievemnt.on('value', function(snapshot) {
+        var loopAchievement = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievement.on('value', function(snapshot) {
           if(snapshot.val() != null) {
             var change = false;
             var index = -1;
@@ -5016,12 +5033,33 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.setReward = function(reward) {
     $scope.reward = reward;
+    if ($scope.student.rewards != undefined) {
+      if ($scope.student.rewards[reward.id] != undefined) {
+        $scope.possessedReward = true;
+      } else {
+      $scope.possessedReward = false;
+      }
+    } else {
+      $scope.possessedReward = false;
+    }
     $scope.showModalRewardDialog();
   }
 
   $scope.buyReward = function(reward) {
-    //THINGS TO DO
-	//Crear campo en alumno de usedPôints que añada los puntos gastados en recompensas (asi para mostrar los puntos disponibles solo hay que restar)
+    if ($scope.availablePoints >= reward.price) {
+      var rewardForStudentRef = firebase.database().ref('students/' + $scope.student.id + '/rewards/' + reward.id + '/id');
+      rewardForStudentRef.set(true);
+
+      var usedPointsForStudentRef = firebase.database().ref('students/' + $scope.student.id + '/classrooms/' + $scope.classroom.id + '/usedPoints');
+      usedPointsForStudentRef.set($scope.student.classrooms[$scope.classroom.id].usedPoints + reward.price);
+
+      var rewardId = reward.id;
+      $scope.student.classrooms[$scope.classroom.id].rewards.push({rewardId : true});
+
+      $scope.availablePoints -= reward.price;
+    } else {
+      alert('NO TIENES PUNTOS SUFICIENTES PARA COMPRAR ' + reward.name);
+    }
   }
 
   $scope.selectRewards = function() {

@@ -2667,12 +2667,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       var teamStudentsToDeleteRef = firebase.database().ref('teams/' + $scope.teams[team].id + '/students/' + student.id);
       teamStudentsToDeleteRef.remove();
 
-      var studentTeamsToDelete = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
-      studentTeamsToDelete.remove();
+      var studentTeamsToDeleteRef = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
+      studentTeamsToDeleteRef.remove();
     }
     
     //THINGS TO DO
     //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
+
+    for (var mission in $scope.missions) {
+      var studentMissionsToDeleteRef = firebase.database().ref('students/' + student.id + '/missions/' + $scope.missions[mission].id);
+      studentMissionsToDeleteRef.remove();
+    }
 
     $scope.getStudents();
   }
@@ -4813,7 +4818,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
             var item = snapshot.val();
             var change = false;
             var index = -1;
-            if(!(item.id in $scope.student.items)) {
+            if($scope.student.items == undefined) {
               for(j = 0 ; j < $scope.itemsLocked.length ; j++){
                 if(item.id == $scope.itemsLocked[j].id){
                   change = true;
@@ -4828,18 +4833,34 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
                 $scope.itemsLocked[index] = item;
               }
             } else {
-              for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
-                if(item.id == $scope.itemsUnlocked[j].id){
-                  change = true;
-                  index = j;
-                  item.studentPoints = $scope.student.items[item.id].points;
+              if(!(item.id in $scope.student.items)) {
+                for(j = 0 ; j < $scope.itemsLocked.length ; j++){
+                  if(item.id == $scope.itemsLocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = 0;
+                  }
                 }
-              }
-              if (!change) {
-                item.studentPoints = $scope.student.items[item.id].points;
-                $scope.itemsUnlocked.push(item);
+                if (!change) {
+                  item.studentPoints = 0;
+                  $scope.itemsLocked.push(item);
+                } else {
+                  $scope.itemsLocked[index] = item;
+                }
               } else {
-                $scope.itemsUnlocked[index] = item;
+                for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
+                  if(item.id == $scope.itemsUnlocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = $scope.student.items[item.id].points;
+                  }
+                }
+                if (!change) {
+                  item.studentPoints = $scope.student.items[item.id].points;
+                  $scope.itemsUnlocked.push(item);
+                } else {
+                  $scope.itemsUnlocked[index] = item;
+                }
               }
             }
           }

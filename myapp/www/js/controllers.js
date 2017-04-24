@@ -2653,12 +2653,17 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       var teamStudentsToDeleteRef = firebase.database().ref('teams/' + $scope.teams[team].id + '/students/' + student.id);
       teamStudentsToDeleteRef.remove();
 
-      var studentTeamsToDelete = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
-      studentTeamsToDelete.remove();
+      var studentTeamsToDeleteRef = firebase.database().ref('students/' + student.id + '/teams/' + $scope.teams[team].id);
+      studentTeamsToDeleteRef.remove();
     }
     
     //THINGS TO DO
     //ELIMINAR LOS LOGROS DE LA CLASE DEL ESTUDIANTE students/studentID/achievements/'EACHachievementINCLASS'
+
+    for (var mission in $scope.missions) {
+      var studentMissionsToDeleteRef = firebase.database().ref('students/' + student.id + '/missions/' + $scope.missions[mission].id);
+      studentMissionsToDeleteRef.remove();
+    }
 
     $scope.getStudents();
   }

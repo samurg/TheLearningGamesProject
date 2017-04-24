@@ -2217,64 +2217,27 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
         })
       }
     });
-    
+
+    //THINGS TO DO //AQUI
+    /*
     var itemsArray = $firebaseArray(itemsRef);
     var achievementsArray = $firebaseArray(achievementsRef);
     itemsArray.$loaded(function() {
       achievementsArray.$loaded(function() {
         var itemId = 0;
         for (var itemId in originalClassroom.items) {
-          var loopItem = firebase.database().ref('items/' + itemId);
-          loopItem.on('value', function(snapshotItem) {
-            if (snapshotItem.val() != null) {
-              var item = snapshotItem.val();
-              itemsArray.$add({
-                'name' : item.name,
-                'description' : item.description,
-                'score' : item.score,
-                'maxScore' : item.maxScore,
-                'useForLevel' : item.useForLevel,
-                'requirements' : item.requirements,
-              }).then(function(refItem) {
-                var newItemId = refItem.key;
 
-                var idForItemRef = firebase.database().ref('items/' + newItemId + '/id');
-                idForItemRef.set(newItemId);
+          //LOOP DEL ITEM
 
-                var classroomItemRef = firebase.database().ref('classrooms/' + newClassroomId + '/items/' + newItemId);
-                classroomItemRef.set(newItemId);
+          for (var achievementId in originalClassroom.items[itemsId].achievements) {
 
-                if (item.achievements != undefined) {
-                  for (var achievementId in item.achievements) {
-                    var loopAchievement = firebase.database().ref('achievements/' + achievementId);
-                    loopAchievement.on('value', function(snapshotAchievement) {
-                      if (snapshotAchievement.val() != null) {
-                        var achievement = snapshotAchievement.val();
-                        achievementsArray.$add({
-                          'name' : achievement.name,
-                          'description' : achievement.description,
-                          'badge' : achievement.badge,
-                          'maxLevel' : achievement.maxLevel,
-                          'requirements' : achievement.requirements,
-                        }).then(function(refAchievement) {
-                          var newAchievementId = refAchievement.key;
+            //LOOP DE CADA ACHIEVEMENT EN EL ITEM
 
-                          var idForAchievementRef = firebase.database().ref('achievements/' + newAchievementId + '/id');
-                          idForAchievementRef.set(newAchievementId);
-
-                          var classroomAchievementRef = firebase.database().ref('items/' + newItemId + '/achievements/' + newAchievementId);
-                          classroomAchievementRef.set(newAchievementId);
-                        });
-                      }
-                    })
-                  }
-                }
-              });
-            }
-          });
+          }
         }
       });
     });
+    */
     
     var rewardsArray = $firebaseArray(rewardsRef);
     rewardsArray.$loaded(function() {
@@ -2296,6 +2259,30 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
 
               var classroomRewardsRef = firebase.database().ref('classrooms/' + newClassroomId + '/rewards/' + id);
               classroomRewardsRef.set(id);
+            });
+          }
+        });
+      }
+    });
+
+    var missionsArray = $firebaseArray(missionsRef);
+    missionsArray.$loaded(function() {
+      for (var missionId in originalClassroom.missions) {
+        var loopMission = firebase.database().ref('missions/' + missionId);
+        loopMission.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var mission = snapshot.val();
+            missionsArray.$add({
+              'name' : mission.name,
+              'additionalPoints' : mission.additionalPoints,
+            }).then(function(ref) {
+              var id = ref.key;
+
+              var missionIdRef = firebase.database().ref('missions/' + id + '/id');
+              missionIdRef.set(id);
+
+              var classroomMissionsRef = firebase.database().ref('classrooms/' + newClassroomId + '/missions/' + id);
+              classroomMissionsRef.set(true);
             });
           }
         });
@@ -2622,7 +2609,6 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
             newStudentClassRef.set({
               'id' : $scope.classroom.id,
               'totalPoints' : 0,
-              'usedPoints' : 0,
               'inClass' : true,
             });
 
@@ -3230,8 +3216,8 @@ function ($scope, $stateParams, $ionicModal, $http, $state, $ionicPopover, $ioni
       $scope.achievements = [];
       for (i = 0 ; i < achievementKeys.length ; i++) {
         var achievementKey = achievementKeys.$keyAt(i);
-        var loopAchievement = firebase.database().ref('achievements/' + achievementKey);
-        loopAchievement.on('value', function(snapshot) {
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
           if(snapshot.val() != null) {
             var change = false;
             var index = -1;
@@ -4760,7 +4746,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
           studentToEditRef.set({
             'id' : classToAdd.id,
             'totalPoints' : 0,
-            'usedPoints' : 0,
             'inClass' : true,
           });
           
@@ -4788,7 +4773,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     $scope.getRewards();
     $scope.getMissions();
     $scope.rulesItemsForm();
-    $scope.availablePoints = $scope.student.classrooms[$scope.classroom.id].totalPoints - $scope.student.classrooms[$scope.classroom.id].usedPoints;
   }
 
   $scope.showArchivedClassrooms = function(value) {
@@ -4907,8 +4891,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
       $scope.achievements = [];
       for (i = 0 ; i < achievementKeys.length ; i++) {
         var achievementKey = achievementKeys.$keyAt(i);
-        var loopAchievement = firebase.database().ref('achievements/' + achievementKey);
-        loopAchievement.on('value', function(snapshot) {
+        var loopAchievemnt = firebase.database().ref('achievements/' + achievementKey);
+        loopAchievemnt.on('value', function(snapshot) {
           if(snapshot.val() != null) {
             var change = false;
             var index = -1;
@@ -5017,6 +5001,8 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
     var rewardKeys = $firebaseArray(classroomRewardsRef);
     rewardKeys.$loaded(function() {
       $scope.rewards = [];
+      $scope.rewardsLocked = [];
+      $scope.rewardsUnlocked = [];
       for (i = 0 ; i < rewardKeys.length ; i++) {
         var rewardKey = rewardKeys.$keyAt(i); 
         var loopReward = firebase.database().ref('rewards/' + rewardKey);
@@ -5025,16 +5011,47 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
             var change = false;
             var index = -1;
             var reward = snapshot.val();
-            for(j = 0 ; j < $scope.rewards.length ; j++){
-              if(reward.id == $scope.rewards[j].id){
-                change = true;
-                index = j;
+            if($scope.student.rewards == undefined){
+              for(j = 0 ; j < $scope.rewardsLocked.length ; j++){
+                if(reward.id == $scope.rewardsLocked[j].id){
+                  change = true;
+                  index = j;
+                }
+              }
+              if(!change) {
+                $scope.rewardsLocked.push(reward);
+              } else {
+                $scope.rewardsLocked[index] = reward;
+              }
+            } else {
+              if(!(reward.id in $scope.student.rewards)) {
+                for(j = 0 ; j < $scope.rewardsLocked.length ; j++) {
+                  if(reward.id == $scope.rewardsLocked[j].id) {
+                    change = true;
+                    index = j;
+                  }
+                }
+                if(!change) {
+                  $scope.rewardsLocked.push(reward);
+                } else {
+                  $scope.rewardsLocked[index] = reward;
+                }
+              } else {
+                for(j = 0 ; j < $scope.rewardsUnlocked.length ; j++) {
+                  if(reward.id == $scope.rewardsUnlocked[j].id) {
+                    change = true;
+                    index = j;
+                  }
+                }
+                if(!change) {
+                  $scope.rewardsUnlocked.push(reward);
+                } else {
+                  $scope.rewardsUnlocked[index] = reward;
+                }
               }
             }
-            if(!change){
-              $scope.rewards.push(reward);  
-            } else {
-              $scope.rewards[index] = reward;
+            if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+              $scope.$apply();
             }
             $scope.getRewardsForSelection();
           }
@@ -5044,7 +5061,7 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
   }
 
   $scope.getRewardsForSelection = function() {
-    $scope.rewardsForSelection = angular.copy($scope.rewards);
+    $scope.rewardsForSelection = angular.copy($scope.rewardsLocked);
     for (var element in $scope.rewardsForSelection) {
       $scope.rewardsForSelection[element].selected = false;
     }
@@ -5053,15 +5070,6 @@ function ($scope, $stateParams, $http, $state, $ionicModal, $ionicActionSheet, $
 
   $scope.setReward = function(reward) {
     $scope.reward = reward;
-    if ($scope.student.rewards != undefined) {
-      if ($scope.student.rewards[reward.id] != undefined) {
-        $scope.possessedReward = true;
-      } else {
-      $scope.possessedReward = false;
-      }
-    } else {
-      $scope.possessedReward = false;
-    }
     $scope.showModalRewardDialog();
   }
 

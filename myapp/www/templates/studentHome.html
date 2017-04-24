@@ -274,13 +274,21 @@
         </h3>
       </header>
       <label class="item item-input list-elements" id="signUp-input3">
-          <span class="inputLabelProfile">
-            <i class="icon ion-thumbsup"></i>&nbsp;&nbsp;PUNTOS DISPONIBLES:
-            <span>{{availablePoints}}</span>
-          </span>
-        </label>
+        <span class="inputLabelProfile">
+          <i class="icon ion-thumbsup"></i>&nbsp;&nbsp;PUNTOS DISPONIBLES:
+          <span>{{availablePoints}}</span>
+        </span>
+      </label>
+      <h3 id="teacherHome-heading1" class="margin-top-null">RECOMPENSAS BLOQUEADAS</h3>
       <ion-list id="class-list5" class="list-elements">
-        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewards" ng-click="setReward(reward)">
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewardsLocked" ng-click="setReward(reward)">
+          <h2>{{reward.name}}</h2>
+          <p>({{reward.price}})</p>
+        </ion-item>
+      </ion-list>
+      <h3 id="teacherHome-heading1" class="margin-top-null">RECOMPENSAS DESBLOQUEADAS</h3>
+      <ion-list id="class-list5" class="list-elements">
+        <ion-item class="list-student" id="class-list-item7" ng-repeat="reward in rewardsUnlocked" ng-click="setReward(reward)">
           <h2>{{reward.name}}</h2>
           <p>({{reward.price}})</p>
         </ion-item>

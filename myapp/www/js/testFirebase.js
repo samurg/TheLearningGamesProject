@@ -140,3 +140,73 @@ var rootRef = firebase.database().ref();
     }
     $scope.closeModalSecondary();
   }
+
+  $scope.getItems = function() {
+    var classroomItemsRef = firebase.database().ref('classrooms/' + $scope.classroom.id + '/items');
+    var itemKeys = $firebaseArray(classroomItemsRef);
+    itemKeys.$loaded(function() {
+      $scope.items = [];
+      $scope.itemsLocked = [];
+      $scope.itemsUnlocked = [];
+      for(i = 0 ; i < itemKeys.length ; i++) {
+        var itemKey = itemKeys.$keyAt(i);
+        var loopItemsRef = firebase.database().ref('items/' + itemKey);
+        loopItemsRef.on('value', function(snapshot) {
+          if (snapshot.val() != null) {
+            var item = snapshot.val();
+            var change = false;
+            var index = -1;
+            if($scope.student.items == undefined) {
+              for(j = 0 ; j < $scope.itemsLocked.length ; j++){
+                if(item.id == $scope.itemsLocked[j].id){
+                  change = true;
+                  index = j;
+                  item.studentPoints = 0;
+                }
+              }
+              if (!change) {
+                item.studentPoints = 0;
+                $scope.itemsLocked.push(item);
+              } else {
+                $scope.itemsLocked[index] = item;
+              }
+            } else {
+              if(!(item.id in $scope.student.items)) {
+                for(j = 0 ; j < $scope.itemsLocked.length ; j++){
+                  if(item.id == $scope.itemsLocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = 0;
+                  }
+                }
+                if (!change) {
+                  item.studentPoints = 0;
+                  $scope.itemsLocked.push(item);
+                } else {
+                  $scope.itemsLocked[index] = item;
+                }
+              } else {
+                for(j = 0 ; j < $scope.itemsUnlocked.length ; j++){
+                  if(item.id == $scope.itemsUnlocked[j].id){
+                    change = true;
+                    index = j;
+                    item.studentPoints = $scope.student.items[item.id].points;
+                  }
+                }
+                if (!change) {
+                  item.studentPoints = $scope.student.items[item.id].points;
+                  $scope.itemsUnlocked.push(item);
+                } else {
+                  $scope.itemsUnlocked[index] = item;
+                }
+              }
+            }
+          }
+          if($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$apply();
+          }
+          $scope.getStudentLevel();
+        });
+      }
+    });
+  }
